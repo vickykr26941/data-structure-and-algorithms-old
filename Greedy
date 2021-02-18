@@ -1,0 +1,291 @@
+// greedy algorithms
+// activity selection : sort according to the finish time and take maximum activities 
+//job sequencing probleam:
+#include<iostream>
+#include<algorithm>
+#include<vector>
+using namespace std;
+int main(){
+	int n;
+	cin>>n;
+	vector<vector<int>> job(n,vector<int>(3,0));
+	for(int i=0; i<n; i++){
+		cin>>job[i][0]>>job[i][1]>>job[i][2];// job,dedline,profit
+	}
+	sort(begin(job),end(job),[&](vector<int> a,vector<int> b){  return a[2]>b[2]; });
+	vector<int> selected_jobs;
+	int max_profit=0;
+	selected_jobs.push_back(job[0][0]);
+	max_profit+=job[0][2];
+	vector<bool> slots(n+1,false);
+	slots[job[0][1]]=true;
+	
+	for(int i=1; i<n; i++){
+		for(int j=min(n,job[i][1]); j>=1; j--){
+			if(slots[j]==false){
+				selected_jobs.push_back(job[i][0]);
+				max_profit+=job[i][2];
+				slots[j]=true;
+				break;
+			}
+		}
+	}
+	cout<<" total selected jobs:";
+	for(int i=0;i<selected_jobs.size(); i++){
+		cout<<selected_jobs[i]<<" ";
+	}
+	cout<<" total profit:"<<max_profit;
+	
+	return 0;
+}
+
+// job sequencing probleam using disjoint set data structure
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+vector<int> parent;
+int find(int x){
+	if(parent[x]==x) return x;
+	else return parent[x]=find(parent[x]);
+}
+int solve(vector<vector<int>>&job,int n){
+	int max_ded=0;
+	for(int i=0; i<n; i++)
+		max_ded=max(max_ded,job[i][1]);
+    parent.assign(max_ded+1,0);
+	for(int i=0; i<max_ded+1; i++)
+		parent[i]=i;
+
+	sort(begin(job),end(job),[&](vector<int>& x,vector<int>& y){return x[2]>y[2];});
+
+    int total=0;
+	for(int i=0; i<n; i++){
+		int max_avail=find(job[i][1]);
+		if(max_avail>0) {
+			int u=find(max_avail-1);
+			parent[max_avail]=u;
+			cout<<job[i][0]<<" ";
+			total+=job[i][2];
+		}
+	}
+
+	return total;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<vector<int>> job(n,vector<int>(3,0));
+	for(int i=0; i<n; i++){
+		cin>>job[i][0]>>job[i][1]>>job[i][2];
+	}
+	int a=solve(job,n);
+	cout<<"\ntotal cost of sequencing job="<<a;
+	return 0;
+}
+
+// job sheduling when more slots have finish time equal to start that time this greedy approach will fail 
+// like:           st,ft,p  (start time ,finish time ,porfit)
+       // Job 1:  {1, 2, 50} 
+       // Job 2:  {3, 5, 20}
+       // Job 3:  {6, 19, 100}
+       // Job 4:  {2, 100, 200}
+// output by greedy approach is 170 but the maximum optimal output is 250
+// dynamic programming soluction using sorting and taking not conflicting element
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+int next_nonconflicting(vector<vector<int>>& job,int n){
+	for(int i=n-1; i>=0; i--){
+		if(job[i][1]<=job[n-1][0]){
+			return i;
+		}
+	}
+	return -1;
+}
+int solve2(vector<vector<int>> &job,int n){
+	if(n==1) return job[n-1][2];
+	int incl=job[n-1][2];
+	int next=next_nonconflicting(job,n);
+	if(next!=-1) incl+=solve2(job,next+1);    // include
+    int excl =solve2(job,n-1);             // exclude
+    return max(incl,excl);
+}
+int solve(vector<vector<int>> &job,int n){
+	sort(begin(job),end(job),[&](vector<int>&x,vector<int>&y){return x[2]<y[2];});
+	return solve2(job,n);
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<vector<int>> job(n,vector<int>(3,0));
+	for(int i=0; i<n; i++)
+		cin>>job[i][0]>>job[i][1]>>job[i][2];
+	cout<<solve(job,n);
+	return 0;
+}
+
+// weighted job sheduling can also be solved using lis(longest increasing subsequences)
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<vector<int>>& &job,int n){
+	sort(begin(job),end(job),[&](vector<int>&x,vector<int>&y){return x[1]<y[1];});
+    vector<vector<int>> res(n);
+    res[0].push_back(job[0]);
+    for(int i=1; i<n; i++){
+    	for(int j=0; j<i; j++){
+    		if(job[j][1]<= job[i][0] && find_sum(jo))
+    	}
+    }
+
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<vector<int>> job(n,vector<int>(3,0));
+	for(int i=0; i<n; i++){
+		cin>>job[i][0]>>job[i][1]>>job[i][2];
+	}
+	cout<<solve(job,n);
+	return 0;
+}
+
+
+#include<iostream>
+#include<vector>
+#include<unordered_map>
+using namespace std;
+vector<int> cnt(26,0);
+string solve(vector<string> list,int m){
+  if(m==0) return "";
+  unordered_map<string,int> res_count;
+
+  for(int i=0; i<m; i++){
+   	  string cur_str;
+       for(auto ch : list[i]){
+           cur_str+=to_string((cnt[ch-'a']));
+       }
+     res_count[cur_str]++;
+   }
+
+   int count=0;
+   string result;
+   for(auto u : res_count){
+   	    if(count<=u.second){
+           count=u.second;
+           result=u.first;
+   	    }
+   }
+   return result=="99999"?"":result;
+}
+int main(){
+  
+     // dictonery entery
+   for(int i=0; i<26; i++){
+   	   if(i==0 || i==1 || i==2)                  cnt[i]=2;
+   	   else if(i==3 || i==4 || i==5)             cnt[i]=3;
+   	   else if(i==6 || i==7 || i==8)             cnt[i]=4;
+   	   else if(i==9 || i==10 || i==11)           cnt[i]=5;
+   	   else if(i==12 || i==13 || i==14)          cnt[i]=6;
+   	   else if(i==15 || i==16 || i==17 || i==18) cnt[i]=7;
+   	   else if(i==19 || i==20 || i==21)          cnt[i]=8;
+   	   else if(i==22 || i==23 || i==24 || i==25) cnt[i]=9;
+
+   }
+
+   int m;
+   cin>>m;
+   vector<string> list(m,"");
+
+   for(int i=0; i<m; i++){
+   	cin>>list[i];
+   }
+   cout<<solve(list,m);
+   return 0;
+}
+
+
+// next problem 
+#include<iostream>
+#include<vector>
+using namespace std;
+int dfs(vector<vector<int>>&graph,int v,int node,int par,vector<int>&welgth){
+     int x=0;
+     for(auto u:graph[v]){
+        if(u==par) continue;
+        x=max(x,welgth[node]-welgth[u]);
+        x=max(x,dfs(graph,u,node,v,welgth));
+     }
+  return x;
+}
+int main(){
+   int n;
+   cin>>n;
+   vector<int> welgth(n+1,0);
+   vector<int> parent(n+1,0);
+   vector<vector<int>> graph(n+1);
+   for(int i=1; i<=n; i++)
+    cin>>welgth[i];
+   for(int i=1; i<=n; i++)
+    cin>>parent[i];
+
+   for(int i=1; i<=n; i++){
+       if(parent[i]==-1) continue;
+       else{
+         graph[parent[i]].push_back(i);
+       }
+   }
+
+   int res=0;
+   for(int i=1; i<=n; i++){
+     res=max(res,dfs(graph,i,i,-1,welgth));
+   }
+
+   cout<<res;
+   return 0;
+}
+
+// 3rd problem 
+#include<iostream>
+#include<vector>
+using namespace std;
+const int inf=1e9;
+int res=0;
+int dfs(vector<vector<int>> &graph,vector<int>&welgth,int v){
+
+  if(graph[v].size()==0) return welgth[v];
+  int val=inf;
+  for(auto u: graph[v]){
+    val=min(val,dfs(graph,welgth,u));
+    res=max(res,welgth[v]-val);
+  }
+  return min(val,welgth[v]);
+}
+int main(){
+  int n;
+  cin>>n;
+  vector<int> welgth(n+1,0);
+  vector<int> parent(n+1,0);
+  vector<vector<int>> graph(n+1);
+  for(int i=1; i<=n; i++)
+      cin>>welgth[i];
+
+  for(int i=1; i<=n; i++)
+    cin>>parent[i];
+
+  int v;
+  for(int i=1; i<=n; i++){
+    if(parent[i]==-1) {
+      v=i;
+      continue;
+    }
+    else
+      graph[parent[i]].push_back(i);
+  }
+  dfs(graph,welgth,v);
+  cout<<res;
+  return 0;
+}
+
