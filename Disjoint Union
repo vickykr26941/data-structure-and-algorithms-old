@@ -1,0 +1,106 @@
+// union find algorithms and various examples
+
+ //union find using union by rank/size
+#include<iostream>
+#include<vector>
+using namespace std;
+vector<int> parent;
+
+               // union by rank algorithm
+vector<int> rank;
+void make_set(int x){
+	parent[x]=x;
+	rank[x]=0;
+}
+int find(int x){
+	if(parent[x]!=x) return x;
+	return parent[x]=find(parent[x]);
+}
+void union_rnk(int x,int y){
+	int a=find(x),b=find(y);
+	if(a!=b){
+		if(rank[a]<rank[b])
+			swap(a,b);
+		parent[b]=a;
+		if(rank[a]==rank[b])
+		rank[a]++;
+	}
+}
+
+
+             // union by size algorithm
+//vector<int> size;
+//void make_set(int x){
+//	parent[x]=x;
+//	size[x]=1;
+//}
+//int find(int x){
+//	if(parent[x]==x) return x;
+//	return parent[x]=find(parent[x]);
+//}
+//void union_sz(int x,int y){
+//	int a=find(x),b=find(y);
+//	if(a!=b){
+//		if(size[a]<size[b]){
+//			swap(a,b);
+//		}
+//		parent[b]=a;
+//		size[a]+=size[b];
+//	}
+//}
+
+
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	parent.assign(n,0);
+	for(int i=0; i<n; i++)
+	make_set(i);	
+}
+
+
+
+
+
+// various application of union find
+// count connected component ,cycle detection,range minimum quary,search for connnected component in image of pixeles
+//storing the informations in each set (this approach can be very useful in various application ) these probleams are van be implemented easly
+
+
+//subarray painting probleam
+// probleam: initially all the array elements are painted by zero(same color) for m quaries paint the subarray [l,r,c] l to r with the color c
+// and at the end find the color of each cell
+// the probleam can be solved using segment tree and dsu 
+
+
+//support distance up to repersentative
+
+#include<iostream>
+#include<conio.h>
+#include<vector>
+using namespace std;
+vector<pair<int,int>> parent;
+void make_set(int x){
+	parent[x]=x;
+	rank[x]=0;
+}
+pair<int,int> find(int x){
+	if(parent[x].first!=x){
+		int len=parent[x].second;
+		parent[x]=find(parent[x].first);
+		parent[x].second+=len;
+	}
+	return parent[x];
+}
+void uni(int x,int y){
+	int a=find(x).first,b=find(y).first;
+	if(a!=b){
+		if(rank[a]<rank[b])
+		swap(a,b);
+		parent[b]={a,1};
+		if(rank[a]==rank[b])
+		rank[a]++;
+	}
+}
+ 
