@@ -1,0 +1,323 @@
+//recursion basic
+
+//sort the arry using recursion
+#include<iostream>
+#include<vector>
+using namespace std;
+void insert(vector<int>&arr,int x){
+	if(arr.size()==0 || arr.back()<=x){
+		arr.push_back(x);
+		return ;
+	}else{
+	    int val=arr[arr.size()-1];
+	    arr.pop_back();
+   	insert(arr,x);
+		arr.push_back(val);
+	}
+}
+void sort(vector<int>& arr){
+	if( arr.size()==1) return ;
+	int x=arr[arr.size()-1];
+	arr.pop_back();
+	sort(arr);
+	insert(arr,x);
+}
+int  main(){
+	 int n;
+	 cin>>n;
+	 vector<int> arr(n,0);
+	 for(int i=0; i<n; i++){
+	 	cin>>arr[i];
+	 }
+	 sort(arr);
+ for(int i=0; i<n; i++)
+  cout<<arr[i]<<" ";
+
+return 0;
+}
+
+
+// sort the stack using recursion
+// same as vector
+#include<iostream>
+#include<vector>
+#include<stack>
+using namespace std;
+void push_stack(stack<int>& stk,int x){
+	 if(stk.size()==0 || stk.top()>=x) 
+	    stk.push(x);
+	 else{
+	 	int val=stk.top();
+	 	stk.pop();
+	 	push_stack(stk,x);
+	 	stk.push(val);
+	 }
+}
+void sort(stack<int>& stk){
+	if(stk.size()==1) return;
+   else{
+   	int x=stk.top();
+		stk.pop();
+		sort(stk);
+		push_stack(stk,x);
+	}
+}
+int main(){
+	int n;
+	cin>>n;
+	stack<int> stk;
+	for(int i=0; i<n; i++){
+		int a;
+		cin>>a;
+		stk.push(a);
+	}
+
+ sort(stk);
+ while(!stk.empty()){
+ 	cout<<stk.top()<<" ";
+ 	stk.pop();
+ }
+ return 0;	
+}
+
+
+// delete middle element of stack
+#include<iostream>
+#include<stack>
+using namespace std;
+void delete_middle(stack<int>&stk,int size,int n){
+	if(size/2+1==n){
+		stk.pop();
+		return;
+	}else{
+		int val=stk.top();
+		stk.pop();
+		delete_middle(stk,size,n+1);
+		stk.push(val);
+	}
+}
+int main(){
+	int n;
+	cin>>n;
+	stack<int> stk;
+	for(int i=0; i<n; i++){
+		int a;
+		cin>>a;
+		stk.push(a);
+	}
+	delete_middle(stk,n,1);
+	
+	while(!stk.empty()){
+		cout<<stk.top()<<" ";
+		stk.pop();
+	}
+	
+return 0;
+}
+
+// reverse the stack using recursion
+#include<iostream>
+#include<stack>
+using namespace std;
+void insert_again(stack<int> &stk,int x){
+	if(stk.size()==0) {
+		stk.push(x);
+		return;
+	}else{
+		int val=stk.top();
+		stk.pop();
+		insert_again(stk,x);
+		stk.push(val);
+	}
+}
+void reverse_stack(stack<int> &stk){
+	if(stk.size()==0) return;
+	else{
+		int val=stk.top();
+		stk.pop();
+		reverse_stack(stk);
+		insert_again(stk,val);
+	}
+}
+int main(){
+	int n;
+	cin>>n;
+	stack<int> stk;
+	for(int i=0; i<n; i++){
+		int a;
+		cin>>a;
+		stk.push(a);
+	}
+	reverse_stack(stk);
+	while(!stk.empty()){
+		cout<<stk.top()<<" ";
+		stk.pop();
+	}
+	return 0;
+}
+
+
+//kth symbol grammer probleam
+// probleam statment: return the bit of Nth row of kth bit
+// base case :N=1,K=1 return 0
+// if in N-1th position is 0 change it to 01, if 1 change it to 10
+// 0
+// 0 1
+// 0 1 1 0
+// 0 1 1 0 1 0 0 1
+// 0 1 1 0 1 0 0 1 1 0 0 1 0 1 1 0
+#include<iostream>
+#include<math.h>
+using namespace std;
+int solve(int n,int k){
+	if(n==1 && k==1) return 0;
+	else{
+		int mid=pow(2,n-1)/2;
+		if(k<=mid) return solve(n-1,k);
+		else return !solve(n-1,k-mid);
+	}
+}
+int main(){
+	int n,k;
+	cin>>n>>k;
+	cout<<solve(n,k);
+	return 0;
+}
+
+// tower of honoi probleam using recursion
+#include<iostream>
+using namespace std;
+void solve(int n,int s,int h,int d){
+	if(n==1) {
+		cout<<"move from "<<s<<" to"<<d<<endl;
+		return;
+	}else{
+		solve(n-1,s,d,h);
+		cout<<"move from "<<s<<" to"<<d<<endl;
+		solve(n-1,h,s,d);
+	}
+}
+int main(){
+	int n;
+	cin>>n;
+	int s=1,h=2,d=3;
+	solve(n,s,h,d);
+
+return 0;
+}
+
+
+// all set of a string 
+// not a efficient but easy to understand
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+int cnt=0;
+void solve(string in,string out){
+	if(in.size()==0){
+		//cout<<out<<endl;
+		cnt++;
+		return;
+	}else{
+	   string op1,op2;
+	   op1=out;
+	   op2=out;
+	   op2.push_back(in[0]);
+	   in.erase(begin(in));
+	   solve(in,op1);
+	   solve(in,op2);
+	}
+}
+int main(){
+	string s;
+	cin>>s;
+	solve(s,"");
+	cout<<cnt;
+	return 0;
+}
+
+
+//permutation with spaces of a string
+#include<iostream>
+#include<string>
+using namespace std;
+void solve(string in,string out){
+	if(in.size()==0) {
+		cout<<out<<endl;
+	}else{
+		string op1,op2;
+		op1=op2=out;
+		op1+="_";
+		op1+=in[0];
+		op2+=in[0];
+		in.erase(begin(in));
+		solve(in,op1);
+		solve(in,op2);
+	}
+}
+int main(){
+	string s;
+	cin>>s;
+	string out;
+	out+=s[0];
+	s.erase(begin(s));
+	solve(s,out);
+	
+return 0;
+}
+
+// permutation of string with case change
+
+#include<iostream>
+#include<string>
+using namespace std;
+void solve(string in,string out){
+	if(in.size()==0){
+		cout<<out<<endl;
+	}else{
+		string op1,op2;
+		op1=op2=out;
+		op1+=in[0];
+		op2+=(in[0]-'a')+'A';
+		in.erase(begin(in));
+		solve(in,op1);
+		solve(in,op2);
+	}
+}
+int main(){
+	string s;
+	cin>>s;
+	solve(s,"");
+	
+	return 0;
+}
+
+// generating all the permutations of a string
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+vector<bool> choosen;
+void permutation(string s,string pre,int n){
+	if(pre.size()==n){
+		cout<<pre<<" ";
+		return ;
+	}
+	for(int i=0; i<n; i++){
+	   if(choosen[i]) continue;
+	   pre.push_back(s[i]);
+	   choosen[i]=true;
+	   permutation(s,pre,n);
+	   choosen[i]=false;
+	   pre.pop_back();
+	}
+}
+int main(){
+	string s;
+	cin>>s;
+	int n=s.size();
+	choosen.assign(n,false);
+	permutation(s,"",n);
+	return 0;
+}
