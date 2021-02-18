@@ -1,0 +1,371 @@
+
+   // trie data structure to do problem on xor queary
+
+ // implementation of trie data structure
+ 
+#include<bits/stdc++.h>
+using namespace std;
+struct Trie{
+	char ch;
+	bool isend;
+	Trie *child[26];
+	Trie(){
+		 memset(child,0,sizeof(child));
+        isend=false;
+	 }
+};
+struct Trie *root;
+void insert(string s){
+	Trie *cur=root;
+	for(char c:s){
+		int idx=c-'a';
+		if(cur->child[idx]==nullptr){
+			cur->child[idx]=new Trie();
+		 }
+		 cur=cur->child[idx];
+	 }
+	 cur->isend=true;
+}
+bool search(string s){
+	Trie *cur=root;
+	for(char c:s){
+		int idx=c-'a';
+		if(cur->child[idx]==nullptr) return false;
+		cur=cur->child[idx];
+	 }
+	return cur->isend;
+}
+int main(){
+	int n;
+	cin>>n;
+	root=new Trie();
+	for(int i=0; i<n; i++){
+		string s;
+		cin>>s;
+		insert(s);
+	 }
+	 int s;   // number of element want to search
+	 cin>>s;
+	 while(s--){
+	 	string str;
+	 	cin>>str;
+	 	if(search(str)){
+	 		cout<<"string is present:";
+		 }
+		 else{
+		 	cout<<"string not present:";
+		 }
+	 }
+
+	return 0;
+}
+
+// build trie data structure to find max xor quary
+//find the maxomum xor of two numbers from array
+
+#include<bits/stdc++.h>
+using namespace std;
+struct trie{
+ trie *left,*right;
+};
+struct trie *root;
+void insert(int n){
+	trie *cur=root;
+   for(int i=31; i>=0; i--){
+   	int b=(n>>i) & 1;
+   		if(b==0){
+	   		if(!cur->left)
+	   		 cur->left=new trie();
+	   		 cur=cur->left;
+			}
+		else{
+			if(!cur->right)
+			cur->right=new trie();
+			cur=cur->right;
+		}
+	}
+}
+int find_max_xor(int *arr,int n){
+	int max_xor=INT_MIN;
+	for(int i=0; i<n; i++){
+		trie* cur=root;
+		int value=arr[i],cur_xor=0;
+		for(int j=31; j>=0; j--){
+			int b=(value>>j)&1;
+			if(b==0){
+				if(cur->right){
+					cur_xor+=pow(2,j);
+					cur=cur->right;
+				}
+				else  cur=cur->left;
+			}else{
+				if(cur->left){
+					cur_xor+=pow(2,j);
+					cur=cur->left;
+				}
+				else cur=cur->right;
+			}
+		}
+	 max_xor=max(max_xor,cur_xor);
+	}
+	return max_xor;
+}
+int main(){
+	root=new trie();
+   int arr[]={3,10,5,25,2,8};
+	for(int i=0; i<6; i++){
+		insert(arr[i]);
+	}
+	int max_xor=find_max_xor(arr,6);
+	cout<<"max xor of two numbers from the array:";
+	cout<<max_xor;
+	
+	return 0;
+}
+
+// longest prefix matching using trie data structre
+#include<bits/stdc++.h>
+using namespace std;
+struct trie{
+	char ch;
+	bool isend;
+	trie *child[26];
+	trie(){
+		 memset(child,0,sizeof(child));
+        isend=false;
+	 }
+};
+struct trie *root;
+void insert(string s){
+	trie *cur=root;
+	for(char c:s){
+		int idx=c-'a';
+		if(cur->child[idx]==nullptr){
+			cur->child[idx]=new trie();
+		 }
+		 cur=cur->child[idx];
+	 }
+	 cur->isend=true;
+}
+string search(string s){
+	string str;
+	trie *cur=root;
+	string res="";
+	bool find=false;
+	for(auto c:s){
+		int idx=c-'a';
+		if(!cur->child[idx])  break;
+		    str+=idx+'a';
+		    if(cur->child[idx]->isend && res.size()<str.size())
+		      res=str,find=true;
+		    cur=cur->child[idx];
+	 }
+	 return find?res:"empty";
+}
+int main(){
+	vector<string> str={"are", "area", "base", "cat", "cater", "children", "basement"};
+	root=new trie();
+	
+	for(int i=0; i<7; i++){
+		insert(str[i]);
+	 }
+	 
+	vector<string> input={"caterer","basemexy","child"};
+	for(int i=0; i<3; i++){
+		cout<<search(input[i])<<endl;
+	}
+	
+	return 0;
+}
+
+// longest common prefix using trie 
+// the time complexity :O(
+
+#include<bits/stdc++.h>
+using namespace std;
+string str="";
+struct trie{
+	char ch;
+	bool isend;
+	trie *child[26];
+	trie(){
+		 memset(child,0,sizeof(child));
+        isend=false;
+	 }
+};
+struct trie *root;
+void insert(string s){
+	trie *cur=root;
+	for(char c:s){
+		int idx=c-'a';
+		if(cur->child[idx]==nullptr){
+			cur->child[idx]=new trie();
+		 }
+		 cur=cur->child[idx];
+	 }
+	 cur->isend=true;
+}
+void search(string s){
+	trie *cur=root;
+	if(str.size()==0){
+		for(auto c: s){
+			int idx=c-'a';
+			if(cur->child[idx]==nullptr) break;
+		
+			str+=idx+'a';
+			cur=cur->child[idx];
+		 }
+	 }
+	 else{
+	 	int i=0;
+	 	string res;
+	 	for(auto c: s){
+	 		int idx=c-'a';
+	 		if(!cur->child[idx]) break;
+	 		if( i<str.size() && str[i]-'a' == idx && cur->child[idx] ){
+	 			res+=str[i++];
+	 			cur=cur->child[idx];
+			 }
+			 else break;
+		 }
+		str=res;
+	 }
+}
+int main(){
+  vector<string> input={"apple", "ape", "april"};
+  root=new trie();
+  for(int i=0; i<3; i++){
+  	insert(input[i]);
+  }
+  
+  for(int i=0; i<3; i++){
+  	  search(input[i]);
+  }
+  
+  cout<<"longest common prefix:";
+  cout<<str;
+  
+  return 0;
+}
+
+// find the shortest unique prefix in every word in a given list
+#include<bits/stdc++.h>
+using namespace std;
+string str="";
+struct trie{
+	char ch;
+   int cnt;
+	trie *child[26];
+	trie(){
+		 memset(child,0,sizeof(child));
+        cnt=1;
+	 }
+};
+struct trie *root;
+void insert(string s){
+	trie *cur=root;
+	for(char c:s){
+		int idx=c-'a';
+		if(cur->child[idx]==nullptr){
+			cur->child[idx]=new trie();
+		 }
+		 else cur->child[idx]->cnt++;
+		 
+		 cur=cur->child[idx];
+	 }
+}
+string search(string s){
+	trie *cur=root;
+	string str;
+	for(auto c : s){
+		int idx=c-'a';
+		str+=idx+'a';
+		if(!cur->child[idx] || cur->child[idx]->cnt==1) break;
+		cur=cur->child[idx];
+	 }
+	 return str;
+}
+int main(){
+  vector<string> input={"zebra", "dog", "duck", "dove"};
+  root=new trie();
+  for(int i=0; i<4; i++){
+  	insert(input[i]);
+  }
+  
+  for(int i=0; i<4; i++){
+  	  cout<<search(input[i])<<endl;
+  }   
+  return 0;
+}
+
+
+//find minimum xor pair in array of integers
+#include<bits/stdc++.h>
+using namespace std;
+struct trie{
+	trie *left,*right;
+};
+struct trie *root;
+void insert(int n){
+	trie *cur=root;
+	for(int i=31; i>=0; i--){
+		int b=n&(1<<i);
+		if(b==0){
+			if(!cur->left) cur->left=new trie();
+			cur=cur->left;
+		}else{
+		  if(!cur->right) cur->right=new trie();
+		  cur=cur->right;	
+		}
+	}
+}
+
+int find_min(int val){
+		trie *cur=root;
+		int  cur_xor=0;
+		for(int j=31; j>=0; j--){
+			int b=val &(1<<j);
+			if(b==0){
+				if(cur->left){
+					cur=cur->left;
+				}
+				else {
+				    cur=cur->right;
+				    cur_xor+=pow(2,j);
+				}
+			}
+			else{
+				if(cur->right){
+					cur=cur->right;
+				}
+				else {
+				    cur=cur->left;
+				    cur_xor+=pow(2,j);
+			    }
+			}
+		}
+	return cur_xor;
+}
+
+int main(){
+	int n;
+	cin>> n; 
+	vector<int> arr;
+	root=new trie();
+	for(int i=0; i<n; i++){
+		int a;
+		cin>>a;
+		arr.push_back(a);
+	}
+	int min_xor=INT_MAX;
+	insert(arr[0]);
+	for(int i=1; i<n; i++){
+		min_xor=min(min_xor,find_min(arr[i]));
+		insert(arr[i]);
+	}
+	
+	cout<<"minimum possible xor:";
+	cout<<min_xor;
+	
+	return 0;
+}
