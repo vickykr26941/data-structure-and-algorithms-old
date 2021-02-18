@@ -1,0 +1,1735 @@
+  // a graph have tree chractresitic find the height of graph and farest node from the root 
+
+#include<iostream>
+#include<conio.h>
+#include<vector>
+using namespace std;
+vector<int> ar[1000];
+vector<bool> vis;
+int ans=0,farest_node=-1;
+void dfs(int a,int m){
+	vis[a]= true; 
+	for(int n: ar[a]){
+		if(!vis[n]){
+		  if(m>ans) {
+		  	ans=m, farest_node=n;
+		  }
+		  dfs(n,m+1);
+		}
+	}
+}
+int main(){
+	int n;
+	cin>> n;
+	vis.assign(n+100,false);
+	for(int  i=1; i<n; i++){
+		int a, b ;
+		cin>>a>>b;
+		ar[a].push_back(b), ar[b].push_back(a);
+	}
+	dfs(1,1);
+	cout<<" height of the tree:";
+	cout<<ans<<endl;
+	cout<<"farest node from the root is:";
+	cout<<farest_node;
+	return 0;	
+}
+
+ 
+ //given a tree find the node from which the height is minimum
+#include<conio.h>
+#include<iostream>
+#include<vector>
+#include<queue>
+using namespace std;
+vector<int> ar[1000];
+int degree[100];
+vector<int> minimum_height(int n){
+	queue<int> q;
+	for(int i=1;i<=n; i++){
+		if(degree[i]==1)
+		q.push(i);
+	 }
+	 int V=n;
+	 while(V>2){
+	 	for(int i=0; i<q.size(); i++){
+	 		int u=q.front();
+	 		q.pop();
+	 		V--;
+	 		for(int v:ar[u]){
+	 			degree[v]--;
+	 			if(degree[v]==1)
+	 			q.push(v);
+			 }
+		 }
+	 }
+	vector<int> res;
+   while(!q.empty()){
+  	res.push_back(q.front());
+  	q.pop();
+  }
+  return res;
+}
+int main(){
+	int n;
+	cin>> n;
+	for(int i=1; i<n; i++){
+		int a,b; 
+		cin>>a>>b;
+		ar[a].push_back(b),ar[b].push_back(a);
+		degree[a]++,degree[b]++;
+	 }
+	vector<int> res=minimum_height(n);
+	for(int i=0;i<res.size();i++)
+	cout<<res[i]<<" ";
+	
+	return 0;
+}
+
+//cycle dectiction using coloring
+#include<iostream>
+#include<conio.h>
+#include<vector>
+using namespace std;
+vector<int> ar[10000];
+int color[1000],parent[1000];
+int cycle_start, cycle_end;
+bool dfs(int v,int par){
+	color[v]=1;
+	for(int u:ar[v]){
+		if(u==par) continue;
+		if(color[u]==0){
+			parent[u]=v;
+			if(dfs(u,v)) return true;
+		}
+		else if(color[u]==1){
+			cycle_start=u;
+			cycle_end=v;
+			return true;
+		}
+	}
+	color[v]=2;
+	return false;
+}
+
+int main(){
+	int n,m;
+	cin>>n>>m;
+	for(int i=0; i<m; i++){
+		int a, b ;
+		cin>>a>>b;
+		ar[a].push_back(b),ar[b].push_back(a);
+	}
+	if(dfs(1,-1)){
+	cout<<"cycle present in graph like:"<<endl;
+   vector<int> cycle;
+   for(int p=cycle_end; p!=cycle_start;p=parent[p]){
+   	cycle.push_back(p);
+	}
+	cycle.push_back(cycle_start);
+	for(int i=0;i<cycle.size();i++){
+		cout<<cycle[i]<<" ";
+	}
+ }
+	else cout <<"there is no cycle in the graph:";
+	return 0;
+}
+
+
+//solve magic indices problem from gfg
+#include<iostream>
+#include<conio.h>
+#include<vector>
+using namespace std;
+int main(){
+	int n;
+	cin>> n;
+	vector<int> arr;
+	for(int i=0; i<n; i++ ){
+		int a;
+		cin>>a;
+		arr.push_back(a);
+	}
+	
+  int parent[n+1],vis[n+1];
+  for(int i=0; i<=n; i++){
+  	parent[i]=-1;
+  	vis[i]=0;
+  }
+  int cnt=0;
+  for(int i=0; i<n; i++){
+  	 int j=i;
+  	 if(parent[j]==-1){
+  	 	while(parent[j]==-1){
+  	 		parent[j]=i;
+  	 		j=(j+arr[j] +1)%n;
+			}
+		
+		if(parent[j]==i){
+		   	while(!vis[j]){
+		   		vis[j]=1;
+		   		cnt++;
+		   		j=(j+arr[j]+1)%n;
+			 }
+		 }
+	 }
+  }
+  
+  cout<<"total indices ot total number of element in all cycle:"<<cnt;
+  return 0;
+}
+
+//negative cyale dectection using foloyd warshal algorithms
+//cycle dectection using union find algorithms
+//cycle dectection uding back edge concept
+//cycle dectection using bfs etc all covered in code blocks ide graph.cpp file
+
+
+
+
+
+//topological sorting algorithms using bfs (without queue bfs)
+#include<iostream>
+#include<conio.h>
+#include<vector>
+using namespace std;
+vector<int> ar[1000];
+vector<bool> vis;
+vector<int> res;
+void dfs(int v){
+	vis[v]=true;
+	for(int u:ar[v]){
+		if(!vis[u]){
+			dfs(u);
+		}
+	}
+	res.push_back(v);
+}
+int main(){
+	int n,m; 
+	cin>>n>>m;
+	vis.assign(n+1,false);
+	for(int i=0; i<m; i++){
+		int a,b; 
+		cin>>a>>b;
+		ar[a].push_back(b);
+	}
+	for(int i=1; i<=n; i++){
+		if(!vis[i]){
+			dfs(i);
+		}
+	}
+	for(int i=res.size()-1; i>=0; i--){
+		cout<<res[i]<<" ";
+	}
+	return 0;
+}
+
+
+
+                            //minimum spanning tree algorithms
+//kruskal's algorithms to find minimum spanning tree
+#include<iostream>
+#include<conio.h>
+#include<vector>
+#include<algorithm>
+using namespace std;
+vector<vector<int>> ar;
+int parent[1000];
+int find(int x){      //finding by path compression 
+	if(parent[x]==x) return x;
+	return parent[x]=find(parent[x]);
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	for(int i=0; i<m; i++){
+		int a,b,w; 
+		cin>>a>>b>>w;
+		ar.push_back({a,b,w});
+	}
+	sort(ar.begin(),ar.end(),[&](vector<int> x,vector<int> y){
+		return x[2]<y[2];
+	});
+	vector<vector<int>> res;
+	int sum=0;
+	for(int i=0;i<=n;i++) parent[i]=i;
+	for(int i=0;i<ar.size(); i++){
+		int a=ar[i][0],b=ar[i][1],w=ar[i][2];
+		int x=find(a),y=find(b);
+		if(x!=y){
+			sum+=w;
+			res.push_back({a,b,w});
+			parent[x]=y;
+		}
+	}
+	
+	cout<<"edges in minimum sapnning tree:";
+	for(int i=0; i<res.size(); i++){
+		cout<<res[i][0]<<" "<<res[i][1]<<" "<<res[i][2]<<endl;
+	}
+	cout<<"total minimum waight of minimum spanning tree:"<<sum;
+	return 0;
+}
+
+        //prim's algorithms like a dijekstra algorithms implementation
+        //using adjency list 
+#include<iostream>
+#include<conio.h>
+#include<vector>
+#include<queue>
+using namespace std;
+using pii=pair<int,int> ;
+vector<pii> ar[1000];
+int parent[1000],weight[1000];
+vector<bool>  vis;
+const int INF=1e9;
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vis.assign(n+1,false);
+	for(int i=0; i<m; i++){
+		int a,b,w; 
+		cin>>a>>b>>w;
+		ar[a].push_back({b,w}),ar[b].push_back({a,w});
+	}
+	
+	for(int i=1; i<=n; i++) parent[i]=-1,weight[i]=INF;
+	priority_queue<pii,vector<pii>,greater<pii>> pq;
+	parent[1]=-1;
+	weight[1]=0;
+	pq.push({0,1});
+  vis[1]=true;
+
+	while(!pq.empty()){
+		int v=pq.top().second;
+		pq.pop();
+		for(auto x:ar[v]){
+			int a=x.first,b=x.second;
+			if(!vis[a] && weight[a]>b){
+        vis[a]=true;
+				parent[a]=v;
+				weight[a]=b;
+				pq.push({b,a});
+			}
+		}
+	}
+	
+	cout<<"edges in minimum spanning tree:"<<endl;
+	for(int i=1; i<=n; i++){
+		cout<<parent[i]<<" ";
+	}
+	cout<<"total cost of minimum spanning tree:";
+	int sum=0;
+	for(int i=1; i<=n; i++){
+		sum+=weight[i];
+	}
+	cout<<sum<<endl;
+	
+	return 0;
+}
+
+
+  //shortest path bellman ford algorithm 
+#include<iostream>
+#include<conio.h>
+using namespace std; 
+struct g{
+	int a,b,w;
+};
+struct g edges[1000];
+int dist[1000],parent[1000];
+const int INF=10e8;
+int main(){
+	int n,m; 
+	cin>>n>>m;
+	for(int i=0; i<m; i++){
+		cin>>edges[i].a>>edges[i].b>>edges[i].w;
+	}
+	for(int i=1; i<=n; i++){
+		dist[i]=INF;
+	}
+	int s,d;
+	cin>>s>>d;
+	dist[s]=0;
+	parent[s]=-1;
+	
+	            // this will run till n-1 even all the shortest path we get in less tha n-1 scan ,we can optimize it
+//	for(int i=1; i<n; i++){
+//		for(int j=0; j<m; j++){
+//		 if(dist[edges[j].a]<INF){
+//		 	if(dist[edges[j].a]+edges[j].w <dist[edges[j].b]){
+//		 		dist[edges[j].b]=dist[edges[j].a]+edges[j].w;
+//			 }
+//		  }	
+//		}
+//	}
+	
+	                     //optimized version 
+	for(;;){ 
+		bool any=false;
+		for(int j=0; j<m; j++){
+		 if(dist[edges[j].a]<INF){
+		 	if(dist[edges[j].a]+edges[j].w <dist[edges[j].b]){
+		 		dist[edges[j].b]=dist[edges[j].a]+edges[j].w;
+		 		parent[edges[j].b]=edges[j].a;
+		 		any=true;
+			 }
+		  }	
+		}
+	  if(!any) break ;
+	}
+	cout<<"shortest path from source to each vertex:";
+	for(int i=1; i<=n; i++){
+		cout<<dist[i]<<" ";
+	}
+	for(int i=n; i>=1; i--){
+		cout<<parent[i]<<" ";
+	}
+	
+	return 0;
+}
+
+
+
+       //shortest path faster algorithms  Bellmadford algorithm logic
+#include<iostream>
+#include<conio.h>
+#include<vector>
+#include<queue>
+using namespace std;
+const int inf=10e8;
+using pii=pair<int,int>;
+vector<pii> ar[1000];
+int dist[1000],cnt[1000];
+vector<bool> enqueue;
+int main(){
+	int n, m;
+	cin>>n>>m;
+	enqueue.assign(n+1,false);
+	for(int i=0; i<m; i++){
+		int a, b,w;
+		cin>>a>>b>>w;
+		ar[a].push_back({b,w}),ar[b].push_back({a,w});
+	}
+	for(int i=1; i<=n; i++) dist[i]=inf;
+	int s,d;
+	cin>>s>>d;
+	dist[s]=0;
+	queue<int> q;
+	q.push(s);
+	enqueue[s]=true;
+	while(!q.empty()){
+		int u=q.front();
+		q.pop();
+		enqueue[u] =false;
+		for(auto edge:ar[u]){
+			int a=edge.first;
+			int len=edge.second;
+			if(dist[u]+len<dist[a]){
+				dist[a]=dist[u]+len;
+				if(!enqueue[a]){
+				   q.push(a);
+				   enqueue[a]=true;
+				   cnt[a]++;
+				   if(cnt[a]>n-1) {
+				   	cout<<"graph contain negative cycle :";
+				   	break;
+				   }
+				}
+			}
+		}
+	}
+	
+	cout<<"shortest path from source to diatance :";
+	for(int i=1; i<=n; i++){
+		cout<<dist[i]<<" ";
+	}
+	return 0;
+}
+  
+  
+// floyd warshal algorithms like (matrix multiplication)
+#include<iostream>
+#include<conio.h>
+using namespace std;
+const int inf=10e8; 
+int main(){
+	int n,m;
+	cin>> n>>m;
+	int **graph=new int *[n+1];
+	for(int i=0;i<=n+1;i++) graph[i]=new int[n+1];
+	
+	for(int i=1; i<=n; i++){
+		for(int j=1; j<=n; j++){
+			if(i==j) graph[i][j]=0;
+			else graph[i][j]=inf;
+		}
+	}
+		for(int j=1; j<=m; j++){
+			int a,b,w;
+			cin>>a>>b>>w;
+			graph[a][b]=w;
+		}
+	 
+	   // foylod warshal algorithms
+	for(int k=1; k<=n; k++){
+	   for(int i=1; i<=n; i++){
+	   	for(int j=1; j<=m; j++){
+	   		  graph[i][j]=min(graph[i][j],graph[i][k]+graph[k][j]);
+		   }
+	   }
+   }	
+	for(int i=1; i<=n; i++){
+		for(int j=1; j<=n; j++){
+			if(graph[i][j]==inf) cout<<"inf";
+			else  cout<<graph[i][j]<<" ";
+		}
+		cout<<endl;
+	}
+	
+	return 0;
+}  
+
+
+//dijkestra algorithms if graph is represented as adjency matrix
+#include<iostream>
+#include<conio.h>
+#include<vector>
+
+using namespace std; 
+const int inf=10e8;
+int dist[1000];
+vector<bool> visited;
+int find_min(int u,int n){
+	int m=inf,idx=-1;
+	for(int i=1; i<=n; i++){
+		if(!visited[i] && dist[i]<m){
+			m=dist[i],idx=i;
+		}
+	}
+return idx;
+}
+int main(){
+	int n,m;
+   cin>>n>>m;
+   visited.assign(n+1,false);
+   int **graph=new int *[n+1];
+   for(int i=0; i<=n; i++) graph[i]=new int [n+1];
+   for(int i=0; i<=n; i++){
+   	for(int j=0; j<=n; j++){
+   	    graph[i][j]=0;  
+		}
+	}
+	for(int i=0; i<m; i++){
+		int a,b,w;             // if graph[i][j] =0 it means there is no path from i to j
+		cin>>a>>b>>w;
+		graph[a][b]=w;
+	}
+	for(int i=1; i<=n; i++){
+		dist[i]=inf;
+	}
+	int s; 
+	cin>>s;
+	dist[s]=0;
+	 for(int i=1; i<=n; i++){
+	 	int u=find_min(i,n);
+	 	visited[u]=true;
+	 	for(int v=1; v<=n; v++){
+	 		if(!visited[v] && graph[u][v] && graph[u][v]!=inf && dist[u]+graph[u][v]<dist[v]){
+	 			dist[v]=dist[u]+graph[u][v];
+			 }
+		 }
+	 }
+	 
+	 for(int i=1; i<=n; i++){
+	 	cout<<dist[i]<<" ";
+	 }
+	 
+	return 0;
+}
+
+
+//dijkestra algorith using set 
+#include<iostream> 
+#include<conio.h>
+#include<vector>
+#include<set>
+using namespace std;
+const int inf=10e8;
+using pii=pair<int,int>;
+vector<pii> ar[100];
+int dist[1000];
+int main(){
+	int n,m;
+	cin>>n>>m;
+	for(int i=0; i<m; i++){
+		int a,b,w; 
+		cin>>a>>b>>w;
+		ar[a].push_back({b,w}),ar[b].push_back({a,w});
+	}
+	for(int i=1; i<=n; i++){
+		dist[i]=inf;
+	}
+	int s;
+	cin>>s;
+	dist[s]=0;
+	set<pii> st;
+	st.insert({0,s});
+	while(!st.empty()){
+		int u=st.being()->second;
+		st.erase(st.begin());
+		
+		for(auto edge: ar[u]){
+			int x=edge.first,len=edge.second;
+			if(dist[x]>dist[u]+len){
+			  st.erase(dist[x],x);
+			  dist[x]=dist[u]+1;
+			  st.insert(dist[x],x);
+			}
+		}
+	}
+	
+	for(int i=1; i<=n; i++){
+		cout<<dist[i]<<" ";
+	}
+	return 0;
+}
+
+                  
+
+// 0 1 BFS  // 
+#include<iostream>
+#include<conio.h>
+#include<queue>
+#include<vector>
+using namespace std;
+const int inf=10e8;
+using pii=pair<int,int>;
+vector<pii> ar[1000];
+int dist[1000];
+int main(){
+	int n, m;
+	cin>>n>>m;
+	for(int i=0; i<m; i++){
+		int a, b, w;     // w can be 0 or 1
+		cin>>a>>b;
+		ar[a].push_back({b,w}),ar[b].push_back({a,w});
+	}
+	for(int i=1; i<=n; i++){
+		dist[i]=inf;
+	}
+	int s;
+	cin>>s;
+	dist[s]=0;
+	
+	deque<int> q;
+	q.push_back(s);
+	while(!q.empty()){
+	   int u=q.front();	
+	   q.pop_front();
+	   for(auto x: ar[u]){
+	   	int a=x.first,len=x.second;
+	   	if(dist[a]>dist[u]+len){
+	   		dist[a]=dist[u]+len;
+	   		if(len==0)
+	   		  q.push_front(a);
+	   		else q.push_back(a);
+		   }
+	   }
+	}
+	
+	cout<<"shortest path from every vertex:";
+	for(int i=1; i<=n; i++){
+		cout<<dist[i]<<" ";
+	}
+
+ return 0;	
+}
+
+                        //connectivity problems theory
+                       // strongly connected component using kosaraju's algorithms
+#include<iostream>
+#include<conio.h>
+#include<vector>
+using namespace std;
+const int inf=10e8;
+vector<int> ar[1000],order,vr[10000];
+vector<bool> vis;
+void dfs1(int u){
+	vis[u]=true;
+	for(int v:ar[u]){
+		if(!vis[v]){
+			dfs1(v);
+		}
+	}
+	order.push_back(u);
+}
+void dfs2(int u){
+	vis[u]=true;
+	cout<<u<<" ";
+	for(int v:vr[u]){
+		if(!vis[v])
+		dfs2(v);
+	}
+}
+void reverse_graph(int n){
+	for(int i=1; i<=n; i++){
+		for(int u:ar[i]){
+			vr[u].push_back(i);
+		}
+	}
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vis.assign(n+1, false);
+	for(int i=0; i<m; i++){
+		int a,b;
+		cin>>a>>b;
+		ar[a].push_back(b);
+	}
+	for(int i=1; i<=n; i++){
+		if(!vis[i]){
+			dfs1(i);
+		}
+	}
+	reverse_graph(n);
+	vis.assign(n+1,false);
+	int x=n;
+	while(x--){
+		int a=order.back();
+		order.pop_back();
+		if(!vis[a]){
+			dfs2(a);
+			cout<<endl;
+		}
+	}
+
+return 0;
+}
+
+
+                           // finding articulation point in graph and verifiying biconnected component
+#include<iostream>
+#include<conio.h>
+#include<vector> 
+using namespace std;
+const int inf=10e8;
+vector<int> ar[1000];
+int in[1000],low[1000];
+vector<int> ar_points;
+vector<bool> vis;
+int timer=0;
+void dfs(int v,int p=-1){
+	vis[v]=true;
+	in[v]=low[v]=timer++;
+	int child=0;
+	for(int u: ar[v]){
+		if(u==p) continue;
+		if(vis[u]){
+			low[v]=min(low[v],in[u]);
+		}else{
+			dfs(u,v);
+			low[v]=min(low[v],low[u]);
+			if(low[u]>=in[v] && p!=-1){
+				ar_points.push_back(v);
+			}
+		  child++;
+		}
+	}
+	if(p==-1 && child>1)
+	 ar_points.push_back(v);
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vis.assign(n+1,false);
+	for(int i=1; i<=n; i++){
+		int a,b; 
+		cin>>a>>b;
+		ar[a].push_back(b),ar[b].push_back(a);
+	}
+	int cc=0;
+	for(int i=1; i<=n; i++){
+		if(!vis[i]){
+			dfs(i,-1),cc++;
+		}
+	}
+	for(int i=0; i<ar_points.size(); i++){
+		cout<<ar_points[i]<<" ";
+	}
+	if(cc>1 || ar_points.size()>1)
+	 cout<<" the graph is not a biconnected component:";
+	 else cout<<" graph is biconnected component:";
+	 
+	return 0;
+}
+
+                      // tarjan algorithms to find the strongly connected component
+#include<iostream>
+#include<conio.h>
+#include<vector>
+#include<stack>
+using namespace std;
+const int inf=10e8;
+vector<int> ar[1000];
+int low[100],in[100];
+stack<int> stk;
+vector<bool> stk_member;
+int timer=0;
+void dfs(int v){
+	stk.push(v);
+	stk_member[v]=true;
+	in[v]=low[v]=timer++;
+	
+	for(int u:ar[v]){
+		if(in[u]==-1){
+			dfs(u);
+			low[v]=min(low[v],low[u]);
+		 }
+		 else if(stk_member[v] ){
+		 	low[v]=min(low[v],low[u]);
+		 }
+	 }
+	 int w;
+ if(in[v]==low[v]){
+	 while(!stk.empty()){
+	 	int w=stk.top();
+	 	stk.pop();
+	 	stk_member[w]=false;
+	 	cout<<w<<" ";
+	 	if(w==v) break;
+	 }
+  }
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	stk_member.assign(n+1,false);
+	for(int i=0; i<m; i++){
+		int a,b;
+		cin>>a>>b;
+		ar[a].push_back(b);
+	 }
+	 for(int i=1; i<=n; i++) in[i]=-1;
+	 
+	 for(int i=1; i<=n; i++){
+	 	if(in[i]==-1){
+	 		dfs(i);
+		 }
+	 }
+	 return 0;
+}
+
+                // finding bridges in a graph
+#include<iostream>
+#include<vector>
+#include<set>
+using namespace std;
+const int inf=10e8;
+vector<int> ar[1000];
+int in[1000],low[1000];
+vector<bool> vis;
+vector<pair<int,int>> bridges;
+void dfs(int v,int p=-1){
+	vis[v]=true;
+	for(int u:ar[v]){
+	  if(u==p) continue;
+	  if(vis[u])
+	    low[v]=min(low[v],in[u]);
+	    else{
+	    	dfs(u,v);
+	    	low[v]=min(low[v],low[u]);
+	    	if(low[u]>in[v])
+	    	 bridges.push_back({v,u});
+		}
+	}
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vis.assign(n+1,false);
+	for(int i=0; i<m; i++){
+		int a,b;
+		cin>>a>>b;
+		ar[a].push_back(b),ar[b].push_back(a);
+	}
+	for(int i=1; i<=n; i++){
+		if(!vis[i]){
+			dfs(i);
+		}
+	}
+	for(int i=0 ;i<bridges.size();i++){
+		cout<<bridges[i].first<<endl;
+	}
+	return 0;
+}
+
+           // a little theory about elurian path
+ // eulerian path and circuit in graph
+ // eulerian path: every edges should be traversed exectely once (0 or 2 vertex have odd degree and all other vertex should have even degree)
+ // eulerian cycle:if eulerian path finished at starting vertex (all the vertex should have even degree )
+ 
+#include<iostream>
+#include<conio.h>
+#include<vector>
+using namespace std; 
+const int inf=10e8;
+vector<int> ar[1000];
+vector<bool> vis;
+void dfs(int v){
+	vis[v] =true;
+	for(int u: ar[v]){
+		if(!vis[u]){
+			dfs(u);
+		 }
+	 }
+}
+int eulerian(int n){
+	vis.assign(n+1 ,false);
+	int v;
+	for(int i=1; i<=n; i++){    //find the any non zero degree vertex 
+		if(ar[i].size()>0) {
+			v=i;
+			break;
+		 }
+     }
+   if(v==n) return 1;   // if every vertex is disconnected than graph is eulerial because there is not any edge
+   dfs(v);
+   for(int i=1;i<=n; i++){
+   	if(!vis[i] && ar[i].size()>0)
+   	 return 0;          // not eulerian disconnected graph with degree> 0
+	}
+	 int odd_degree=0;
+	 for(int i=1; i<=n; i++){
+	 	if(ar[i].size() & 1) odd_degree++;
+	 }
+	 return odd_degree>2?0:2;
+}
+int main(){
+	int n, m;
+	cin>>n>>m;
+	for(int i=0; i<n; i++){
+		int a,b; 
+		cin>>a>>b;
+		ar[a].push_back(b),ar[b].push_back(a);
+	 }
+	 
+	 int x=eulerian(n);
+	 if(x==0) cout<<"not eulerin path does not exit:";
+	 else if(x==2) cout<<" eulerian path exit:";
+	 else cout<<"eulerian circuit paresent in the graph:";
+	 
+	 
+	 return 0;
+}
+
+
+
+          //print the eulerian path in a undirected graph
+          // algorithm: 
+          /* 1)first check eulerian path or circuit exit or not
+             2) start from the any node which have odd vertices in case present
+             3) if single  vertices from u to v than take it and remove it from the graph
+             4) if more than 1 edges from u to v than always choose non-bridge edges (how can we check non bridge edge and bidges:
+                                                                                      from u - v :count rechable nodes from u than remove u-v again count
+																					  rechable node from u-v if count is same then the edge u-v is not a bridge
+																					  else it's bridge  
+		  */
+
+// check eulerian path exit or not in directed graph
+//algorithm:1) graph should be strongly connected and all the vertices have equal in degree and out degree than garph have eulerian path exit or not 
+       //   2) if exit than print the path as undirected method
+
+//find the transitive closure of the graph
+//transitive closure is total reachable vertex from a particular vertex
+// the problem can ve solved woth n dfs or using fylod warshal algorithms
+#include<iostream>
+#include<vector>
+#include<conio.h>
+using namespace std;
+const int inf=10e8;
+int main(){
+	int n, m; 
+	cin>>n>>m;
+	int **graph=new int*[n+1];
+	for(int i=0; i<=n; i++) graph[i]=new int[n+1];
+	for(int i=0; i<=n; i++){
+		for(int j=0; j<=n; j++)
+		if(i==j) graph[i][j]=1;  // all the digonal values
+		else graph[i][j]=0;
+	}
+	for(int i=0; i<m; i++){
+		int a, b;
+		cin>>a>>b;
+		graph[a][b]=1; 
+	}  
+	       //modify the floyd warshal algorithm for rechablity to all the other verticeses
+           complexity O(n^3)
+	for(int k=1; k<=n; k++){
+		for(int i=1; i<=n; i++){
+			for(int j=1; j<=n; j++){
+			 graph[i][j]=graph[i][j] || (graph[i][k] && graph[k][j]);	
+			}
+		}
+	}
+	
+	cout<<"transitive closure of graph:"<<endl;
+	for(int i=1; i<=n; i++){
+		for(int j=1; j<=n; j++){
+			cout<<graph[i][j]<<" ";
+		}
+		cout<<endl;
+	}
+	
+	return 0;
+}
+
+// same above program using dfs
+//complexity : V*(V+E)
+//space: O(v*v)
+#include<iostream>
+#include<vector>
+#include<conio.h>
+using namespace std;
+const int inf=10e8;
+vector<int> ar[1000];
+vector<bool> vis;
+void dfs(int v,int **output,int x){
+	vis[v] =true;
+	if(x!=-1)
+	 output[x][v]=1;
+	for(int u:ar[v]){
+		if(!vis[u]){
+			dfs(u,output,x);
+		}
+	}
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	for(int i=0; i<m; i++){
+		int a,b;
+		cin>>a>>b;
+		ar[a].push_back(b);
+	}
+ int **output=new int *[n+1];
+ for(int i=0; i<=n+1; i++) output[i]=new int[n+1];
+ for(int i=0; i<=n; i++){
+ 	 for(int j=0; j<=n; j++){
+ 	 	output[i][j]=0;
+	   }
+ }
+ for(int i=1; i<=n; i++){
+ 	 vis.assign(n+1,false);
+ 	 dfs(i,output,i);
+ }
+ 
+  for(int i=1; i<=n; i++){
+  	for(int j=1; j<=n; j++){
+  		cout<<output[i][j]<<" ";
+	   }
+	  cout<<endl;
+  }
+ return 0;
+}
+
+
+// find the total connected component using disjoint union set algorithm
+#include<iostream>
+#include<conio.h>
+#include<vector>
+using namespace std;
+int  parent[10000];
+vector<int> ar[1000];
+int find(int x){
+	if(parent[x]==x) return x;
+	return parent[x]=find(parent[x]);
+}
+int connected_component(int cc,int m){
+	for(int i=0 ;i<m; i++){
+		int a=ar[i][0],b=ar[i][1];
+		int x=find(a),y=find(b);
+		if(x!=y){
+			parent[y]=x;
+			cc--;
+		}
+	}
+	return cc;
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	for(int i=1; i<=n; i++)
+	  parent[i]=i;
+	for(int i=0; i<m; i++){
+	    int a,b;
+	    cin>>a>>b;
+	    ar[i].push_back(a);
+	    ar[i].push_back(b);
+	}
+	int cc=connected_component(n,m);
+	cout<<"total connected component:"<<cc;
+	return 0;
+}
+
+
+  //count the total number of nodes between source and destination in connected undirected  acylic graph
+#include<iostream>
+#include<conio.h>
+#include<vector>
+using namespace std;
+vector<int> ar[1000];
+vector<bool> vis;
+int parent[1000];
+pair<bool,int> dfs(int s,int d,int cnt){
+	vis[s]=true;
+	if(s==d)
+	 return {true,cnt};
+	for(int u:ar[s]){
+		if(!vis[u]){
+			parent[u]=s;
+			auto res=dfs(u,d,cnt+1);
+			if(res.first) return res;
+		}
+	}
+	return {false,-1};
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vis.assign(n+1,false);
+	for(int i=0; i<m; i++){
+		int a,b;
+		cin>>a>>b;
+		ar[a].push_back(b),ar[b].push_back(a);
+	}
+	int s,d;
+	cin>>s>>d;
+	parent[s]=-1;
+	auto k=dfs(s,d,0);
+	cout<<k.second-1<<" "<<endl;
+	cout<<"path from source to destination:"<<endl;
+	int x=d;
+	while(x!=-1){
+		cout<<x<<" ";
+		x=parent[x];
+	}
+	return 0;
+}
+  
+    // counting the number of elements in cyclic array
+// brutte force approach
+#include<iostream>
+#include<conio.h>
+#include<vector>
+using namespace std;
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr,parent(n,-1);
+	vector<bool> vis(n,false);
+	for(int i=0; i<n; i++){
+		int a;
+		cin>>a;
+		arr.push_back(a);
+	}
+   int cnt=0;
+	for(int i=0; i<n; i++){
+		int j=i;
+		if(parent[j]=-1){
+			while(parent[j]==-1){
+				parent[j]=i;
+				j=(j+arr[j]+1)%n;
+			}
+		}
+		if(parent[j]==i){
+			while(!vis[j]){
+				vis[j]=true;
+				cnt++;
+				j=(j+arr[j]+1)%n;
+			}
+		}
+  }
+		cout<<"total number of elements:"<<cnt;
+}
+
+    // above problem can be solved in efficient o(n) way using strongly connected component
+#include<iostream>
+#include<conio.h>
+#include<vector>
+using namespace std;
+vector<int> ar[1000],vr[1000],order;
+vector<bool> vis;
+void dfs1(int v){
+	vis[v]=true;
+	for(int u: ar[v]){
+		if(!vis[u]){
+			dfs1(u);
+		 }
+	 }
+	 order.push_back(v);
+}
+int dfs2(int v){
+	vis[v] =true;
+	int count =1;
+	for(int u:vr[v]){
+		if(!vis[u]){
+			count+=dfs2(u);
+		 }
+	 }
+	return count;
+}
+void get_transpose(int n){
+	for(int i=1; i<=n; i++){
+		for(int u:ar[i]){
+			vr[u].push_back(i);
+		 }
+	 }
+}
+int  count_scc(int n){
+   vis.assign(n+1,false);
+   for(int i=1; i<=n; i++){
+   	if(!vis[i]){
+   		dfs1(i);
+		}
+	}
+	get_transpose(n);
+	vis.assign(n+1,false);
+	int x=n,res=0;
+	while(x--){
+		int a=order.back();
+		order.pop_back();
+		if(!vis[a]){
+			int b=dfs2(a);
+			if(b>1) res+=b;
+		}
+	}
+	return res;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n+1,0);
+	for(int i=0; i<n; i++){
+	   cin>>arr[i];
+	 }
+	int res=0;
+	for(int i=1; i<=n; i++){
+		int x=arr[i-1];
+		int v=(x+i)%n+1;
+		if(v==i) res++;
+		ar[i].push_back(v);
+	}
+	res+=count_scc(n);
+	cout<<res;
+	return 0;
+	 
+}
+
+
+         //lowest commonan ancestors using naiv approach
+#include<iostream>
+#include<conio.h>
+#include<vector>
+using namespace std;
+vector<int> ar[1000];
+int parent[100],level[1000];
+void dfs(int v,int lwl=0,int par=-1){
+	for(int u:ar[v]){
+		if(u==par) continue;
+		else{
+			parent[u]=v;
+			level[u]=level[v]+1;
+			dfs(u,lwl+1,v);
+		}
+	}
+}
+int main(){
+	int n;
+	cin>>n;
+	for(int i=1; i<n; i++){
+		int a,b;
+		cin>>a>>b;
+		ar[a].push_back(b),ar[b].push_back(a);
+	}
+	dfs(1);
+	int x,y;
+	cin>>x>>y;
+	if(level[y]>level[x]){
+		swap(x,y);
+	}
+	int d=level[x]-level[y];
+	while(d--){
+		x=parent[x];
+	}
+	while(x!=y){
+		x=parent[x];
+		y=parent[y];
+	}
+	cout<<x<<" " <<y<<endl;
+	return 0;
+}
+
+
+// finding negative weight cycle  using bellman ford algoruthm
+
+#include<iostream>
+#include<conio.h>
+#include<vector>
+using namespace std;
+const int inf=10e8;
+struct edge{
+	int a,b,w;
+};
+struct edge e[100];
+int dist[1000];
+int main(){
+	int  n,m;
+	cin>>n>>m;
+	for(int i=0; i<m; i++){
+	 cin>>e[i].a>>e[i].b>>e[i].w;
+	}
+	for(int i =1; i<=n; i++){
+		dist[i]=inf;
+	}
+	int s;
+	cin>>s;
+	dist[s]=0;
+	                        //complexity O(v*e) 
+	bool negative_cycle;
+	for(int i=1; i<=n; i++){
+		negative_cycle=false;
+		for(int j=0; j<m; j++){
+			if(dist[e[j].a]<inf){
+				if(dist[e[j].a]+e[j].w<dist[e[j].b]){
+					dist[e[j].b]=dist[e[j].a]+e[j].w;
+					negative_cycle=true;
+				}
+			}
+		}
+	}
+	if(negative_cycle) {
+		cout<<"graph contain negative weight cycle:";
+	}
+	else{
+       cout<<"shortest path from source to each vertex:";
+    	for(int i=1; i<=n; i++){
+	    	cout<<dist[i]<<" ";
+    	}
+ }
+	return 0;
+}
+
+
+// above algorithm in optimum way using queue 
+#include<iostream>
+#include<vector>
+#include<queue>
+using namespace std;
+const int inf=10e8;
+using pii=pair<int,int>;
+vector<pii> ar[1000];
+int dist[1000],cnt[1000];
+bool inqueue[1000];
+int main(){
+	int n,m;
+	cin>>n>>m;
+	for(int i=0; i<m; i++){
+		int a,b,w;
+		cin>>a>>b>>w;
+		ar[a].push_back({b,w}),ar[b].push_back({a,w});
+	}
+	for(int i=1; i<=n; i++)  dist[i]=inf,cnt[i]=0;
+	int s;
+	bool n_cycle=false;
+	cin>>s;
+	dist[s]=0;
+	queue<int> q;
+	q.push(s);
+	inqueue[s]=true;
+	while(!q.empty()){
+		int u=q.front();
+		q.pop();
+		inqueue[u]=false;
+		for(auto x:ar[u]){
+			int edge=x.first;
+			int len=x.second;
+			if(dist[u]+len<dist[edge]){
+				dist[edge]=dist[u]+len;
+				if(!inqueue[edge]){
+					inqueue[edge]=true;
+					q.push(edge);
+					cnt[edge]++;
+					if(cnt[edge]>n){
+						n_cycle=true;
+						break;
+					}
+				}
+			}
+		}
+	   if(n_cycle) break;
+	}
+	
+	if(n_cycle){
+		cout<<"graph containg negaive cycle:";
+	}
+	else{
+		for(int i=1; i<=n; i++){
+			cout<<dist[i]<<" ";
+		}
+	}
+	return 0;
+}
+
+
+// negative weight cycle dectection using floyd warshal algorithm
+//fact: digonals are always zero if all the weight are positive because zero is best shortest in this case
+// but when it contain negative cycle than the negative value is best shortest than zero so when node form itself become negatove than it contain negaive cycle
+ // note: not clear too much
+#include<iostream>
+#include<conio.h>
+#include<vector>
+using namespace std;
+const int inf=10e8;
+int main(){
+	int n,m;
+	cin>>n>>m;
+	int **graph=new int *[n+1];
+	for(int i=0; i<=n; i++) graph[i]=new int[n+1];
+	for(int i=0; i<=n; i++){
+		for(int j=0; j<=n; j++){
+			if(i==j) graph[i]=0;
+			else graph[i][j]=inf;
+		}
+	}
+	for(int i=0; i<m; i++){
+		int a,b,w;
+		cin>>a>>b>>w;
+		graph[a][b]=w;
+	}
+	for(int k=1; k<=n; k++){
+		for(int i=1; i<=n; i++){
+			for(int j=1; j<=n; j++){
+				graph[i][j]=min(graph[i][j],graph[i][k]+graph[k][j]);
+			}
+		}
+	}
+	
+	bool n_cycle=false;
+	for(int i=1; i<=n; i++){
+		if(graph[i][i]<0){
+			cout<<"grah contain negative cycle:";
+			n_cycle=true;
+			break;
+		}
+	}
+	if(!n_cycle){
+		for(int i=1; i<=n; i++){
+			for(int j=1; j<=n; j++){
+				cout<<graph[i][j]<<" ";
+			}
+		 cout<<endl;
+		}
+	}
+
+
+return 0;
+}
+
+// check if there is a cycle of odd weight in undirected graph
+#include<iostream>
+#include<conio.h>
+#include<vector>
+using namespace std;
+vector<int> ar[1000];
+vector<bool> vis;
+int color[1000];
+bool dfs(int v,int c){
+	vis[v]=true;
+	color[v]=c;
+	for(int u:ar[v]){
+		if(!vis[u]){
+			if(!dfs(u,c^1)) return false;
+		}
+		else if(color[v]==color[u]) return false;
+	}
+	return true;
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	int extra_node=n+1,extra_node_count=0;
+	for(int i=0; i<m; i++){
+      int a,b,w;
+	   cin>>a>>b>>w;
+	   if(w&1)
+	       ar[a].push_back(b),ar[b].push_back(a);
+	    else{
+	      ar[a].push_back(extra_node),ar[extra_node].push_back(a);
+		  ar[b].push_back(extra_node),ar[extra_node].push_back(b);
+		  extra_node_count++;	
+		}   		
+	}
+	bool flag=false;
+	vis.assign(n+extra_node_count+1,false);
+	for(int  i=1; i<=n+extra_node_count; i++){
+		if(!vis[i]){
+			bool res=dfs(i,0);
+			if(!res){
+				flag=true;
+				break;
+			}
+		}
+	}
+	if(flag){
+		cout<<"graph have odd weight cycle:";
+	}
+	else cout<<"graph dosent contain odd weight cycle::";
+	
+	return 0;
+}
+
+
+// checek the array contain loop with fiven constraints we can move (i+arr[i])%n if arr[i] is positive else (i-arr[i])%n if arr[i] is negative
+
+    // naive implementation
+#include<iostream>
+#include<conio.h>
+#include<vector>
+using namespace std;
+int main(){
+	int n,m;
+	cin>>n;
+	int *arr=new int [n];
+	for(int i=0; i<n; i++){
+		cin>>arr[i];
+	}
+	vector<int> cnt(n,-1);
+	bool loop=false;
+	for(int i=0; i<n; i++){
+		int j=i;
+		if(cnt[j]==-1){
+			while(cnt[j]==-1){
+				cnt[j]=i;
+				j=(j+arr[j])%n;
+			}
+		}
+		if(j==i && cnt[j]==i){
+			loop=true;
+			break;
+		}
+	}
+	if(loop){
+		cout<<"array contain loop:";
+	}
+	else {
+		cout<<" array does not contain loop:";
+	}
+	
+	return 0;
+}
+
+// graph soluction for above probleam
+ // simply transfom the probleam in to graph as par given constraints if self loop then not add the edge like (i+arr[i])%n==0) is self loop
+ // than detect the cycle in directe graph
+
+
+// ford folkerson algorithm for network flow probleam 
+ // graph representation : adjencey metrix
+#include<iostream>
+#include<vector>
+#include<queue>
+using namespace std;
+vector<bool> vis;
+bool bfs(int **graph,int s,int t,int *parent,int n){
+	vis.assign(n+1,false);
+	vis[s]=true;
+	parent[s]=-1;
+	queue<int> q;
+	q.push(s);
+	while(!q.empty()){
+		int u=q.front();
+		q.pop();
+		for(int v=1; v<=n; v++){
+			if(!vis[v] && graph[u][v]>0){
+				vis[v]=true;
+				q.push(v);
+				parent[v]=u;
+			}
+		}
+	}
+	return vis[t];
+}
+void ford_folkerson(int **graph,int& max_flow,int s,int t,int n){
+	int *parent=new int[n+1];
+	while(bfs(graph,s,t,parent,n)){
+		int cur_flow=10e8;
+		for(int v=t; v!=s; v=parent[v]){
+			int u=parent[v];
+			cur_flow=min(cur_flow,graph[u][v]);
+		}
+		max_flow+=cur_flow;
+		for(int v=t; v!=s; v=parent[v]){
+			int u=parent[v];
+			graph[u][v]-=cur_flow;
+			graph[v][u]+=cur_flow;
+		}
+	}
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	int **graph=new int *[n+1];
+	for(int i=0; i<=n; i++) graph[i]=new int [n+1];
+	
+	for(int i=0; i<=n; i++){
+		for(int j=0; j<=n; j++){
+			graph[i][j]=0;
+		}
+	}
+	for(int i=0; i<m; i++){
+		int a,b,w; 
+		cin>>a>>b>>w;
+		graph[a][b]=w;
+	}
+   int max_flow=0,s,t;
+   cin>>s>>t;
+   ford_folkerson(graph,max_flow,s,t,n);
+   cout<<max_flow;
+   
+   return 0;
+}
+
+// ford folkerson algorithm using adjency list
+
+// the time complexti of using adjency list is better O(v*e*e) 
+ 
+#include<iostream>
+#include<conio.h>
+#include<vector>
+#include<queue>
+using namespace std;
+vector<vector<int>> capacity,ar;
+const int inf=10e8;
+int bfs(vector<int> &parent,int s,int t,int n){
+	parent.assign(n+1,-1);
+	using pii=pair<int,int>;
+	queue<pii> q;
+	q.push({s,inf});
+	parent[s]=-2;
+	while(!q.empty()){
+		int cur=q.front().first;
+		int flow=q.front().second;
+		q.pop();
+		
+		for(int next : ar[cur]){
+			if(parent[next] == -1 && capacity[cur][next]>0){
+				parent[next] = cur;
+				int new_flow = min(flow,capacity[cur][next]);
+				if (next == t) return new_flow;
+				q.push({next, new_flow});                   //keep current minimum flow of path 
+			}
+		}
+	}
+	return 0;
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	capacity.assign(n+1,vector<int>(n+1,0));
+	ar.resize(n+1);
+	for(int i=0; i<m; i++){
+		int a,b,w;
+		cin>>a>>b>>w;
+		ar[a].push_back(b);
+		ar[b].push_back(a);
+		capacity[a][b]=w;
+	}
+  vector<int> parent;
+  int new_flow, s, t, max_flow = 0;
+  cin>>s>>t;
+  while(new_flow = bfs(parent, s, t, n)){
+  	    max_flow += new_flow;
+  	    int cur = t;
+  	    while(cur != s){
+  	    	int prev=parent[cur];
+  	    	capacity[prev][cur] -= new_flow;
+  	    	capacity[cur][prev] += new_flow;
+  	    	cur = prev;
+		   }
+    }
+    
+    cout<<"maximum flow of netwotk:";
+    cout<<max_flow;
+    return 0;
+    
+}
+
+
+
+// find the maximum number of edge disjoint path from source to vertex
+
+// edge disjoint path:path which not include any common edge
+#include<bits/stdc++.h>
+using namespace std;
+vector<vector<int>> ar,capacity;
+const int inf=10e8;
+bool bfs(vector<int> &parent,int s,int t,int n){
+	parent.assign(n+1,-1);
+	using pii=pair<int,int>;
+	queue<pii> q;
+	q.push({s,inf});
+	parent[s]=-2;
+	while(!q.empty()){
+		int u=q.front().first;
+		int flow=q.front().second;
+		q.pop();
+		
+		for(int v:ar[u]){
+			if(parent[v]==-1 && capacity[u][v]>0){
+				parent[v]=u;
+				int new_flow=min(flow,capacity[u][v]);
+				if(v==t) return new_flow;
+				q.push({v,new_flow});
+			}
+		}
+	}
+	return 0;
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	capacity.assign(n+1,vector<int>(n+1,0));
+	ar.resize(n+1);
+	for(int i=0; i<m; i++){
+		int a,b;
+		cin>>a>>b;
+		ar[a].push_back(b);
+		capacity[a][b]=1;
+	}
+  
+   int disjoint_path=0,new_flow;
+   vector<int> parent;
+   int s,t;
+   cin>>s>>t;
+   
+   while(new_flow=bfs(parent,s,t,n)){
+   	disjoint_path+=new_flow;
+   	int cur = t;
+  	    while(cur != s){
+  	    	int prev=parent[cur];
+  	    	capacity[prev][cur] -= new_flow;
+  	    	capacity[cur][prev] += new_flow;
+  	    	cur = prev;
+		   }
+	}
+	
+	cout<<" total number of disjoint edge path:";
+	cout<<disjoint_path;
+	
+	return 0;
+	
+}
+
