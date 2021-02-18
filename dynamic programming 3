@@ -1,0 +1,5337 @@
+
+
+// mathmetics programming & dynamic programming series
+
+// maximum path sum of grid
+#include<iostream>
+#include<vector>
+using namespace std;
+int max_sum_path(vector<vector<int>>& grid,int i,int j){
+	if(i>=grid.size() || i<0 || j>=grid[0].size() || j<0) return 0;
+	if(i==0 && j==0) return grid[0][0];
+	return max(max_sum_path(grid,i,j-1),max_sum_path(grid,i-1,j))+grid[i][j];
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<int>> grid(n,vector<int>(m,0));
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+			cin>>grid[i][j];
+		}
+	}
+	cout<<max_sum_path(grid,n-1,m-1);
+	return 0;
+}
+
+// buttom up dp for maximum path sum
+#include<iostream>
+#include<vector>
+using namespace std;
+int max_sum_path(vector<vector<int>>&grid,int n,int m){
+	vector<vector<int>> dp(n,vector<int>(m,0));
+	for(int i=n-1; i>=0; i--){
+		for(int j=m-1; j>=0; j--){
+			if(j==m-1 && i==n-1)
+			    dp[i][j]=grid[i][j];
+			else if(j==m-1)
+				dp[i][j]=dp[i+1][j] + grid[i][j];
+			else if(i==n-1)
+				dp[i][j]=dp[i][j+1] + grid[i][j];
+			else
+				dp[i][j]=max(dp[i+1][j],dp[i][j+1]) + grid[i][j];
+		}
+	}
+	return dp[0][0];
+
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<int>> grid(n,vector<int>(m,0));
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+			cin>>grid[i][j];
+		}
+	}
+	cout<<max_sum_path(grid,n,m);
+	return 0;
+}
+
+// minimum path sum from top left cornor to botom right cornor
+
+#include<iostream>
+#include<vector>
+using namespace std;
+const int inf=1e5;
+int min_sum_path(vector<vector<int>>& grid,int i,int j){
+	if(i>=grid.size() || i<0 || j>=grid[0].size() || j<0) return inf;
+	if(i==0 && j==0) return grid[0][0];
+	return min(min_sum_path(grid,i,j-1),min_sum_path(grid,i-1,j))+grid[i][j];
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<int>> grid(n,vector<int>(m,0));
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+			cin>>grid[i][j];
+		}
+	}
+	cout<<min_sum_path(grid,n-1,m-1);
+	return 0;
+}
+
+     // mimum sum path buttom up
+#include<iostream>
+#include<vector>
+using namespace std;
+int min_path_sum(vector<vector<int>>&grid,int n,int m){
+	vector<vector<int>> dp(n,vector<int>(m,0));
+	for(int i=n-1; i>=0; i--){
+		for(int j=m-1; j>=0; j--){
+			if(j==m-1 && i==n-1)
+				dp[i][j]=grid[i][j];
+			else if(j==m-1)
+				dp[i][j]=dp[i+1][j] + grid[i][j];
+			else if(i==n-1)
+				dp[i][j]=dp[i][j+1] + grid[i][j];
+			else
+				dp[i][j]=min(dp[i+1][j],dp[i][j+1]) + grid[i][j];
+		}
+	}
+
+	return dp[0][0];
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<int>> grid(n,vector<int>(m,0));
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+			cin>>grid[i][j];
+		}
+	}
+
+	cout<<min_path_sum(grid,n,m);
+	return 0;
+}
+
+
+
+// find the maximum sum such that no two adjecene element are adjecent
+// recursive soluction (time complxity O(n)) two pass soluction
+#include<iostream>
+#include<vector>
+using namespace std;
+int max_sum(vector<int>& arr,int n){
+	if(n<=0) return 0;
+	return arr[n-1]+max_sum(arr,n-2);
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++){
+		cin>>arr[i];
+	}
+	           // recursive soluction two pass soliction
+	cout<<max(max_sum(arr,n),max_sum(arr,n-1));
+
+	//iterative soluction two pass soluction
+    int sum1=0,sum2=0;
+	for(int i=0; i<n; i+=2){
+       sum1+=arr[i];
+	}
+	for(int i=1; i<n; i+=2){
+      sum2+=arr[i];
+	}
+	cout<<endl<<max(sum1,sum2);
+
+	// iterative single pass soluction
+
+ return 0;
+}
+
+
+// maximum sum of subsequence such that no three elements are consecutive
+// recursive soluction // for dp memoized it // and for buttom up dp fill the table according recursive formula
+
+#include<iostream>
+#include<vector>
+using namespace std;
+int max_val(int a,int b,int c){
+	return max(a,max(b,c));
+}
+int max_sum(vector<int>& arr,int n){
+	if(n<=0) return 0;
+	if(n==1) return arr[0];
+	if(n==0) return arr[0]+arr[1];
+  return max_val(max_sum(arr,n-1),arr[n-1] + max_sum(arr,n-2),arr[n-1]+arr[n-2]+max_sum(arr,n-3));
+
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+
+   cout<<max_sum(arr,n);
+   return 0;
+}
+
+
+
+// maximum product of increasing subsequence
+#include<iostream>
+#include<vector>
+using namespace std;
+int msp(vector<int> &arr,int n){
+	vector<int> res=arr;
+	for(int i=1; i<arr.size(); i++){
+		for(int j=0; j<i; j++){
+			if(arr[j]<arr[i] && res[i]<(res[j]*arr[i]))
+				res[i]=res[i]*arr[j];
+		}
+	}
+
+	int result=0;
+	for(int i=0; i<res.size(); i++){
+		result=max(result,res[i]);
+	}
+
+	return result;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++){
+		cin>>arr[i];
+	}
+
+	cout<<msp(arr,n);
+
+	return 0;
+}
+
+
+// longest biotanic subsequence// biotanic subsequence first increasing then decreasing
+#include<iostream>
+#include<vector>
+using namespace std;
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i< n; i++)
+		cin>>arr[i];
+
+    vector<int> lis(n,1),dis(n,1);
+    for(int i=1; i<n; i++){
+    	int max_val=0;
+    	for(int j=0; j<i; j++){
+    		if(arr[j]<arr[i] && lis[j]>max_val)
+    			max_val=lis[j];
+    	}
+    	lis[i]=max_val+1;
+    }
+
+    for(int i=n-2; i>=0; i--){
+    	int max_val=0;
+    	for(int j=n-1; j>i; j--){
+          if(arr[j]<arr[i] && dis[j]>max_val)
+          	max_val=dis[j];
+    	}
+    	dis[i]=max_val+1;
+    }
+
+   	int result=0;
+   	for(int i=0; i<n; i++)
+   		result=max(result,lis[i]+dis[i]-1);
+
+   	cout<<result;
+
+    return 0;
+}
+
+// maximum sum biotonic subsequence
+// the probleam is same as above
+// lis[]=maximum sum increasing subsequence of array,dis[]=maximum sum of decreasing subsequence of array
+// result=max(result,lis[i]+dis[i]-arr[i]); for each i 0 to n
+
+// gloomb subsequence 1 2 2 3 3 4 4 4 5 5 5 6 6 6 6
+// a increasing sequence
+
+// probleam given n return first n terms of sequence
+#include<iostream>
+#include<vector>
+using namespace std;
+int main(){
+	int n;
+	cin>>n;
+
+    vector<int> result;
+    result.push_back(1);
+    result.push_back(2),result.push_back(2);
+    int i=3;
+    while(result.size()<n+1){
+       int x=result[i-1];
+       while(x--){
+       	     result.push_back(i);
+       }
+       i++;
+    }
+   for(int i=0; i<n; i++)
+   	cout<<result[i]<<" ";
+return 0;
+}
+
+// find the maximum length snake sequence
+// snake sequence:the absulete difference between adjecent element should be atmose 1
+// recursive soluction // memoized it for top down dp
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<vector<int>>& grid,int i,int j,int prev){
+	if(i>=grid.size() || i<0 || j>=grid[0].size() || j<0 || abs(prev-grid[i][j])>1) return 0;
+    if(i==0 && j==0) return 1;
+    return max(solve(grid,i-1,j,grid[i][j]),solve(grid,i,j-1,grid[i][j]))+1;
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<int>> grid(n,vector<int>(m,0));
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+			cin>>grid[i][j];
+		}
+	}
+   cout<<solve(grid,n-1,m-1,grid[n-1][m-1]);
+   return 0;
+}
+
+// buttom up approach
+#include<iostream>
+#include<vector>
+using namespace std;
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<int>> grid(n,vector<int>(m,0));
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+			cin>>grid[i][j];
+		}
+	}
+     // buttom up dp for max snake length sequence
+    vector<vector<int>> dp(n,vector<int>(m,0));
+    dp[n-1][m-1]=1;
+    for(int i=n-2; i>=0; i--)
+    	if(abs(grid[i+1][m-1]-grid[i][m-1])<=1)
+    		dp[i][m-1]=dp[i+1][m-1]+1;
+
+    for(int i=m-2; i>=0; i--)
+    	if(abs(grid[n-1][i+1]-grid[n-1][i])<=1)
+    		dp[n-1][i]=dp[n-1][i+1]+1;
+
+    for(int i=n-2; i>=0; i--){
+    	for(int j=m-2; j>=0; j--){
+    		if(abs(grid[i][j]-grid[i][j+1])<=1)
+    			dp[i][j]=max(dp[i][j],dp[i][j+1]+1);
+
+    		if(abs(grid[i][j]-grid[i+1][j])<=1)
+    			dp[i][j]=max(dp[i][j],dp[i+1][j]+1);
+    	}
+    }
+    cout<<dp[0][0]<<endl;
+
+    return 0;
+}
+
+
+// maximum sum such that no two elements are adjecent
+#include<iostream>
+#include<vector>
+using namespace std;
+int max_sum(vector<int>& arr,int n){
+	int incl=arr[0],excl=0;
+	for(int i=1; i<arr.size(); i++){
+		int new_exl=incl>excl?incl:excl;
+		incl=excl+arr[i];
+		excl=new_exl;
+	}
+
+	return excl>incl?excl:incl;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	cout<<max_sum(arr,n);
+	return 0;
+}
+
+
+// minimum cost path sum of grid // path allowed down,right,digonally right
+recursive soluction
+#include<iostream>
+#include<vector>
+using namespace std;
+int min_val(int a,int b,int c){
+	return min(min(a,b),c);
+}
+int min_path_sum(vector<vector<int>>& grid,int i,int j){
+	if(i>=grid.size() || i<0 || j>grid[0].size() || j<0) return INT_MAX;
+	if(i==0 && j==0) return grid[0][0];
+	return min_val(min_path_sum(grid,i-1,j),min_path_sum(grid,i,j-1),min_path_sum(grid,i-1,j-1))+grid[i][j];
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<int>> grid(n,vector<int>(m,0));
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+			cin>>grid[i][j];
+		}
+	}
+
+	cout<<min_path_sum(grid,n-1,m-1);
+	return 0;
+}
+
+// memoized it and solve it using buttom up dp
+// interesting note:this probleam can also be solved using sortest path algorithm if we consider matrix as weighted graph
+
+
+// minimum number of jumps required to reach the end  of the array
+// first approach: bfs approach
+
+// bfs soluction but the time complexity is very high so,it will give time limit exceeded
+#include<iostream>
+#include<queue>
+#include<vector>
+using namespace std;
+vector<bool> visited;
+int min_jump(vector<int> &arr,int n){
+    queue<int> q;
+    q.push(0);
+    visited[0]=true;
+    int jump=0;
+    while(!q.empty()){
+    	int size=q.size();
+    	jump++;
+    	for(int i=0; i<size; i++){
+    		int j=q.front();
+    		q.pop();
+    	    for(int k=1; k<=arr[j]; k++){
+    	    	int next_idx=k+j;
+    	    	if(next_idx==n-1) return jump;
+    	    	if(next_idx>n-1) break;
+    	    	if(visited[next_idx]==false){
+    	    		visited[next_idx]=true;
+    	    	    q.push(next_idx);
+    	    	}
+    	    }
+    	}
+    }
+    return -1;
+}
+int main(){
+	int n;
+	cin>>n;
+	visited.assign(n,false);
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+
+	cout<<min_jump(arr,n);
+	return 0;
+}
+
+// recursive soluction for above probleam
+// time complexity is very high (n^n) ( higher than exponantial complexity also)
+// bu memoizing it complexity will become O(n^2)
+#include<iostream>
+#include<vector>
+using namespace std;
+int min_jump(vector<int> &arr,int n,int i){
+	if(i==n-1) return 1;
+	int current_res=INT_MAX;
+	for(int k=1; k<=arr[i]; k++){
+       if(i+k==n-1) return 1;
+       if(i+k<n-1){
+       	current_res=min(current_res,1+min_jump(arr,n,i+k));
+       }
+	}
+ return current_res;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++){
+		cin>>arr[i];
+	}
+	cout<<min_jump(arr,n,0);
+	return 0;
+}
+
+// reverse recursive approach
+// by memoizing the complexity will reduce O(n^n) to O(n^2)
+#include<iostream>
+#include<vector>
+using namespace std;
+int min_jump(vector<int>&arr,int n){
+	if(n==1) return 0;
+	int current_res=INT_MAX;
+	for(int i=n-2; i>=0; i--){
+		if(i+arr[i]>=n-1){
+          int sub_res=min_jump(arr,i+1);
+          if(sub_res!=INT_MAX){
+			current_res=min(current_res,sub_res+1);
+		   }
+		}
+	}
+	return current_res;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++){
+		cin>>arr[i];
+	}
+	cout<<min_jump(arr,n);
+
+  return 0;
+}
+
+// above probleam by buttom up dp
+#include<iostream>
+#include<vector>
+using namespace std;
+const int inf=INT_MAX;
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+
+      // the probleam can be solved like lis in O(n^2) time
+	vector<int> dp(n,inf);
+	dp[0]=0;
+	for(int i=1; i<n; i++){
+		int current_min=inf;
+		for(int j=0; j<i; j++){
+			if(i-j<=arr[j]){
+				current_min=min(current_min,dp[j]);
+			}
+		}
+		dp[i]=current_min+1;
+	}
+	cout<<"minimum step required to reach the end:"<<dp[n-1];
+	return 0;
+}
+
+// again the above probleam can be solved in O(n) time complexity  // eiter by modifyed bfs or by greedy approach
+// greedy approach using ladders and stairs approach linear time complexity
+#include<iostream>
+#include<vector>
+using namespace std;
+int min_jump(vector<int> &arr,int n){
+	if(arr.size()<2) return 0;
+  int ladder=arr[0],stair=arr[0];
+  int jump=0;
+  for(int i=1; i<n; i++){
+  	    if(i==n-1) return jump+1;
+        if(i+arr[i]>ladder){
+        	ladder=i+arr[i];
+        }
+        stair--;
+        if(stair==0){
+        	jump++;
+        	stair=ladder-i;
+        }
+  }
+  return jump;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+
+	cout<<min_jump(arr,n);
+	return 0;
+}
+
+
+// minimum cost to fill the given weight in a bag
+// the probleam can be solved by varition of rod cutting probleam or unbounded kanpcak probleam
+
+
+// recursive soluction // memoized it for top down dp
+
+#include<iostream>
+#include<vector>
+using namespace std;
+int min_cost(vector<int> &arr,int n,int w){
+	if(n<=0) return INT_MAX;
+	if(w<0) return -1;
+	if(w==0) return 0;
+	if(n<=w && arr[n-1]!=-1){
+		return min(arr[n-1]+min_cost(arr,n,w-n),min_cost(arr,n-1,w));
+	}else return min_cost(arr,n-1,w);
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> weight(n,0);
+	for(int i=0; i<n; i++)
+		cin>>weight[i];
+
+    int w;
+    cin>>w;
+	cout<<min_cost(weight,n,w);
+	return 0;
+};
+
+// buttom up dp
+#include<iostream>
+#include<vector>
+using namespace std;
+const int inf=1e8;
+int min_cost(vector<int>&arr,int n,int w){
+
+     // knapsck pattern
+     vector<vector<int>> dp(n+1,vector<int>(w+1,0));
+     for(int i=1; i<w+1; i++) dp[0][i]=inf;
+
+     for(int i=1; i<n+1; i++){
+     	for(int j=1; j<w+1; j++){
+     		if(i<=j){
+     			dp[i][j]=min(arr[i-1]+dp[i][j-i],dp[i-1][j]);
+     		}else
+     		     dp[i][j]=dp[i-1][j];
+     	}
+     }
+
+    return dp[n][w];
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+
+    int w;
+    cin>>w;
+	cout<<min_cost(arr,n,w);
+
+	return 0;
+}
+
+
+//  using rod cutting varition
+// check at each step by // just memoized it for top down dp
+#include<iostream>
+#include<vector>
+using namespace std;
+int min_cost(vector<int>&arr,int n,int w){
+     // base case
+     if(n<=0) return 0;
+     if(w==0) return 0;
+
+    int current_res=INT_MAX;
+    for(int i=0; i<n; i++){
+         current_res=min(current_res,arr[i]+min_cost(arr,n-i-1,w-i-1));
+    }
+    return current_res;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> weight(n,0);
+	for(int i=0; i<n; i++){
+		cin>>weight[i];
+	}
+
+    int w;
+    cin>>w;
+	cout<<min_cost(weight,n,w);
+	return 0;
+}
+
+
+// above probleam using buttom up dp
+#include<iostream>
+#include<vector>
+using namespace std;
+int min_cost(vector<int>&arr,int n,int w){
+	// on the basis of rod cutting iterative varition(time complexity O(n^2))
+	vector<int> dp(n+1,0);
+    dp[0]=0;
+                            // it seems like lis pattern
+    for(int i=1; i<n+1; i++){
+    	int current_res=INT_MAX;
+    	for(int j=0; j<i; j++){
+            current_res=min(current_res,arr[j]+dp[i-j-1]);
+    	}
+    dp[i]=current_res;
+    }
+ return dp[n];
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+
+    int w;
+    cin>>w;
+	cout<<min_cost(arr,n,w);
+	return 0;
+}
+
+
+// size of the subarray with maximum sum // negative elemnts are allowed
+#include<iostream>
+#include<vector>
+using namespace std;
+int maximum_sum(vector<int>& arr,int n){
+	// first implementation
+	// if(n==0) return 0;
+	// int sum=0,result=0;
+	// for(int i=0; i<n; i++){
+ //        sum+=arr[i];
+ //        if(sum<0) sum=0;
+ //        result=max(result,sum);
+	// }
+	// return result;
+
+	// another implementation
+    int sum=arr[0],res=0;
+    for(int i=0; i<n; i++){
+    	sum=max(arr[i],sum+arr[i]);
+    	res=max(res,sum);
+    }
+   return res;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+
+	cout<<maximum_sum(arr,n);
+	return 0;
+}
+
+// another question on the above pattern
+// find the length of max_sum subarray
+#include<iostream>
+#include<vector>
+using namespace std;
+int max_length(vector<int>&arr,int n){
+   if(n==0) return 0;
+   int prev_mx=0,max_here=0,s;
+   int start,end;
+   for(int i=0; i<n; i++){
+   	  max_here+=arr[i];
+   	  if(prev_mx<max_here){
+   	  	prev_mx=max_here;
+   	  	start=s;
+   	  	end=i;
+   	  }
+   	  if(max_here<0) {
+   	  	max_here=0;
+   	  	s=i+1;
+   	  }
+   }
+  return end-start+1;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+
+	cout<<max_length(arr,n);
+	return 0;
+}
+
+
+// maximum size squre sub matrix with all one's
+#include<iostream>
+#include<vector>
+using namespace std;
+int min_val(int a,int b,int c){
+        return min(min(a,b),c);
+}
+ int maximalSquare(vector<vector<char>>&grid) {
+         if(grid.size()<1) return 0;
+         int n=grid.size(),m=grid[0].size();
+         int result=0;
+         vector<vector<int>> dp(n+1,vector<int>(m+1,0));
+         for(int i=1; i<n+1; i++){
+             for(int j=1; j<m+1; j++){
+                 if(grid[i-1][j-1]=='1'){
+                     dp[i][j]=min_val(dp[i-1][j-1],dp[i-1][j],dp[i][j-1])+1;
+                     result=max(result,dp[i][j]);
+                 }else dp[i][j]=0;
+             }
+         }
+    return result;
+}
+
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<char>> grid(n,vector<int>(m));
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+			cin>>grid[i][j];
+		}
+	}
+
+	cout<<maximalSquare(grid);
+
+	return 0;
+}
+
+
+// minimum sum contigues subarray
+#include<iostream>
+#include<vector>
+using namespace std;
+int min_sum(vector<int>&arr,int n){
+	 if(n==0) return 0;
+	int sum=0,result=0;
+	for(int i=0; i<n; i++){
+		if(sum>0)
+			sum=arr[i];
+		else {
+			sum+=arr[i];
+			result=min(result,sum);
+		}
+	}
+  return result;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	cout<<min_sum(arr,n);
+
+	return 0;
+}
+
+
+// size of array after repeated deletion of lis
+// soluction:find repetedely lis remove that and at the end if arr.size()>2 find the size
+
+// Remove array end element to maximize the sum of product
+// given a arra we can remove the either side of a=last element and result is incresed by
+// result+=value of element*(number of elemet removed alread + 1) // the task is to find the maximum possible result
+
+// just memoized for top down dp
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int> &arr,int a,int b,int turn){
+	if(a==b) return arr[a]*turn;
+	return max(arr[a]*turn+solve(arr,a+1,b,turn+1),arr[b]*turn+solve(arr,a,b-1,turn+1));
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+
+	cout<<solve(arr,0,n-1,1);
+	return 0;
+}
+
+
+// convert to strictely inreasing arry with minimu changes
+// this is the varitio of lis proleam
+#include<iostream>
+#include<vector>
+using namespace std;
+int min_change(vector<int>& arr,int n){
+	if(n<2) return 0;
+	int len=0;
+	vector<int> lis(n,1);
+	                       // we have to insure for strictely increasing array
+	                       // like for 1 2 5 3 4 // strictely greater possbley by 1 2 5 not by 1 2 3 4
+	for(int i=1; i<n; i++){
+		for(int j=0; j<i; j++){
+            if(arr[i]>arr[j] && (arr[i]-arr[j])>=i-j){
+            	lis[i]=max(lis[i],lis[j])+1;
+            }
+		}
+	 len=max(len,lis[i]);
+	}
+  return n-len;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+
+	cout<<min_change(arr,n);
+	return 0;
+}
+
+
+
+
+// longest alteranating subarray with negative positive array
+#include<iostream>
+#include<vector>
+using namespace std;
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++){
+		cin>>arr[i];
+	}
+
+	// longest subarray
+	int result=0;
+	vector<int> res(n,0);
+	res[n-1]=1;
+	for(int i=n-2; i>=0; i--){
+		if(arr[i+1] * arr[i]>0) res[i]=1;
+		else res[i]=res[i+1]+1;
+		result=max(result,res[i]);
+	}
+
+	cout<<result;
+ return 0;
+
+}
+
+// unique path in grid with obstacles from top left to buttom right
+// 0 represent there is path 1 represent obstacles
+// allowed direction is left,and down
+
+// recursive soluction
+#include<iostream>
+#include<vector>
+using namespace std;
+int unique_path(vector<vector<int>> &grid,int i,int j){
+   if(i==grid.size()-1 && j==grid[0].size()-1) return 1;
+   if(i<0 || i>=grid.size() || j>grid[0].size() || j<0 || grid[i][j]==1) return 0;
+   return unique_path(grid,i+1,j) + unique_path(grid,i,j+1);
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<int>> grid(n,vector<int>(m,0));
+
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+			cin>>grid[i][j];
+		}
+	}
+	if(grid[n-1][m-1]==1 || grid[0][0]==1) cout<<" threr is no path";
+	else
+	    cout<<unique_path(grid,0,0);
+
+	return 0;
+}
+
+
+// buttom up dp
+#include<iostream>
+#include<vector>
+using namespace std;
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<int>> grid(n,vector<int>(m,0));
+
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+			cin>>grid[i][j];
+		}
+	}
+	vector<vector<int>> dp(n,vector<int>(m,0));
+	dp[n-1][m-1]=1;
+	for(int i=n-2; i>=0; i--){
+         if(grid[i][m-1]==0) dp[i][m-1]=1;
+         else break;
+	}
+	for(int i=m-2; i>=0; i--){
+		if(grid[n-1][i]==0) dp[n-1][i]=1;
+		else break;
+	}
+
+	for(int i=n-2; i>=0; i--){
+		for(int j=m-2; j>=0; j--){
+			if(grid[i][j]==0)
+				dp[i][j]=dp[i+1][j]+dp[i][j+1];
+		}
+	}
+	cout<<dp[0][0];
+	return 0;
+}
+
+// total possible number of non decreasing number of n digits
+#include<iostream>
+#include<vector>
+using namespace std;
+int main(){
+	int n;
+	cin>>n;
+
+	vector<vector<int>> dp(n+1,vector<int>(10,1));
+	for(int i=1; i<=n; i++){
+		for(int j=8; j>=0; j--){
+			dp[i][j]=dp[i-1][j]+dp[i][j+1];
+		}
+	}
+	cout<<dp[n][0];
+	return 0;
+}
+
+// count path form a given point to origin if we can move only left or down
+// this is a combination probleam p1+p2 choose p1 or p2
+
+#include<iostream>
+using namespace std;
+int total_path(int x,int y){
+	 if(k==0 || x==0) return 1;
+	 return total_path(x-1,k) + total_path(x-1,k-1);
+}
+int main(){
+	int x,y;
+	cin>>x>>y;
+	cout<<total_path(x,y);
+	return 0;
+}
+
+
+// conunt number of ways to cover the distance by 1 ,2 or steps
+#include<iostream>
+#include<vector>
+using namespace std;
+int count(int n){
+	if(n==0) return 1;
+	if(n<0) return 0;
+    return count(n-1)+count(n-2)+count(n-3);
+}
+int main(){
+	int n;
+	cin>>n;
+	cout<<count(n);
+	return 0;
+}
+
+
+// Count ways to divide circle using N non-intersecting chords such that no two chorda should intrect each other
+// the probleam can be solved by dynamic programming or it's pattern of catalan number which can be solved by directely applying formuls
+
+// recursion soluction // this is just a varition of catalan number
+// memoized it for top down dp soluction
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(int n){
+	if(n==2 || n==0) return 1;
+	int sum=0;
+	for(int i=0; i<n; i++){
+		sum+=solve(i)*solve(n-i-2);
+	}
+  return sum;
+}
+int main(){
+	int n;
+	cin>>n;
+	  // if n chords then 2*n points are there
+	cout<<solve(2*n);
+    return 0;
+}
+
+using catalan number
+#include<iostream>
+using namespace std;
+int ways(int n){
+	   // first version
+	if(n<=1) return 1;
+	int sum=0;
+	for(int i=0; i<n; i++){
+		sum+=ways(i)*ways(n-i-1);
+	}
+	return sum;
+}
+int main(){
+	int n;
+	cin>>n;
+	cout<<ways(n);
+	return 0;
+}
+
+// count possible blanced binary tree of hight h
+#include<iostream>
+using namespace std;
+int solve(int n){
+	if(n==0 || n==1 ) return 1;
+	return solve(n-1)*solve(n-2)+solve(n-2)*solve(n-1) + solve(n-1)*solve(n-1);
+	       //or  solve(n-1)*(2*solve(n-2)+solve(n-1));
+}
+int main(){
+	int n;  // hight
+	cin>>n;
+    cout<<solve(n);
+    return 0;
+}
+
+// maximum differencde of zeros and ones's in a binary string
+// the probleam can be maximum sum subarray by transforming 0 to 1 and 1 to -1
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+int solve(vector<int> &arr,int n){
+   if(n==0) return 0;
+   int sum=0,result=0;
+   for(int i=0; i<n; i++){
+   	  sum+=arr[i];
+   	  if(sum<0) sum=0;
+   	  result=max(result,sum);
+   }
+   return result;
+}
+int max_length(string s){
+  vector<int> arr(s.size(),0);
+  for(int i=0; i<s.size(); i++){
+  	 arr[i]=s[i]=='0'?1:-1;
+  }
+  return solve(arr,s.size());
+}
+int main(){
+	string s;
+	cin>>s;
+	int x=max_length(s);
+	x==0?cout<<-1:cout<<x;
+	return 0;
+}
+
+// another dp soluction for above probleam
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+int main(){
+   string s;
+   cin>>s;
+   vector<int> dp(n,0);
+   for(int i=1; i<n; i++){
+   	  if(s[i]=='1')
+   	  	dp[i]=max(dp[i-1]-1,1);
+   	  else dp[i]=max(dp[i-1]+1,1);
+   }
+   int result=0;
+   for(int i=0; i<dp.size(); i++)
+   	  result=min(result,dp[i]);
+
+   	cout<<result;
+   return 0;
+}
+
+// Sum of all substrings of a string representing a number
+// like:"1234" :1+2+3+4+12+23+34+123+234+1234=1670
+
+// recursive soluction
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int> &arr,int i){
+	if(i==0) return arr[0];
+	return (i+1)*arr[i]+10*solve(arr,i-1);
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	int sum=0;
+	for(int i=0; i<n; i++)
+		sum+=solve(arr,n-i-1);
+	cout<<sum;
+return 0;
+}
+
+// Maximize the sum of selected numbers from an array to make it empty
+// select a number add to result then We have to delete all the occureneces
+// of Ai+1 and Ai-1 elements if they are present in the array the task is to maximize the result
+
+// recursive soluction
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int>&arr,int n,int prev){
+   if(n==1 && arr[0]+1==prev || arr[0]-1==prev) return 0;
+   else if(n==1) return arr[n-1];
+   else if(n<1) return 0;
+
+   if(arr[n-1]+1==prev || arr[n-1]-1==prev)
+   	return solve(arr,n-1,prev);
+   else return max(arr[n-1]+solve(arr,n-1,arr[n-1]),solve(arr,n-1,prev));
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	cout<<solve(arr,n,-2);
+ return 0;
+}
+
+// Maximum subarray sum in an array created after repeated concatenation
+// like : 1 2 3 -1 ,k=2 [1,2,3,-1,1,2,3,-1] maximum sum in now resultent array
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int>&arr,int n,int k){
+	int sum=0,result=0;
+		for(int j=0; j<n*k; j++){
+           sum+=arr[j%n];
+           if(sum<0) sum=0;
+           result=max(result,sum);
+		}
+  return result;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	int k;
+	cin>>k;
+	cout<<solve(arr,n,k);
+	return 0;
+}
+
+// minimum number of removel from array to make max(arr)-min(arr)<=k
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+int solve(vector<int>&arr,int low,int high,int k){
+   if(low>=high) return 0;
+   if(arr[high]-arr[low]<=k) return 0;
+  if(arr[high]-arr[low]>k)
+  	return min(solve(arr,low+1,high,k),solve(arr,low,high-1,k))+1;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n;i++)
+		cin>>arr[i];
+
+   sort(begin(arr),end(arr));
+   int k;
+   cin>>k;
+    cout<<solve(arr,0,n-1,k);
+	return 0;
+}
+
+// minimum number of steps to minimize the given number to 1 we can performe following operations
+// 1) if n is divisible by 2 we may reduce to n/2
+// 2) if n is divisble by 3 we may recude to n/3
+// 3) decrese the the n by 1
+
+  // recursive soluction
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(int n){
+
+    if(n<=1) return 0;
+	if(n%2==0 && n%3==0) return min(solve(n/2),solve(n/3)) + 1;
+	else if(n%2==0) return 1+solve(n/2);
+	else if(n%3==0) return 1+solve(n/3);
+	else return 1+solve(n-1);
+}
+int main(){
+	int n;
+	cin>>n;
+	cout<<solve(n);
+	return 0;
+}
+
+// edit didstance // find the number of operation required to convert first string to second string
+// we can  performe insertion,deletion,replace operation
+
+// recursive soluction // memoized it for top down dp
+#include<iostream>
+#include<string>
+using namespace std;
+int min_val(int a,int b,int c){
+	return min(min(a,b),c);
+}
+int solve(string x,string y,int n,int m){
+	if(n==0) return m;
+	if(m==0) return n;
+	if(x[n-1]==y[m-1]) return solve(x,y,n-1,m-1);
+	else return min_val(solve(x,y,n,m-1),solve(x,y,n-1,m),solve(x,y,n-1,m-1))+1;
+}
+int main(){
+	string x,y;
+	cin>>x>>y;
+	cout<<solve(x,y,x.size(),y.size());
+
+	return 0;
+}
+
+// buttom up dp for above probleam
+#include<iostream>
+#include<string>
+#include<vector>
+using namespace std;
+int min_val(int a,int b,int c){
+	return min(min(a,b),c);
+}
+int solve(string x,string y,int n,int m){
+   if(n==0) return m;
+   if(m==0) return n;
+
+   vector<vector<int>> dp(n+1,vector<int>(m+1,0));
+   dp[0][0]=0;
+   for(int i=1; i<m+1; i++) dp[0][i]=m;
+   for(int i=1; i<n+1; i++) dp[i][0]=n;
+
+   for(int i=1; i<n+1; i++){
+   	for(int j=1; j<m+1; j++){
+   		if(x[i-1]!=y[j-1])
+   			dp[i][j]=min_val(dp[i-1][j-1],dp[i][j-1],dp[i-1][j]) + 1;
+   		else dp[i][j]=dp[i-1][j-1];
+   	   }
+   }
+
+   return dp[n][m];
+}
+int main(){
+	string x,y;
+	cin>>x>>y;
+	cout<<solve(x,y,x.size(),y.size());
+	return 0;
+}
+
+// minimum time to write N same character on the screen
+// operation: insertion take :1 unit of time
+//            deletion take : 3 unit time
+//            copy the text:  1 unit time
+#include<iostream>
+using namespace std;
+
+int solve(int n,int m){
+	 // need not to do anything
+	if(n==m) return 0;
+	  // we can insert or copy
+	if(n<m) return min(solve(n+1,m)+1,solve(2*n,m)+1);
+	    // we have to delete a chracter
+	else return solve(n-1,m)+2;
+}
+int main(){
+	int n;
+	cin>>n;
+	cout<<solve(1,n) + 1;
+	return 0;
+}
+
+// another way to solve by recursion
+// we can memoize to avoide overlapping subproblems or tabulate the following recursion
+#include<iostream>
+using namespace std;
+int solve(int n){
+	// we need not to do anything
+	if(n==0) return 0;
+	// we can cut half or fetch 1 chracter
+	if(n>0) return min(solve(n/2)+1,solve(n-1)+1);
+	// if n goes negative
+	else return solve(n+1)+2;
+}
+int main(){
+	int n;
+	cin>>n;
+	cout<<solve(n)+1;
+	return 0;
+}
+
+// count the total number of ways to express the N with the sum of 1,3 and 4
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(int n){
+	if(n==0 || n==2) return 1;
+	if(n==3) return 2;
+	if(n<0) return 0;
+	return solve(n-1) + solve(n-3) + solve(n-4);
+}
+int main(){
+	int n;
+	cin>>n;
+	cout<<solve(n);
+return 0;
+}
+
+// Count ways to reach the nth stair using step 1, 2 or 3
+#include<iostream>
+using namespace std;
+int solve(int n){
+	if(n==1 || n==0) return 1;
+	if(n==2) return 2;
+	if(n<0) return 0;
+	return solve(n-1) + solve(n-2) + solve(n-3);
+}
+int main(){
+	int n;
+	cin>>n;
+	cout<<solve(n);
+	return 0;
+}
+
+// coin change probleam
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int>&arr,int n,int m){
+	if(n<0) return 0;
+	if(m<0) return 0;
+	if(m==0) return 1;
+	if(m>=1 && n<=0) return 0;
+	return solve(arr,n,m-arr[n-1]) + solve(arr,n-1,m);
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	int m;
+	cin>>m;
+	cout<<solve(arr,n,m);
+	return 0;
+}
+
+
+// based on above probleam
+// Count number of ways to reach a given score in a game
+// a player can score 3 ,5 or 10 points in a sigle move
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int>&arr,int n,int m){
+	if(n<=0 && m>=1 || n<0 || m<0) return 0;
+	if(m==0) return 1;
+	return solve(arr,n,m-arr[n-1]) + solve(arr,n-1,m);
+}
+int main(){
+	vector<int> arr={3,5,10};
+	int n;
+	cin>>n;
+	cout<<solve(arr,3,n);
+	return 0;
+}
+
+// find the number of endless points
+// given a binary matrix find the number of endless point
+// endless point:  Any position (i, j) is said to have an endless
+// path if and only if the position (i,j) has the value 1 and all of the next positions in its row(i) and its column(j) should have value 1
+
+
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<vector<int>> &grid,int n,int m){
+	vector<vector<int>> row(n,vector<int>(m,0));
+	vector<vector<int>> col(n,vector<int>(m,0));
+
+	// blockeg ways for col // block the row path
+	for(int i=0; i<m; i++){
+		int endless=0;
+        for(int j=n-1; j>=0; j--){
+        	if(grid[j][i]==0 || endless==1){
+                col[j][i]=1;
+                endless=1;
+        	}
+        }
+	}
+                // block the column path if not follwoing constraints
+	for(int i=0; i<n; i++){
+		int endless=0;
+		for(int j=m-1; j>=0; j--){
+             if(grid[i][j]==0 || endless==1){
+             	row[i][j]=1;
+             	endless=1;
+             }
+		}
+	}
+	int result=0;
+	                 // count the result
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+			if(grid[i][j]==1 && col[i][j]==0 && row[i][j]==0) result++;
+		}
+	}
+	return result;
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<int>> grid(n,vector<int>(m,0));
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+			cin>>grid[i][j];
+		}
+	}
+
+   cout<<solve(grid,n,m);
+   return 0;
+}
+
+// find the maximum robary can stole the money
+// constraints: if robary stole the ith position house then he will not not stole there adjecent houses
+
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int>&arr,int n,int i){
+  if(n<0) return 0;
+  if(n==i-1) return solve(arr,n-1,n-1);
+  else return max(arr[n]+solve(arr,n-1,n),solve(arr,n-1,n-1));
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i< n; i++){
+		cin>>arr[i];
+	}
+	cout<<solve(arr,n-1,-2);
+	return 0;
+}
+
+
+// gold mine probleam
+// the probleam is that a miner is standing at fisrst column at any row  he can go (i-1,j+1),(i,j+1) or (i+1,j+1) find the
+// maximum gold he can collect
+
+#include<iostream>
+#include<vector>
+using namespace std;
+int max_val(int a,int b,int c){
+	return max(max(a,b),c);
+}
+int solve(vector<vector<int>> &grid,int i,int j){
+	if(i>=grid.size() || i<0 || j>=grid[0].size() || j<0 || grid[i][j]<=0) return 0;
+	if(j==grid[0].size()-1) return grid[i][j];
+
+    int current_max=max_val(solve(grid,i-1,j+1),solve(grid,i,j+1),solve(grid,i+1,j+1));
+    return current_max+grid[i][j];
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<int>> grid(n,vector<int>(m,0));
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+			cin>>grid[i][j];
+		}
+	}
+
+	int result=0;
+	for(int i=0;i<n; i++){
+		if(grid[i][0]>0)
+		result=max(result,solve(grid,i,0));
+	}
+	cout<<result;
+	return 0;
+}
+
+
+// Ways to sum to N using array elements with repetition allowed
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int>&arr,int n,int m){
+  if(m==0) return 1;
+  if(m<0 || n<=0) return 0;
+  int current_count=0;
+  for(int i=0; i<n; i++){
+  	current_count+=solve(arr,n,m-arr[i]);
+  }
+  return current_count;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+
+    int m;
+    cin>>m;
+	cout<<solve(arr,n,m);
+	return 0;
+}
+
+// maximum decimal value path in a binary matrix
+recursive soluction
+#include<iostream>
+#include<vector>
+#include<math.h>
+using namespace std;
+
+int solve(vector<vector<int>>&grid,int i,int j){
+	if(i>=grid.size() || j>=grid[0].size()) return 0;
+	if(i==grid.size()-1 && j==grid[0].size()-1) return grid[i][j]*pow(2,i+j);
+    int current_res=max(solve(grid,i+1,j),solve(grid,i,j+1));
+    return current_res+grid[i][j]*pow(2,i+j);
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<int>> grid(n,vector<int>(m,0));
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+			cin>>grid[i][j];
+		}
+	}
+    cout<<solve(grid,0,0);
+    return 0;
+}
+
+// finding the maximum subsquare matrix with all equal elements
+// the probleam is just extension of // find the maximum square submatrix with all one's
+#include<iostream>
+#include<vector>
+using namespace std;
+int min_val(int a,int b,int c){
+	return min(min(a,b),c);
+}
+int solve(vector<vector<int>>&grid,int i,int j){
+     int n=grid.size(),m=grid[0].size();
+     vector<vector<int>> dp(n,vector<int>(m,1));
+     for(int i=1; i<n; i++){
+     	for(int j=1; j<m; j++){
+     		int x=grid[i][j];
+     		if(grid[i-1][j-1]==x && grid[i-1][j]==x && grid[i][j-1]==x)
+     			dp[i][j]=min_val(dp[i][j-1],dp[i-1][j-1],dp[i-1][j])+1;
+     		else dp[i][j]=1;
+     	}
+     }
+
+     int result=0;
+     for(int i=0; i<n; i++){
+     	for(int j=0; j<m; j++)
+     		result=max(result,dp[i][j]);
+     }
+
+     return result;
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<int>> grid(n,vector<int>(m,0));
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+			cin>>grid[i][j];
+		}
+	}
+	cout<<solve(grid,0,0);
+	return 0;
+}
+
+// 0/1 knapsack probleam
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int>& val,vector<int> &wt,int n,int w){
+    if(n<=0 || w<=0) return 0;
+	if(wt[n-1]<=w) return max(val[n-1]+solve(val,wt,n-1,w-wt[n-1]),solve(val,wt,n-1,w));
+	else return solve(val,wt,n-1,w);
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> val(n,0),wt(n,0);
+	for(int i=0; i<n; i++)
+		cin>>val[i];
+	for(int i=0; i<n; i++)
+		cin>>wt[i];
+	int weight;
+	cin>>weight;
+	cout<<solve(val,wt,n,weight);
+	return 0;
+}
+
+// temple offering probleam
+// given the hightes of tables in row each taple will recive offering the maximum height tample will recive maximum offering then
+// their neighbors // find the sum of minimum required offering such that each tample recive atleat 1 offering
+
+// naive approach// time complexity O(n^2)
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int> &arr,int n){
+	int sum=0;
+     for(int i=0; i<n; i++){
+     	int left=0,right=0;
+     	for(int j=i-1; j>=0; j--){
+     		if(arr[j]<arr[j+1]) left++;
+     		else break;
+     	}
+     	for(int j=i+1; j<n; j++){
+     		if(arr[j]<arr[j-1]) right++;
+     		else break;
+     	}
+        sum+=max(left,right)+1;
+     }
+     return sum;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	cout<<solve(arr,n);
+  return 0;
+}
+
+// greedy approach for the above probleam
+// give the offering from left to right// the fill offering form right to left
+
+// print the longest increasing subsequence
+
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+vector<int> solve(vector<int> &arr,int n){
+	vector<vector<int>> lis(n,vector<int>());
+	lis[0].push_back(arr[0]);
+
+	for(int i=1; i<n; i++){
+		for(int j=0; j<i; j++){
+			if(arr[i]>arr[j] && lis[j]>lis[i])
+				lis[i]=lis[j];
+		}
+		lis[i].push_back(arr[i]);
+	}
+    vector<int> result;
+    for(int i=0; i<n; i++){
+    	if(lis[i].size()>result.size())
+    		result=lis[i];
+    }
+    return result;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	vector<int> lis=solve(arr,n);
+	for(int i=0; i<lis.size(); i++)
+		cout<<lis[i]<<" ";
+	return 0;
+}
+
+// print the longest increasing biotonic subsequence
+#include<iostream>
+#include<vector>
+using namespace std;
+void reverse(vector<int>& v,int a,int b){
+	while(a<b){
+		swap(v[a],v[b]);
+		a++,b--;
+	}
+}
+void print(vector<int>&arr,int n){
+	for(int i=0; i<n; i++){
+	    cout<<arr[i]<<" ";
+	}
+}
+void solve(vector<int> &arr,int n){
+
+	vector<vector<int>> lis(n,vector<int>()),lds(n,vector<int>());
+	lis[0].push_back(arr[0]);
+	for(int i=1; i<n; i++){
+		for(int j=0; j<i; j++){
+			if(arr[i]>arr[j] && lis[i]<lis[j])
+				lis[i]=lis[j];
+		}
+		lis[i].push_back(arr[i]);
+	}
+
+    lds[n-1].push_back(arr[n-1]);
+	for(int i=n-2; i>=0; i--){
+		for(int j=n-1; j>i; j--){
+			if(arr[i]>arr[j] && lds[i]<lds[j])
+				lds[i]=lds[j];
+		}
+		lds[i].push_back(arr[i]);
+	}
+    for(int i=0; i<n; i++){
+    	reverse(lds[i],0,lds[i].size()-1);
+    }
+	int max=0,max_idx=0;
+	for(int i=0; i<n; i++){
+		if(lis[i].size()+lds[i].size()>max){
+			max=lis[i].size() + lds[i].size();
+			max_idx=i;
+		}
+	}
+    print(lis[max_idx],lis[max_idx].size()-1);
+    print(lds[max_idx],lds[max_idx].size());
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	solve(arr,n);
+	return 0;
+}
+
+// longest palondromic subsiquence in a substring
+recursive soluction
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+int solve(string s,int n,int m){
+  if(n>m) return 0;  // invalid position
+  if(n==m) return 1; // if single chracter
+  //if(i+1==j && s[i]==s[j]) return 2; // if two character and both are same
+  if(s[n]==s[m]) return 2+solve(s,n+1,m-1);
+  else return max(solve(s,n+1,m),solve(s,n,m-1));
+}
+int main(){
+	string s;
+	cin>>s;
+	cout<<solve(s,0,s.size()-1);
+	return 0;
+}
+
+// longest palindromic subsequence using lcs
+#include<iostream>
+#include<string>
+using namespace std;
+string reverse(string str){
+	int a=0,b=str.size();
+	string s=str;
+	while(a<b){
+		swap(s[a],s[b]);
+		a++,b--;
+	}
+  return s;
+}
+int lps(string x,string y,int n,int m){
+    if(n==0 || m==0) return 0;
+    if(x[n-1]==y[m-1]) return 1+lps(x,y,n-1,m-1);
+    else return max(lps(x,y,n-1,m),lps(x,y,n,m-1));
+}
+int main(){
+	string s;
+	cin>>s;
+	cout<<lps(s,reverse(s),s.size(),s.size()); // longest palindromic subsequence
+	return 0;
+}
+
+// longest palindromic subsequence buttom up dp
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+int solve(string s,int n){
+	vector<vector<int>> dp(n,vector<int>(n,0));
+	for(int i=0; i<n; i++) dp[i][i]=1;
+
+	for(int i=2; i<=n; i++){
+         for(int j=0; j<n-i+1; j++){
+         	int k=j+i-1;
+         	if(s[j]==s[k]) dp[j][k]=2+dp[j+1][k-1];
+         	else dp[j][k]=max(dp[j+1][k],dp[j][k-1]);
+         }
+	}
+
+	return dp[0][n-1];
+}
+int main(){
+    string s;
+    cin>>s;
+    cout<<solve(s,s.size());
+    return 0;
+}
+
+// print the longest palindromic subsequence
+// soluction: find the lcs of given string and reverse of that string and print that
+
+// coutn all palindromic subsequence of a given string
+// recursive soluction
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+int solve(string s,int i,int j){
+	if(i>j) return 0;
+  if(i==j) return 1;
+  if(s[i]==s[j]) return 1+solve(s,i+1,j)+solve(s,i,j-1); // 1+solve(i+1,j-1) + solve(i+1,j) + solve(i,j-1) - solve(i+1,j-1);
+                                                        // the middle part counted 2 times so we have to subtract 1 part
+  else return solve(s,i+1,j) + solve(s,i,j-1) - solve(s,i+1,j-1);
+                                               // same in this part middle parth of string counted 2 times so we have to subtract 1 part
+                                                // from the result
+}
+int main(){
+	string s;
+	cin>>s;
+	cout<<solve(s,0,s.size()-1);
+	return 0;
+}
+
+length of longest palindromic substring recursive soluction
+#include<iostream>
+#include<string>
+using namespace std;
+int solve(string s,int i,int j,int cnt){
+	if(i>j) return cnt;
+	if(i==j) return cnt+1;
+	if(s[i]==s[j]) {
+		cnt=solve(s,i+1,j-1,cnt+2);
+		return cnt;
+	}else{
+		cnt=max(cnt,max(solve(s,i+1,j,0),solve(s,i,j-1,0)));
+		return cnt;
+	}
+}
+int main(){
+	string s;
+	cin>>s;
+	cout<<solve(s,0,s.size(),0);
+	return 0;
+}
+
+// dp soluction to find the longest palindromic soluction
+#include<iostream>
+#include<string>
+#include<vector>
+using namespace std;
+pair<int,int> solve(string s,int n){
+	vector<vector<int>> dp(n,vector<int>(n,0));
+	for(int i=0; i<n; i++) dp[i][i]=1;
+	int idx,max_len;
+    for(int i=1; i<n; i++){
+        if(s[i-1]==s[i]){
+        	dp[i-1][i]=1;
+        	idx=i;
+        	max_len=2;
+        }
+    }
+
+
+    for(int i=3; i<=n; i++){
+    	for(int j=0; j<n-i+1; j++){
+    		int k=i+j-1;
+    		if(s[j]==s[k] && dp[j+1][k-1]==1){
+                dp[j][k]=1;
+    			if(max_len<k){
+    				idx=j;
+    				max_len=i;
+    			}
+    		}
+    		else dp[j][k]=0;
+    	}
+    }
+   return {idx,max_len};
+}
+int main(){
+	string s;
+	cin>>s;
+	pair<int,int> p=solve(s,s.size());
+	cout<<"length of longest palindrom:"<<p.second;
+	cout<<"\npalindromic substring is:";
+	for(int i=p.first; i<p.second+p.first; i++)
+		cout<<s[i];
+
+	return 0;
+}
+
+// shortest common supersequence
+// given two string s1 and s2 find the string s3 such that the s1 and s2 are the subsequence of s3 and the length of string s3
+// is minimum possible string
+// soluction:s1.size() + s2.size() -lcs(s1,s2).size()
+
+// another way to solve this
+#include<iostream>
+#include<string>
+using namespace std;
+int solve(string s,int n,int m){
+    if(n==0) return m;
+    if(m==0) return n;
+    if(s[n-1]==s[m-1]) return 1+solve(s,n-1,m-1);
+    else return min(solve(s,n-1,m),solve(s,n,m-1))+1;
+}
+int main(){
+	string s,a;
+	cin>>s>>a;
+	cout<<solve(s,s.size(),a.size());
+	return 0;
+}
+
+// count the total number of subsequence of a string
+// as we know at each character have 2 choice either we can take that in subsequence or not so, total possible subsequences are 2^n
+// where n=len(string)
+
+
+// coutn the total distinct subsequences of a string
+// soluction: 2*count(n)-repetation // the task to find the repetated subsequences
+// we can store the count of subsequences ended by a character if it occure agin then we subtract all the previous generated
+// subsequences
+#include<iostream>
+#include<vector>
+#include<string>
+
+using namespace std;
+int solve(string s,int n){
+	vector<int> dp(n+1,0),last(128,-1);
+	dp[0]=1;
+	for(int i=1; i<=n; i++){
+		dp[i]=2*dp[i-1];
+		if(last[s[i-1]]!=-1){
+			dp[i]=dp[i]-dp[last[s[i-1]]];
+		}
+		last[s[i-1]]=i-1;
+	}
+	return dp[n];
+}
+int main(){
+	string s;
+	cin>>s;
+	cout<<solve(s,s.size());
+	return 0;
+}
+
+// Given a two strings S and T, find the count of distinct occurrences of T in S as a subsequence.
+// S = banana, T = ban// [ban], [ba  n], [b   an] // output:3
+
+#include<iostream>
+#include<string>
+using namespace std;
+int solve(string x,string y,int n,int m){
+     if(n<0 || m>n) return 0;
+     if(m==0 && n>=0) return 1;
+     if(n==0 && m>0) return 0;
+    if(x[n-1]!=y[m-1]) return solve(x,y,n-1,m);
+    else return solve(x,y,n-1,m-1) + solve(x,y,n-1,m);
+}
+int main(){
+	string x,y;
+	cin>>x>>y;
+	cout<<solve(x,y,x.size(),y.size());
+	return 0;
+}
+
+// buttom up dp
+#include<iostream>
+#include<string>
+#include<vector>
+using namespace std;
+int solve(string x,string y,int n,int m){
+	if(m>n) return 0;
+
+	   // if n as row
+	// vector<vector<int>> dp(m+1,vector<int>(n+1,0));
+	// for(int i=0; i<n+1; i++)
+	// 	dp[0][i]=1;
+	// for(int i=1; i<m+1; i++){
+	// 	for(int j=1; j<n+1; j++){
+	// 		if(y[i-1]==x[j-1])
+	// 			dp[i][j]=dp[i][j-1] + dp[i-1][j-1];
+	// 		else dp[i][j]=dp[i][j-1];
+	// 	}
+	// }
+
+	// return dp[m][n];
+
+
+	// if m as row
+	vector<vector<int>> dp(n+1,vector<int>(m+1,0));
+	for(int i=0; i<n+1; i++) dp[i][0]=1;
+	for(int i=1; i<n+1; i++){
+		for(int j=1; j<m+1; j++){
+			if(x[i-1]==y[j-1])
+				dp[i][j]=dp[i-1][j]+dp[i-1][j-1];
+			else dp[i][j]=dp[i-1][j];
+		}
+	}
+
+	return dp[n][m];
+}
+int main(){
+	string x,y;
+	cin>>x>>y;
+	cout<<solve(x,y,x.size(),y.size());
+	return 0;
+}
+
+// longest commone increasing subsequence
+// given two array the task is to find the length of longest common increasing subsequence
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int>& x,vector<int>& y,int n,int m,int prev){
+
+    if(n==0 || m==0) return 0;
+    if(x[n-1]==y[m-1] && x[n-1]<prev) return 1+solve(x,y,n-1,m-1,x[n-1]);
+    else return max(solve(x,y,n-1,m,prev),solve(x,y,n,m-1,prev));
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<int> arr1(n,0),arr2(m,0);
+	for(int i=0; i<n; i++)
+		cin>>arr1[i];
+	for(int i=0; i<m; i++)
+		cin>>arr2[i];
+
+	cout<<solve(arr1,arr2,n,m,INT_MAX);
+	return 0;
+}
+
+   // buttom up soluction //space uptimized and better approach
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int> &x,vector<int>& y,int n,int m){
+	if(n==0 || m==0) return 0;
+	vector<int> dp(max(n,m),0);
+
+	for(int i=0; i<min(n,m); i++){
+		int current=0;
+		for(int j=0; j<max(n,m); j++){
+			if(x[i]==y[j]){
+				if(current+1>dp[j])
+					dp[j]=current+1;
+			}
+
+			// if some elements are already smaller, then take them in current
+			if(y[j]<x[i]){
+				if(dp[j]>current)
+					current=dp[j];
+			}
+		}
+	}
+	int result=0;
+	for(int i=0; i<n; i++){
+	  result=max(result,dp[i]);
+	}
+	return result;
+}
+int main()
+{
+	int n,m;
+	cin>>n>>m;
+	vector<int> arr1(n,0) ,arr2(m,0);
+	for(int i=0; i<n; i++)
+		cin>>arr1[i];
+	for(int i=0; i<m; i++)
+		cin>>arr2[i];
+	cout<<solve(arr1,arr2,n,m);
+	return 0;
+}
+
+// number of path with excetly k coins
+// given a matrix and each cell contain number of coins and given k ,the task is to find the number of path to reach buttom right cell form top left
+with excetly k coins
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<vector<int>> &grid,int i,int j,int k){
+	if(i<0 || j<0) return 0;
+    if(i==0 && j==0 ) return grid[i][j]==k;
+    return solve(grid,i-1,j,k-grid[i][j]) + solve(grid,i,j-1,k-grid[i][j]);
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<int>> grid(n,vector<int>(m,0));
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+			cin>>grid[i][j];
+		}
+	}
+	int k;
+	cin>>k;
+	cout<<solve(grid,n-1,m-1,k);
+	return 0;
+}
+
+
+// collect the maximum coins before hitting the dedend
+// C' -->  This cell has coin
+
+// '#' -->  This cell is a blocking cell.
+//          We can not go anywhere from this.
+
+// 'E' -->  This cell is empty. We don't get
+         // a coin, but we can move from here.
+
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<vector<char>>& grid,int i,int j,int d){
+	if(i>=grid.size() || i<0 || j<0 || j>=grid[0].size() || grid[i][j]=='#' ) return 0;
+
+	int result=grid[i][j]=='c'?1:0;
+	//grid[i][j]='a';
+	if(d==0) return result + max(solve(grid,i,j+1,0),solve(grid,i+1,j,1));
+	else return result + max(solve(grid,i,j-1,1),solve(grid,i+1,j,0));
+
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<char>> grid(n,vector<char>(m,' '));
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++)
+			cin>>grid[i][j];
+	}
+	cout<<solve(grid,0,0,0);
+	return 0;
+}
+
+// minimum number of jump required to reach to end
+// 1, 3, 5, 8, 9, 2, 6, 7, 6, 8, 9
+//  recursive soluction
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int> &arr,int n,int i){
+   if(i>=n) return 0;
+   if(i==n-1) return 1;
+   int current_res=INT_MAX;
+   for(int k=1; k<=arr[i]; k++){
+       current_res=min(current_res,1+solve(arr,n,i+k));
+   }
+   return current_res;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	cout<<solve(arr,n,0);
+	return 0;
+}
+
+// iterative minimum jump required to reach to end
+#include<iostream>
+#include<vector>
+using namespace std;
+const int inf=1e9;
+int solve(vector<int> &arr,int n){
+	if(n==0) return 0;
+	vector<int> dp(n,inf);
+	dp[0]=0;
+	for(int i=1; i<n; i++){
+		int current_min=INT_MAX;
+		for(int j=0; j<i; j++){
+			if((i-j)<=arr[j]){
+               current_min=min(current_min,dp[j]);
+			}
+		}
+	 dp[i]=current_min+1;
+	}
+ return dp[n-1];
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	cout<<solve(arr,n);
+	return 0;
+}
+
+// count the number of ways to reach the end of array of each elemement of array
+// i will try it latter
+
+
+// count the number of ways to reach the end of the maze with obstacles in maze
+// -1 :obstacle //0 :there is path
+
+// the probleam can also be solved using backtracking
+// recursive soluction// memoized it for dp
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<vector<int>> &grid,int i,int j){
+     if(i>=grid.size() || j>=grid.size() || grid[i][j]==-1) return 0;
+	if(i==grid.size()-1 && j==grid[0].size()-1) return 1;
+	return solve(grid,i+1,j) + solve(grid,i,j+1);
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<int>> grid(n,vector<int>(m,0));
+	for(int i=0; i<n; i++){
+        for(int j=0; j<m; j++)
+        	cin>>grid[i][j];
+	}
+	cout<<solve(grid,0,0);
+	return 0;
+}
+
+// counnt all palindromic substring's of a given string length >=2
+
+#include<iostream>
+#include<string>
+#include<vector>
+using namespace std;
+bool is_palindrome(string s,int i,int j){
+       if(i==j || i+1==j && s[i]==s[j]) return true;
+       is_palindrome(s,i+1,j-1);
+       return s[i]==s[j];
+}
+int solve(string s,int i,int j){
+	if(i>j) return 0;
+   if(i==j) return 1;
+   if(is_palindrome(s,i,j))
+   	     return 1+solve(s,i+1,j) + solve(s,i,j-1) -solve(s,i+1,j-1);
+   	else return solve(s,i+1,j) + solve(s,i,j-1) - solve(s,i+1,j-1);
+}
+int main(){
+	string s;
+	cin>>s;
+	cout<<solve(s,0,s.size()-1);
+	return 0;
+}
+
+// buttom up soluction
+#include<iostream>
+#include<string>
+#include<vector>
+using namespace std;
+int solve(string s,int n){
+	vector<vector<int>> p(n,vector<int>(n,0));
+	vector<vector<int>> dp(n,vector<int>(n,0));
+	                 // single length palindrome
+	for(int i=0; i<n; i++)
+		p[i][i]=1;
+	           // two length palindrome
+	for(int i=1; i<n; i++){
+		if(s[i]==s[i-1])
+			p[i-1][i]=1;
+	}
+
+	for(int i=3; i<=n; i++){
+		for(int j=0; j<n-i+1; j++){
+			int k=i+j-1;
+			if(s[j]==s[k] && p[j+1][k-1]==1)
+				p[j][k]=1;
+			if(p[j][k]==1){
+				dp[j][k]= 1 + dp[j+1][k] + dp[j][k-1] - dp[j+1][k-1];
+			}else
+			   dp[j][k] = dp[j+1][k] + dp[j][k-1] - dp[j+1][k-1];
+		}
+	}
+
+	return dp[0][n-1];
+}
+int main(){
+	string s;
+	cin>>s;
+	cout<<solve(s,s.size());
+	return 0;
+}
+
+// count the number of palindromic substring of length k
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+int solve(string s,int n,int q){
+  if(q==n) return n;
+  vector<vector<int>> dp(n,vector<int>(n,0));
+                     time complexity is O(n^2)
+  for(int i=0; i<n; i++)
+  	dp[i][i]=1;
+  int cnt=0;
+  for(int i=0; i<n; i++){
+  	 if(s[i-1]==s[i]) dp[i-1][i]=1,cnt++;
+  }
+  if(q==2) return cnt;
+  cnt=0;
+  for(int i=3; i<=n; i++){
+  	for(int j=0; j<n-i+1; j++){
+  		int k=i+j-1;
+  		if(s[j]==s[k] && dp[j+1]==dp[k-1]){
+  			dp[j][k]=1;
+  			//if(q==k) cnt++; // we can count the substring here also
+  		}
+  	}
+  }
+                      // counting the palindromic substring of length k
+  for(int i=0; i<n-q+1; i++){
+  	 int j=i+q-1;
+  	 if(dp[i][j]==1) cnt++;
+  }
+   return cnt;
+}
+int main(){
+	string s;
+	cin>>s;
+	int k;
+	cin>>k;
+	cout<<solve(s,s.size(),k);
+	return 0;
+}
+
+// count digit grouping of a number
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(string s,int pos,int len,int prev_sum){
+	if(pos==len) return 1;
+	int sum=0,res=0;
+	for(int i=pos; i<len; i++){
+		sum+=(s[i]-'0');
+		if(sum>=prev_sum){
+			res+=solve(s,i+1,len,sum);
+		}
+	}
+  return res;
+}
+int main(){
+	string s;
+	cin>>s;
+	cout<<solve(s,0,s.size(),0);
+	return 0;
+}
+
+// count all increasing subsequences
+first approach // based on lis
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int> &arr,int n){
+	vector<int> dp(n,1);
+	dp[0]=1;
+	for(int i=1; i<n; i++){
+		for(int j=0; j<i; j++){
+			if(arr[j]<arr[i])
+				dp[i]+=dp[j];
+		}
+	}
+
+    int res=0;
+    for(int i=0; i<n; i++)
+    	res+=dp[i];
+    return res;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	cout<<solve(arr,n);
+	return 0;
+}
+
+// if there is constraints that all the elements are in the range 0 - 9 then we can solve it in 10*n time
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int>& arr,int n){
+	vector<int> cnt(10,0);
+	cnt[arr[0]]+=1;
+	for(int i=1; i<n; i++){
+		for(int j=arr[i]-1; j>=0; j--){
+			cnt[arr[i]]+=cnt[j];
+		}
+		cnt[arr[i]]+=1;
+	}
+	int res=0;
+	for(int i=0; i<10; i++)
+		res+=cnt[i];
+	return res;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	cout<<solve(arr,n);
+	return 0;
+}
+
+
+// count the number of binary string without consutive one's of given length
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(int n){
+	// if string is ending with 0 then we can append either 0 or 1
+	// if string is ending with 1 the we have only one choice we have to append 0
+	vector<int> a(n,0),b(n,0);
+    a[0]=b[0]=1; // suppose a[] is for string ending with 0 and without conscutive one's
+                 // suppose b[] is for string endint with 1 and without conscutive one's
+
+    for(int i=1; i<n; i++){
+    	a[i]=a[i-1] + b[i-1];
+    	b[i]=a[i-1];
+    }
+    return a[n-1] + b[n-1];
+}
+int main(){
+	int n;
+	cin>>n;
+	cout<<solve(n);
+	return 0;
+}
+
+
+// count possible way to construct the buildings
+// on the side of rod each section have to slots in which we can construct building in both slot ,construct in either side or do not construct at all
+// the task to find how many ways we can construct buildings such that every buildings between must have space
+
+// the probleam is extension above probleam
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(int n){
+  	vector<int> a(n,0),b(n,0);
+     a[0]=b[0]=1;
+     for(int i=1; i<n; i++){
+     	a[i]=a[i-1] + b[i-1];
+     	b[i]=a[i-1];
+     }
+     return a[n-1] + b[n-1];
+}
+int main(){
+	int n;
+	cin>>n;
+	int result=solve(n);
+	cout<<result*result;
+	return 0;
+}
+
+// subset sum probleam
+// given a number N and array find a subset is present or not is the array which gives sum N
+
+// recursive soluction
+#include<iostream>
+#include<vector>
+using namespace std;
+bool solve(vector<int>&arr,int n,int s){
+	if(s==0) return true;
+	if(s<0 || n<=0) return false;
+	if(arr[n-1]<=s)
+		return solve(arr,n-1,s-arr[n-1]) || solve(arr,n-1,s);
+	else return solve(arr,n-1,s);
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	int N;
+	cin>>N;
+	cout<<solve(arr,n,N);
+	return 0;
+}
+
+// buttom up dp
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int> &arr,int n,int m){
+	vector<vector<bool>> dp(n+1,vector<bool>(m+1,false));
+	for(int i=0; i<n+1; i++)
+		dp[i][0]=true;
+	for(int i=1; i<n+1; i++){
+		for(int j=1; j<m+1; j++){
+			if(arr[i-1]<=j)
+				dp[i][j]=dp[i-1][j-arr[i-1]] || dp[i-1][j];
+			else dp[i][j]=dp[i-1][j];
+		}
+	}
+ return dp[n][m];
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	int k;
+	cin>>k;
+	cout<<solve(arr,n,k);
+	return 0;
+}
+
+// find the maximum size subset with given sum // this problam of varition of above probleam
+// recursive soluction
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int>&arr,int n,int s){
+
+	if(n==1 && arr[n-1]==s) return 1;
+	if(n<=0 || s<0) return 0;
+	if(arr[n-1]<=s) return max(1+solve(arr,n-1,s-arr[n-1]),solve(arr,n-1,s));
+	else return solve(arr,n-1,s);
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	int sum;
+	cin>>sum;
+	cout<<solve(arr,n,sum);
+	return 0;
+}
+
+// maximum prduct cutting probleam
+// given rop n length cut in the way such that the product of the rops are maximum
+
+// recursive soluctin // based on rod cutting probleam
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(int n){
+    if(n==0) return 1;
+	int current_res=INT_MIN;
+	for(int i=1; i<=n; i++){
+		current_res=max(current_res,i*solve(n-i));
+	}
+ return current_res;
+}
+int main(){
+	int n;
+	cin>>n;
+	cout<<solve(n);
+	return 0;
+}
+
+// recursive soluction // based on unbounded knacpac
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int> &arr,int n,int len){
+    if(len==0) return 1;
+    if(n<=0 || len<=0) return 0;
+	if(len>=arr[n-1]) return max(arr[n-1]*solve(arr,n,len-arr[n-1]),solve(arr,n-1,len));
+	else return solve(arr,n-1,len);
+}
+int main(){
+	int n;
+	cin>>n;
+	            // taking extra space for rops
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		arr[i]=i+1;
+	cout<<solve(arr,n,n);
+	return 0;
+}
+
+// same above recursive soluction without extra space //only recursive based on unbounded knapsac
+#include<iostream>
+using namespace std;
+int solve(int n,int len){
+	if(len==0) return 1;
+	if(n<=0 || len<0) return 0;
+	if(len>=n) return max(n*solve(n,len-n),solve(n-1,len));
+	else return solve(n-1,len);
+}
+int main(){
+	int n;
+	cin>>n;
+	cout<<solve(n,n);
+	return 0;
+}
+
+// maximum profit from sales of wines // given the wines array array[i] represent price of  ith wine we can sold either 1st or last
+// the profit increases by previous_res+(i+1)*arr[i] // the task is to find the maximum wine we can sell
+
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int>& arr,int i,int j,int turn){
+	             // time complexity after memoizaizing it
+    if(i>j) return 0;
+    if(i==j) return arr[i] * turn;
+    return max(arr[i]*turn + solve(arr,i+1,j,turn + 1),arr[j]*turn + solve(arr,i,j-1,turn + 1));
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	cout<<solve(arr,0,n-1,1);
+	return 0;
+}
+
+// minimum number of insertion required to make a string palindrome
+
+// algo: if last two chracter are not equal then we have to insert two chracter one at first and second at last
+//       if both are equal then we need not to do anything just shrink size-2
+//          base case: if single chracter return 0,if two chracter left if both are equal then return 0 if both are different then return 1
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+int solve(string s,int i,int j){
+	if(i>j) return INT_MAX;
+	if(i==j) return 0;
+	if(i==j-1) return s[i]==s[j]?0:1;
+	return s[i]==s[j]?solve(s,i+1,j-1):min(solve(s,i+1,j),solve(s,i,j-1))+1;
+}
+int main(){
+	string s;
+	cin>>s;
+	cout<<solve(s,0,s.size()-1);
+	return 0;
+}
+
+
+// buttom up for above probleam
+#include<iostream>
+#include<string>
+#include<vector>
+using namespace std;
+const int inf=1e9;
+int solve(string s,int n){
+	vector<vector<int>> dp(n,vector<int>(n,0));
+	for(int i=0; i<n; i++) dp[i][i]=0;
+	for(int i=1; i<n; i++)
+		if(s[i-1]!=s[i]) dp[i-1][i]=1;
+
+	for(int i=3; i<=n; i++){
+		for(int j=0; j<n-i+1; j++){
+			int k=i+j-1;
+			if(j>k) dp[i][k]=inf;
+			if(s[j]==s[k]) dp[j][k]=dp[j+1][k-1];
+			else dp[j][k]=min(dp[j+1][k],dp[j][k-1]) + 1;
+		}
+	}
+  return dp[0][n-1];
+}
+int main(){
+	string s;
+	cin>>s;
+	cout<<solve(s,s.size());
+	return 0;
+}
+
+// the above probleam finding the minimum number of insertion to make palindrome can also be solved
+on lcs varition
+soluction: s.size() - lcs(s,reverse(s)).size()
+#include<iostream>
+#include<string>
+using namespace std;
+string reverse(string s){
+	int a=0,b=s.size()-1;
+	string str=s;
+	while(a<b){
+		swap(str[a],str[b]);
+		a++,b--;
+	}
+	return str;
+}
+int solve(string x,string y,int n,int m){
+ if(n==0 || m==0) return 0;
+ return x[n-1]==y[m-1]?1+solve(x,y,n-1,m-1):max(solve(x,y,n-1,m),solve(x,y,n,m-1));
+}
+int main(){
+	string s;
+	cin>>s;
+	cout<<s.size()-solve(s,reverse(s),s.size(),s.size());
+}
+
+// given a arrary find the minimum number of deletion to make sorted sequence
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int> &arr,int n){
+	// the prebleam can be solved by lis
+	vector<int> dp(n,0);
+	dp[0]=1;
+	for(int i=1; i<n; i++){
+		int current_max=INT_MIN;
+		for(int j=0; j<i; j++){
+			if(arr[j]<arr[i]){
+				current_max=max(current_max,dp[j]);
+		    }
+	     }
+	    dp[i]=current_max+1;
+	}
+	int len=0;
+	for(int i=0; i<n; i++)
+		len=max(len,dp[i]);
+
+	return n-len;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	cout<<solve(arr,n);
+	return 0;
+}
+
+// minimum number of jumps required to reach the last building in the maxtrix n-1,m-1 from 0 0
+// each matrix cell repersenting the hight of building the jump we can take the absulate difference between adjecent hight
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+const int inf=1e9;
+int solve(vector<vector<int>> &grid,int i,int j,int n,int m){
+  if(i>=n || j>=m) return 0;
+  if(i==n-1 && j==m-1) return 0;
+  int a,b,c;
+  a=b=c=inf;
+  if(i+1<n && j+1<m) a=solve(grid,i+1,j+1,n,m) + abs(grid[i][j]-grid[i+1][j+1]); // digonal
+  if(i+1<n && j<m)   b=solve(grid,i+1,j,n,m) + abs(grid[i][j]-grid[i+1][j]);    //down
+  if(i<n && j+1<m)   c=solve(grid,i,j+1,n,m) + abs(grid[i][j]-grid[i][j+1]);   // right
+  return min(min(a,b),c);
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<int>> grid(n,vector<int> (m,0));
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++)
+			cin>>grid[i][j];
+	}
+
+	cout<<solve(grid,0,0,n,m);
+	return 0;
+}
+
+// minimum number of deletion to make string palindrome
+// first approach // s.size()-(max len of palindromic subsequence)
+#include<iostream>
+#include<string>
+using namespace std;
+int solve(string s,int i,int j){
+   if(i>j) return 0;
+   if(i==j) return 1;
+   if(i+1==j) s[i]==s[j]?2:1;
+   return s[i]==s[j]?2+solve(s,i+1,j-1):max(solve(s,i+1,j),solve(s,i,j-1));
+}
+int main(){
+	string s;
+	cin>>s;
+	cout<<s.size()-solve(s,0,s.size());
+	return 0;
+}
+
+
+// second approach for above probleam // apply direct deletion //as insertion probleam
+// number of insertion = number of deletion to make a string palindrome
+#include<iostream>
+#include<string>
+#include<vector>
+using namespace std;
+const int inf=1e9;
+int solve(string s,int i,int j){
+	if(i>j) return inf;
+	if(i==j) return 0;
+	if(i+1==j) return s[i]==s[j]?0:1;
+	return s[i]==s[j]?solve(s,i+1,j-1):min(solve(s,i+1,j),solve(s,i,j-1))+1;
+}
+int main(){
+	string s;
+	cin>>s;
+	cout<<solve(s,0,s.size()-1);
+	return 0;
+}
+
+// Remove minimum elements from either side such that 2*min becomes more than max
+// the given array is unsorted
+// naive recursive apprach
+
+// memoizd it or write tabulation for this the time complexity o(n^2) but we are finding min and max element in each (n^2) iteration
+// so,the overall time complexity is O(n^3)
+// if probleam is for many query then this can be done n^2logn time by segment tree by preprocessing the array
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+int solve(vector<int> &arr,int i,int j){
+	if(i>=j) return 0;
+    if(*min_element(begin(arr)+i,begin(arr)+j+1)*2>*max_element(begin(arr)+i,begin(arr)+j+1)) return 0;
+    return min(solve(arr,i+1,j),solve(arr,i,j-1)) + 1;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	cout<<solve(arr,0,n-1);
+	return 0;
+}
+
+// find the minimum cost to reach the destination using train
+// given a matrix  matrix(i,j) represent the maximum price to station i to j find the minimum price to go to N-1 from 0
+// this is shortest path probleam can be solved by various method
+
+// dijkestra shortest
+#include<iostream>
+#include<vector>
+#include<queue>
+using namespace std;
+vector<pair<int,int>> ar[100];
+const int inf=1e9;
+vector<int> dist;
+int shortest_path(int n){
+  priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> q;
+  q.push({0,1});
+  dist[1]=0;
+
+  while(!q.empty()){
+  	int v=q.top().second;
+  	 q.pop();
+
+  	 for(auto x:ar[v]){
+         int u=x.first;
+         int len=x.second;
+         if(dist[u]>dist[v]+len){
+         	dist[u]=dist[v]+len;
+         	q.push({dist[u],u});
+         }
+  	 }
+  }
+
+  return dist[n];
+}
+int main(){
+    int n,m;
+    cin>>n>>m;
+    dist.assign(n+1,inf);
+    for(int i=0; i<m; i++){
+       int a,b,c;
+       cin>>a>>b>>c;
+       ar[a].push_back({b,c}),ar[b].push_back({a,c});
+    }
+    cout<<shortest_path(n);
+    return 0;
+}
+
+// shortest path O(n^2) time
+#include<iostream>
+#include<vector>
+using namespace std;
+const int inf=1e9;
+vector<int> dist;
+int solve(vector<vector<int>> &grid,int n,int m){
+  dist.assign(n,inf);
+  dist[0]=0;
+  for(int i=0; i<n; i++){
+  	for(int j=i+1; j<n; j++){
+  	    if(dist[j]>dist[i]+grid[i][j])
+  	    	dist[j]=dist[i]+grid[i][j];
+  	}
+  }
+
+  return dist[n-1];
+}
+int main(){
+	// int n,m;
+	// cin>>n>>m;
+	vector<vector<int>> grid  { {0, 15, 80, 90},
+                                {inf, 0, 40, 50},
+                                {inf, inf, 0, 70},
+                                {inf, inf, inf, 0}
+                             };
+	// for(int i=0; i<n; i++)
+	// 	for(int j=0; j<m; j++)
+	// 		cin>>grid[i][j];
+
+	cout<<solve(grid,4,4);
+	return 0;
+}
+
+// find the longest path in the matrix with given condition
+// we can move from any cell to any cell with the adjecent difference must be 1
+// the movment is allowed in four direction
+#include<iostream>
+#include<vector>
+using namespace std;
+const int inf=1e9;
+
+int solve(vector<vector<int>> &grid,int i,int j,int n,int m){
+  if(i>=grid.size() || i<0 || j>=grid[0].size() || j<0) return 0;
+  int a,b,c,d;
+  a=b=c=d=INT_MIN;
+  if(j<m-1 && grid[i][j]+1== grid[i][j+1]) a= 1 + solve(grid,i,j+1,n,m);
+  if(i<n-1 && grid[i][j]+1==grid[i+1][j]) b=1 + solve(grid,i+1,j,n,m);
+  if(i>0 && grid[i][j]+1==grid[i-1][j]) c=1 + solve(grid,i-1,j,n,m);
+  if(j>0 && grid[i][j]+1==grid[i][j-1]) d=1 + solve(grid,i,j-1,n,m);
+
+  return max(a, max(b, max(c, max(d, 1))));
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<int>> grid(n,vector<int>(m,0));
+
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++)
+			cin>>grid[i][j];
+	}
+	int result=INT_MIN;
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+			result=max(result,solve(grid,i,j,n,m));
+		}
+	}
+
+	cout<<result;
+	return 0;
+}
+
+// prefix sum of a matrix
+#include<iostream>
+#include<vector>
+using namespace std;
+
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<int>> grid(n,vector<int>(n,0));
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+			cin>>grid[i][j];
+		}
+	}
+    for(int i=1; i<m; i++)
+       grid[0][i]+=grid[0][i-1];
+    for(int i=1; i<n; i++)
+       grid[i][0]+=grid[i-1][0];
+
+    for(int i=1; i<n; i++){
+    	for(int j=1; j<m; j++){
+    		grid[i][j]+=grid[i-1][j] + grid[i][j-1] - grid[i-1][j-1];
+    	}
+    }
+
+    for(int i=0; i<n; i++){
+    	for(int j=0; j<m; j++){
+    		cout<<grid[i][j]<<" ";
+    	}
+    	cout<<endl;
+    }
+    return 0;
+}
+
+// count of string that can be formed using a,b,and c under given  constraints
+// atmost 1 b and 2 c are allowed and  'a' have not any constraints // the task is to find the number of possible string of length n
+
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(int a,int b,int c,int n){
+  if(b>1) return 0;
+  if(c>2) return 0;
+  if(a+b+c==n) return 1;
+  if(a+b+c>n) return 0;
+  return solve(a+1,b,c,n) + solve(a,b+1,c,n) + solve(a,b,c+1,n);
+}
+int main(){
+	int n;
+	cin>>n;
+	cout<<solve(0,0,0,n);
+	return 0;
+}
+
+the above probleam can also be solved in  constant time
+using combination
+#include<iostream>
+using namespace std;
+int main(){
+	int n;
+	cin>>n;
+	int result=1+ 2*n + n*(n*n-1)/2;
+	cout<<result;
+	return 0;
+}
+
+// count the total number of subset with given sum
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int> &arr,int n,int s){
+    if(n<0 || s>0 && n<=0) return 0;
+    if(s==0) return 1;
+	// if(s>=arr[n-1]) return solve(arr,n-1,s-arr[n-1]) + solve(arr,n-1,s);
+	// else return solve(arr,n-1,s);
+	// or
+	return solve(arr,n-1,s-arr[n-1]) + solve(arr,n-1,s);
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	int s;
+	cin>>s;
+	cout<<solve(arr,n,s);
+	return 0;
+}
+
+// partition probleam
+// given array find is it possible to divide the arry in to two subset such that the sum of both subset is equal
+#include<iostream>
+#include<vector>
+using namespace std;
+bool solve(vector<int> &arr,int n,int s){
+   // base case
+  if(s>=1 && n<=0 || n<0) return false;
+  if(s==0) return true;
+  // if(s>=arr[n-1]) return solve(arr,n-1,s-arr[n-1]) || solve(arr,n-1,s);
+  // else return solve(arr,n-1,s);
+
+  //or
+  return solve(arr,n-1,s-arr[n-1]) || solve(arr,n-1,s);
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	int s=0;
+	for(int i=0; i<n; i++)
+		s+=arr[i];
+	if(s&1) cout<<-1;
+	else {
+		bool res=solve(arr,n,s/2);
+	    res==true?cout<<1:cout<<-1;
+	}
+	return 0;
+}
+
+// house rober probleam
+#include<iostream>
+#include<vector>
+    int solve(vector<int>&arr,int n,int p){
+        if(n<0) return 0;
+
+        if(p==n+1 || p==n-1) return  solve(arr,n-1,p);
+        else return max(arr[n] + solve(arr,n-1,n), solve(arr,n-1,p));
+    }
+
+    int main(){
+    	int n;
+    	cin>>n;
+    	vector<int>(arr,n);
+    	for(int i=0; i<n; i++)
+    		cin>>arr[i];
+    	cout<<solve(arr,n,-2);
+    	return 0;
+    }
+
+// maximized array element up to given element
+#include<iostream>
+#include<vector>
+using namespace std;
+int ans=0;
+int solve(vector<int>&arr,int i,int val,int limit,int n){
+    if(i>n || val<0 || val>limit) return 0;
+    if(i==n) return val;
+    int a=0,b=0;
+	if(val-arr[i]>=0) a=solve(arr,i+1,val-arr[i],limit,n);
+	if(val+arr[i]<=limit) b=solve(arr,i+1,val+arr[i],limit,n);
+	return max(a,b);
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	int a,b;
+	cin>>a>>b;
+	cout<<solve(arr,0,a,b,n);
+	cout<<endl<<ans;
+	return 0;
+}
+
+// minimum number of deletion required to empty the string we can delete a palindromic substrig or a character at a time
+// probleam statment : we can delete a character or we can delete a palindromic substring we need to find the minimum step required to make the string empty
+
+#include<bits/stdc++.h>
+using namespace std;
+string s;
+int solve(int i,int j){
+	if(i>j) return 0;
+	if(i==j) return 1;
+	if(s[i]==s[i+1]){
+		int ans=1+solve(i+1,j);
+		ans=min(ans,1+solve(i+2,j));
+		for(int k=i+2; k<=j; k++){
+			if(s[i]==s[k])
+				ans=min(ans,solve(i+1,k-1)+solve(k+1,j));
+		}
+	  return ans;
+	}
+	else{
+		int ans=1+solve(i+1,j);
+		for(int k=i+1; k<=j; k++){
+			if(s[i]==s[k])
+				ans=min(ans,solve(i+1,k-1)+solve(k+1,j));
+		}
+	return ans;
+	}
+}
+int main(){
+	cin>>s;
+	cout<<solve(0,s.size()-1);
+	return 0;
+}
+
+// given an ansorted array find the minimum number of insertion required to sort the array
+// soluction: array size - lis.size()
+
+// given two string and deletion cost for both string
+// we need to find the minimum cost to make both string identical if we delete chracter from the first cost will be added and same from second
+// the probleam is a variation of longest common subsequence
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+int solve(string x,string y,int n,int m){
+	if(n==0 || m==0) return 0;
+	if(x[n-1]==y[m-1]) return 1+solve(x,y,n-1,m-1);
+	else return max(solve(x,y,n-1,m),solve(x,y,n,m-1));
+}
+int main(){
+	string s,t;
+	cin>>s>>t;
+	int c1,c2;
+	cin>>c1>>c2;
+	int x=solve(s,t,s.size(),t.size());
+	int res=0;
+	res+=(s.size()-x) * c1;
+	res+=(t.size()-x) * c2;
+	cout<<res;
+	return 0;
+}
+
+
+// Minimum cost to make two strings identical by deleting the digits
+// given two string of digits contaning 0 to 9 we can perform only deletion deleted amount will be added to result
+// find the minimum cost to delete the string
+
+// the probleam can be solved by reverse thinking
+// soluction: cost to remove all chracter from x + cost of remove all character from second string - maximum cost to add identical string
+
+//    recursive soluction
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(string x,string y,int n,int m){
+      if(n==0 || m==0) return 0;
+      if(x[n-1]==y[m-1]) return (x[n-1]-'0') + (y[m-1]-'0') + solve(x,y,n-1,m-1);
+      return max(solve(x,y,n-1,m),solve(x,y,n,m-1));
+}
+int main(){
+	string a,b;
+	cin>>a>>b;
+	int x=solve(a,b,a.size(),b.size());
+	int c1=0,c2=0;
+	for(int i=0; i<a.size(); i++)
+		c1+=a[i]-'0';
+	for(int i=0; i<b.size(); i++)
+		c2+=b[i]-'0';
+	cout<<c1+c2-x;
+	return 0;
+}
+
+// buttom up soluction
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(string x,string y,int n,int m){
+
+     vector<vector<int>> dp(n+1,vector<int>(m+1,0));
+     for(int i=1; i<=n; i++){
+     	for(int j=1; j<=m; j++){
+     		if(x[i-1]==y[j-1])
+     			dp[i][j]=dp[i-1][j-1] + 2*(x[i-1]-'0');
+     		else dp[i][j]=max(dp[i-1][j],dp[i][j-1]);
+     	}
+     }
+
+     return dp[n][m];
+}
+int main(){
+	string s,t;
+	cin>>s>>t;
+	int x=solve(s,t,s.size(),t.size());
+	int c1=0,c2=0;
+	for(int i=0; i<s.size(); i++)
+		c1+=s[i]-'0';
+	for(int i=0; i<t.size(); i++)
+		c2+=t[i]-'0';
+
+    cout<<x<<endl;
+    cout<<c1+c2-x;
+    return 0;
+}
+
+
+// minimum cost to make longest common subsequence of length k
+// given to string x,y we can chage such that the longest common subsequence is k and the cost is added cost=xor(old character ,current charecter)
+// the task is to minimize the total cost to do this
+
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+int min_val(int a,int b,int c){
+	return min(min(a,b),c);
+}
+int solve(string x,string y,int n,int m,int k){
+
+   if(k==0) return 0;
+   if(n<0|| m<0) return 1e9;
+   int cost=(x[n]-'a')^(y[m]-'a');
+   return min_val(cost+solve(x,y,n-1,m-1,k-1),solve(x,y,n-1,m,k),solve(x,y,n,m-1,k));
+}
+int main(){
+	string s,t;
+	cin>>s>>t;
+	int k;
+	cin>>k;
+	cout<<solve(s,t,s.size()-1,t.size()-1,k);
+	return 0;
+}
+
+
+// Minimum cells required to reach destination with jumps equal to cell values
+// in the matrix we can can jump mat[i][j] to the right or if exit the cell we need to find the minimum number of cell need to reach the
+// destination
+
+#include<iostream>
+#include<vector>
+using namespace std;
+const int inf=1e9;
+int solve(vector<vector<int>>&grid,int i,int j){
+     if(i>=grid.size() || j>=grid[0].size()) return inf;
+     if(i==grid.size()-1 && j==grid[0].size()-1) return 1;
+     int a,b;
+     a=b=inf;
+     if(i+grid[i][j]<grid.size()) a=solve(grid,i+grid[i][j],j);
+     if(j+grid[i][j]<grid[0].size()) b=solve(grid,i,j+grid[i][j]);
+     return min(a,b) + 1;
+     //or
+     //return min(solve(grid,i+grid[i][j],j),solve(grid,i,j+grid[i][j])) + 1;
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<int>> grid(n,vector<int>(m,0));
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++)
+			cin>>grid[i][j];
+	}
+	cout<<solve(grid,0,0);
+	return 0;
+}
+
+// Minimum sum subsequence such that at least one of every four consecutive elements is picked
+#include<iostream>
+#include<vector>
+using namespace std;
+const int inf=1e9;
+int solve(vector<int> &arr,int n){
+   vector<int> dp=arr;;
+   if(n==1) return arr[0];
+   if(n==2) return min(arr[0],arr[1]);
+   if(n==3) return min(arr[0],min(arr[1],arr[2]));
+   if(n==4) return min(min(arr[0],arr[1]),min(arr[2],arr[3]));
+
+   for(int i=4; i<n; i++){
+      dp[i]=arr[i]+min(min(arr[i-1],arr[i-2]),min(arr[i-3],arr[i-4]));
+   }
+   return min(min(dp[n-1],dp[n-2]),min(dp[n-3],dp[n-4]));
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	cout<<solve(arr,n);
+	return 0;
+}
+
+// partatining an arrary such that sum of squre difference is minimum
+// partition at every point and find minimum of all
+
+// little bit hard to understand try it latter
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int> &arr,int i,int par,int k,int n){
+    if(par>k) return 0;
+    if(par==k && i==n-1) {
+       current
+    }
+    int current_res=inf;
+    for(int j=i+1; j<n; j++){
+       current_res=min(current_res,solve(arr,j,par+1,k,n)+(arr[j]-arr[i+1])*arr[])
+    }
+
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	int k;
+	cin>>k;
+	cout<<solve(arr,-1,0,k);
+	return 0;
+}
+
+
+// number of palindromic subsequences of length k where k<=3
+#include<iostream>
+#include<string>
+#include<vector>
+using namespace std;
+void precompute(string s,vector<vector<int>>& L,vector<vector<int>>& R){
+	int n=s.size();
+	L[s[0]-'a'][0]=1;
+	for(int i=1; i<n; i++){
+		for(int j=0; j<26; j++){
+            L[j][i]+=L[j][i-1];
+		}
+       L[s[i]-'a'][i]++;
+	}
+	R[s[n-1]-'a'][n-1]=1;
+	for(int i=n-2; i>=0; i--){
+		for(int j=0; j<26; j++){
+			R[j][i]+=R[j][i+1];
+		}
+		R[s[i]-'a'][i]++;
+	}
+}
+int solve(string s,int k,vector<vector<int>>& l,vector<vector<int>>& r){
+        int n=s.size();
+       precompute(s,l,r);
+       int res=0;
+      if(k==1) {
+      	for(int i=0; i<26; i++)
+       			res+=l[i][n-1];
+       	return res;
+      }
+
+  		 if(k==2){
+  		 	for(int i=0; i<26; i++)
+         		 res+=(l[i][n-1] * (l[i][n-1]-1)) /2;
+         	return res;
+  		 }
+
+
+       for(int i=1; i<n-1; i++){
+       	 for(int j=0; j<26; j++){
+       	 	res+=l[j][i-1] * r[j][i+1];
+       	 }
+       }
+    return res;
+ }
+int main(){
+	string s;
+	cin>>s;
+	int k;
+	cin>>k;
+	vector<vector<int>> L(26,vector<int>(s.size(),0)),R(26,vector<int>(s.size(),0));
+	cout<<solve(s,k,L,R);
+	return 0;
+}
+
+// partition a array in to two subset such that the difference between them is minimum
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int>&arr,int n,int cur_sum,int tot_sum){
+	// if n==0 // first subset will have (tot_sum-curr_sum)
+	// second subset will have curr_sum
+	if(n<0) return 1e9;
+   if(n==0) return abs((tot_sum-cur_sum)-cur_sum);
+   return min(solve(arr,n-1,cur_sum+arr[n-1],tot_sum),solve(arr,n-1,cur_sum,tot_sum));
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	int sum=0;
+	for(int i=0; i<n; i++)
+		cin>>arr[i],sum+=arr[i];
+
+	cout<<solve(arr,n,0,sum);
+	return 0;
+}
+
+// ways to transform the one string to another string by removing one or more character
+// Input : A = "abcccdf", B = "abccdf"
+// Output : 3
+
+// the above probleam can simply transform to how many times b occures in a as subsequence
+// soluction by recursive recurrence
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+int solve(string x,string y,int n,int m){
+	if(m==0 || n==0 && m==0) return 1;
+   if(n<=0 || m<0) return 0;
+   if(x[n-1]==y[m-1]) return solve(x,y,n-1,m-1) + solve(x,y,n-1,m);
+   else return solve(x,y,n-1,m);
+}
+int main(){
+	string s,t;
+	cin>>s>>t;
+	cout<<solve(s,t,s.size(),t.size());
+	return 0;
+}
+
+// another recursive recurrence
+#include<iostream>
+#include<string>
+#include<vector>
+using namespace std;
+int solve(string s,string t,int n,int m){
+	if(n<0 || m<0) return 0;
+	if(n==0 && m==0 || m==0) return 1;
+	int result=0;
+	if(s[n-1]==t[m-1])
+		result=solve(s,t,n-1,m-1) + solve(s,t,n-1,m);
+	else result=solve(s,t,n-1,m);
+	return result;
+}
+int main(){
+	string s,t;
+	cin>>s>>t;
+	cout<<solve(s,t,s.size(),t.size());
+	return 0;
+}
+
+ // buttom up dp
+#include<iostream>
+#include<string>
+#include<vector>
+using namespace std;
+int solve(string s,string t,int n,int m){
+	vector<vector<int>> dp(n+1,vector<int>(m+1,0));
+	for(int i=0; i<n; i++)
+		dp[i][0]=1;
+
+	for(int i=1; i<=n; i++){
+		for(int j=1; j<=m; j++){
+			if(s[i-1]==t[j-1])
+				dp[i][j]=dp[i-1][j-1] + dp[i-1][j];
+			else dp[i][j]=dp[i-1][j];
+		}
+	}
+
+    return dp[n][m];
+}
+int main(){
+	string s,t;
+	cin>>s>>t;
+	cout<<solve(s,t,s.size(),t.size());
+	return 0;
+}
+
+// There are ‘p’ balls of type P, ‘q’ balls of type Q and ‘r’ balls of type R.
+// Using the balls we want to create a straight line such that no two balls of same type are adjacent.
+
+// recursive soluction
+// last ball be placed be type p
+// last ball be placed be type q
+// last ball be placed be type r
+
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(int p,int q,int r,int taken){
+	if(p<0 || q<0 || r<0) return 0;
+
+	if(p==1 && q==0 && r==0 && taken==0) return 1;
+	if(q==1 && p==0 && r==0 && taken==1) return 1;
+	if(r==1 && p==0 && q==0 && taken==2) return 1;
+
+	if(taken==0) return solve(p-1,q,r,1) + solve(p-1,q,r,2);
+	if(taken==1) return solve(p,q-1,r,0) + solve(p,q-1,r,2);
+	else         return solve(p,q,r-1,0) + solve(p,q,r-1,1);
+}
+int main(){
+	int p,q,r; // type 0=p,type 1=q,type 2=r
+	cin>>p>>q>>r;
+	cout<<solve(p,q,r,0) + solve(p,q,r,1) + solve(p,q,r,2);
+	return 0;
+}
+
+// length of longest substring without repeating character
+// using sliding window techniques
+
+#include <bits/stdc++.h>
+using namespace std;
+int solve(string s,int n){
+	unordered_map<char,int> m;
+	int j=0,ans=0;
+	for(int i=0; i<n; i++){
+         m[s[i]]++;
+         while(m[s[i]]>1) {
+             m[s[j]]--;
+             j++;
+         }
+        ans=max(ans,i-j+1);
+	}
+	return ans;
+}
+int main(){
+	string s;
+	cin>>s;
+	cout<<solve(s,s.size());
+	return 0;
+}
+
+// shortest path in multistage graph
+// multistage graph: a multistage graph is directed weighted  graph in which the edges are from one stage to another stage only
+// recursive soluction // adjencey list representation
+#include<iostream>
+#include<vector>
+using namespace std;
+using pii=pair<int,int>;
+const int inf=1e9;
+int solve(vector<vector<pii>> &graph ,int v,int n){
+     if(v==n) return 0;
+     int res=inf;
+
+     for(auto u:graph[v]){
+     	res=min(res,u.second+solve(graph,u.first,n));
+     }
+     return res;
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+
+	vector<vector<pii>> graph(n+1);
+	for(int i=0; i<m; i++){
+		int a,b,c;
+		cin>>a>>b>>c;
+		graph[a].push_back({b,c});
+	}
+	cout<<solve(graph,1,n);
+	return 0;
+}
+
+// buttom up upproach backward direcrtion
+#include<iostream>
+#include<vector>
+using namespace std;
+const int inf=1e9;
+
+int solve(vector<vector<int>>&graph,int n,int m){
+    vector<int> dist(n,0);
+    dist[n-1]=0;
+    for(int i=n-2; i>=0; i--){
+         dist[i]=inf;
+         for(int j=i; j<n; j++){
+         	 if(graph[i][j]==inf) continue;
+         	 else dist[i]=min(dist[i],graph[i][j] + dist[j]);
+         }
+    }
+
+    return dist[0];
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<int>> graph(n,vector<int>(m,0));
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+           int a;
+           cin>>a;
+           if(a==0) graph[i][j]=inf;
+           else graph[i][j]=a;
+		}
+	}
+
+    cout<<solve(graph,n,m);
+    return 0;
+}
+
+
+// given even no of points on the circumtance of circle find the total no of ways to connect these points
+// such that no two points cross each other
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(int n){
+	if(n<0) return 0;
+	if(n==0 || n==2) return 1;
+	int sum=0;
+	for(int i=0; i<n; i++){
+		sum+=solve(i) * solve(n-i-2);
+	}
+	return sum;
+}
+int main(){
+	int n;
+	cin>>n;   // enter always even no.
+    cout<<solve(n);
+    return 0;
+}
+
+// or the probleam can be solved using catalan number
+// 2n choose n-1 diveide by n+1
+
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(int n){
+	vector<vector<int>> dp(n+1,vector<int>(10,0));
+	for(int i=0; i<10; i++) dp[0][i]=1;
+	for(int i=0; i<=n; i++) dp[i][9]=1;
+
+	for(int i=1; i<=n; i++){
+		for(int j=8; j>=0; j--){
+			dp[i][j]=dp[i-1][j] + dp[i][j+1];
+		}
+	}
+	return dp[n][0];
+}
+int main(){
+	int n;
+	cin>>n;
+	cout<<solve(n);
+    return 0;
+}
+
+// maximum sum subsequence such that the difference between indices is k
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int> &arr,int i,int n,int k){
+ if(i>=n) return 0;
+ return max(arr[i]+solve(arr,i+k+1,n,k),solve(arr,i+1,n,k));
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	int k;
+	cin>>k;
+	cout<<solve(arr,0,n,k);
+	return 0;
+}
+
+// buttom up dp for above probleam
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int>&arr,int n,int k){
+	vector<int> dp(n,0);
+	dp[n-1]=arr[n-1];
+	for(int i=n-2; i>=0; i--){
+		if(i+k+1>=n) dp[i]=max(dp[i],dp[i+1]);
+		else dp[i]=max(dp[i+1],arr[i]+dp[i+k+1]);
+	}
+ return dp[0];
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++){
+		cin>>arr[i];
+	}
+	int k;
+	cin>>k;
+	cout<<solve(arr,n,k);
+	return 0;
+}
+
+// coin game winner// given the n coins and the number x and y player A or B can pick x or y coin at a time
+// A always start the game return true if A will win the game
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(int n,int x,int y,bool turn){
+	if(n==0) return !turn;
+	if(n<0) return false;
+	return solve(n-1,x,y,!turn) || solve(n-x,x,y,!turn) || solve(n-y,x,y,!turn);
+}
+int main(){
+	int n,x,y;
+	cin>>n>>x>>y;
+	cout<<solve(n,x,y,true);
+	return 0;
+}
+
+// length longest increasing concutative subsequences
+nave approach time O(N^2)
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int> &arr,int n){
+   int res=0;
+   for(int i=0; i<n; i++){
+   	int cnt=1,next=arr[i];
+   	  for(int j=i+1; j<n; j++){
+        if(next+1==arr[j]){
+        	cnt++;
+        	next=arr[j];
+        }
+   	  }
+   	 res=max(res,cnt);
+   }
+  return res;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	cout<<solve(arr,n);
+	return 0;
+}
+
+// efficient approch for above probleam using unordered map time O(N)
+#include<iostream>
+#include<vector>
+#include<map>
+using namespace std;
+int solve(vector<int> &arr,int n){
+  map<int,int> m;
+  m[arr[0]]=1;
+
+  int res=0;
+  for(int i=1; i<n; i++){
+       m[arr[i]]=m[arr[i]-1] + 1;
+       res=max(res,m[arr[i]]);
+  }
+  return res;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	cout<<solve(arr,n);
+	return 0;
+}
+
+// printin the longest consutive increasing subsequence
+// time complexity O(n)
+#include<iostream>
+#include<vector>
+#include<map>
+using namespace std;
+int solve(vector<int>&arr,int n){
+   map<int,vector<int>> m;
+   m[arr[0]].push_back(arr[0]);
+
+   for(int i=1; i<n; i++){
+        if(m.find(arr[i]-1)!=m.end()){
+        	vector<int> cnt=m[arr[i]-1];
+        	cnt.push_back(arr[i]);
+        	m.erase(arr[i]-1);
+        	m[arr[i]]=cnt;
+        }
+        else if(m.find(arr[i])!=m.end()) continue;
+        else {
+        	m[arr[i]]=vector<int>();
+        	m[arr[i]].push_back(arr[i]);
+        }
+    }
+
+   vector<int> res;
+   for(auto u:m){
+   	 if(u.second.size()>res.size())
+   	 	res=u.second;
+   }
+   for(int i=0; i<res.size(); i++)
+   	cout<<res[i]<<" ";
+   return 0;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	solve(arr,n);
+	return 0;
+}
+
+// find the longest common subsequence if atmost k changes allowed
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int>&arr1,vector<int>&arr2,int n,int m,int k){
+  if(k<0) return INT_MIN;
+  if(n<0 || m<0) return 0;
+  int ans=0;
+  ans=max(solve(arr1,arr2,n-1,m,k),solve(arr1,arr2,n,m-1,k));
+  if(arr1[n-1]==arr2[m-1]) ans=max(ans,1+solve(arr1,arr2,n-1,m-1,k));
+  else ans=max(ans,1+solve(arr1,arr2,n-1,m-1,k-1));
+  return ans;
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<int> arr1(n,0),arr2(m,0);
+	for(int i=0; i<n; i++)
+		cin>>arr1[i];
+	for(int i=0; i<m; i++)
+		cin>>arr2[i];
+	int k;
+	cin>>k;
+	cout<<solve(arr1,arr2,n,m,k);
+	return 0;
+}
+
+// another soluction for the above problem res=min(lcs(a,b),n)// i think this will also be wright
+
+// non decreasing subsequences of size k with minimum sum
+
+// sum of average of all the subsets of a given array
+// the probleam can be solved using backtracking or bit masking but it will take exponantial time
+// using bitmasking (time 2^n exponantiol)
+#include<iostream>
+#include<vector>
+using namespace std;
+double solve(vector<int>&arr,int n){
+	int len=1<<n;
+	double res=0;
+	for(int i=0; i<len; i++){
+		double sum=0,cnt=0;
+		int mask=1,j=0,m=i;
+		while(m){
+			if(m&1) sum+=arr[j],cnt++;
+			j++;
+			m>>=1;
+		}
+     if(sum>0) res+=sum/cnt;
+	}
+   return res;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++){
+		cin>>arr[i];
+	}
+	double s=solve(arr,n);
+	cout<<s;
+	return 0;
+}
+
+// dynamic programming implementation of the above probleam
+// mathmetics formula derivation is in the copy// the probleam is not about dp it's about to recognize the formula's by pattern
+// of summetion of subsets of array
+
+// recursive soluction
+#include<iostream>
+#include<vector>
+using namespace std;
+int ncr(int n,int r){
+	if(r==0 || n==r) return 1;
+	return ncr(n-1,r) + ncr(n-1,r-1);
+}
+double solve(vector<int> &arr,int n){
+   int sum=0;
+   for(int i=0; i<n; i++)
+   	sum+=arr[i];
+   double res=0;
+   for(int i=1; i<=n; i++){
+       res+=((double)(sum*ncr(n-1,i-1)))/i;
+   }
+   return res;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	cout<<solve(arr,n);
+	return 0;
+}
+
+// largest divisible pair subset
+// algorithm: sort the array so that all the largest elements then process the arrary like lis from end to first
+
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+int solve(vector<int> &arr,int n){
+  	sort(begin(arr),end(arr));
+  	vector<int> dp(n,0);
+  	dp[n-1]=1;
+  	for(int i=n-2; i>=0; i--){
+  		int current_max=INT_MIN;
+  		for(int j=i+1; j<n; j++){
+  			if(arr[j]%arr[i]==0){
+  				current_max=max(current_max,dp[j]);
+  			}
+  		}
+  		dp[i]=current_max+1;
+  	}
+  	return *max_element(begin(dp),end(dp));
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	cout<<solve(arr,n);
+	return 0;
+}
+
+// number of permutation with excetly k inversions // refere// gfg or stack overflow
+// great: permutation question
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(int n,int k){
+	if(n<=0) return 0;
+	if(k==0) return 1;
+	int cnt=0;
+	for(int i=0; i<n && k-i>=0; i++)
+		cnt+=solve(n-1,k-i);
+	return cnt;
+}
+int main(){
+	int n,k;
+	cin>>n>>k;
+	cout<<solve(n,k);
+	return 0;
+}
+
+// print the all the permutation of an array of size k
+#include<iostream>
+#include<vector>
+using namespace std;
+void solve(vector<int> arr,int k,vector<int> cnt){
+	if(arr.size()==0){
+		if(cnt.size()==k){
+			for(int i=0; i<k; i++)
+				cout<<cnt[i]<<" ";
+			cout<<endl;
+		}
+	} else if(cnt.size()==k){
+		for(int i=0; i<k; i++)
+			cout<<cnt[i]<<" ";
+		cout<<endl;
+	}
+	else{
+		vector<int> x,y;
+		x=y=cnt;
+		int a=arr[0];
+		arr.erase(begin(arr));
+		x.push_back(a);
+		solve(arr,k,x);
+		solve(arr,k,y);
+	}
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	int k;
+	cin>>k;
+	solve(arr,k,vector<int>());
+	return 0;
+}
+
+
+// above probleam by another way
+#include<iostream>
+#include<vector>
+using namespace std;
+void solve(vector<int> &arr,int k,int n,int depth,int index,vector<int> cnt){
+	if(index==k){
+		for(int i=0; i<k; i++)
+			cout<<cnt[i]<<" ";
+		cout<<endl;
+		return ;
+	}
+	for(int i=depth; i<n; i++){
+		cnt[index]=arr[i];
+		solve(arr,k,n,i+1,index+1,cnt);
+	}
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+    int k;
+    cin>>k;
+    vector<int> cnt(k,0);
+    solve(arr,k,n,0,0,cnt);
+    return 0;
+}
+
+// Sum of products of all combination taken (1 to n) at a time
+// burrete force approach
+
+#include<iostream>
+#include<vector>
+using namespace std;
+int res=0;
+void combination(vector<int> &arr,int n,int k,int depth,int index,vector<int> cnt){
+	if(index==k){
+		int product=1;
+		for(int i=0; i<k; i++){
+			product*=cnt[i];
+		}
+	res+=product;
+	return ;
+	}
+	for(int i=depth; i<n; i++){
+		cnt[index]=arr[i];
+		combination(arr,n,k,i+1,index+1,cnt);
+	}
+}
+void solve(vector<int> &arr,int n){
+	for(int i=0; i<n; i++){
+		vector<int> cnt(i+1,0);
+        combination(arr,n,i+1,0,0,cnt);
+	}
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		arr[i]=i+1;
+	solve(arr,n);
+	cout<<res;
+	return 0;
+}
+
+// optimal binary search tree
+#include<iostream>
+#include<vector>
+using namespace std;
+int sum(vector<int> &arr,int i,int j){
+    return i==j?arr[i]:sum(arr,i+1,j)+arr[i];
+}
+int solve(vector<int>& key,vector<int> & frq,int i,int j){
+        if(i>j) return 0;
+         if(i==j) return frq[i];
+         int fsum=sum(frq,i,j);
+         int cost=INT_MAX;
+         for(int r=i; r<=j; r++){
+         	 cost=min(cost,solve(key,frq,i,r-1) + solve(key,frq,r+1,j));
+         }
+    return cost+fsum;
+}
+
+int main(){
+	int n;
+	cin>>n;
+	vector<int> key(n,0),frq(n,0);
+	for(int i=0; i<n; i++)
+		cin>>key[i];
+	for(int i=0; i<n; i++)
+		cin>>frq[i];
+	cout<<solve(key,frq,0,n-1);
+	return 0;
+}
+
+// find the minimum sum such that the one of every three consucative element is taken
+#include<iostream>
+#include<vector>
+using namespace std;
+int min_val(int a,int b,int c){
+	return min(min(a,b),c);
+}
+int solve(vector<int> &arr,int n){
+	vector<int> dp(n,INT_MAX);
+	dp[0]=arr[0];
+	dp[1]=arr[1];
+	dp[2]=arr[2];
+	for(int i=3; i<n; i++){
+		dp[i]=min(dp[i],min_val(dp[i-1],dp[i-2],dp[i-3])) + arr[i];
+	}
+	return min_val(dp[n-1],dp[n-2],dp[n-3]);
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	cout<<solve(arr,n);
+	return 0;
+}
+
+// Find number of times a string occurs as a subsequence in given string
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+int solve(string x,string y,int n,int m){
+    if(n==0 && m==0 || m==0) return 1;
+    if(n==0) return 0;
+	if(x[n-1]==y[m-1]){
+       return solve(x,y,n-1,m-1) + solve(x,y,n-1,m);
+	}else{
+		return solve(x,y,n-1,m);
+	}
+}
+int main(){
+	string s,t;
+	cin>>s>>t;
+	cout<<solve(s,t,s.size(),t.size());
+    return 0;
+}
+
+// by tabulation method
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+int solve(string x,string y,int n,int m){
+	vector<vector<int>> dp(n+1,vector<int> (m+1,0));
+    for(int i=0; i<=n; i++)
+    	dp[i][0]=1;
+    for(int i=1; i<=n; i++){
+    	for(int j=1; j<=m; j++){
+           if(x[i-1]==y[j-1])
+           	dp[i][j]=dp[i-1][j-1] + dp[i-1][j];
+           else dp[i][j]=dp[i-1][j];
+    	}
+    }
+    return dp[n][m];
+}
+int main(){
+	string s,t;
+	cin>>s>>t;
+	cout<<solve(s,t,s.size(),t.size());
+	return 0;
+}
+
+// box stacking probleam
+// some bug in this soluction come back letter and try again
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+int box_stcking(vector<vector<int>> box,int n){
+
+   vector<vector<int>> r(3*n,vector<int>(3,0));
+   // rotation
+   int j=0;
+   for(int i=0; i<n; i++){
+       r[j]=box[i],j++;
+
+       r[j][0]=box[i][1];
+       r[j][1]=box[i][2];
+       r[j][2]=box[i][0];
+       j++;
+
+       r[j][0]=box[i][2];
+       r[j][1]=box[i][0];
+       r[j][2]=box[i][1];
+       j++;
+   }
+   sort(begin(r),end(r),[&](vector<int>&x,vector<int> &y) { return x[0] * x[1]>=y[0] * y[1];});
+   vector<int> h(3*n,0); // hight array
+   for(int i=0; i<3*n; i++)
+   	h[i]=r[i][2];
+
+   for(int i=1; i<3*n; i++){
+   	 for(int j=0; j<i; j++){
+   	 	if(r[j][0]<r[i][0] && r[j][1]<r[i][1] && h[i]<h[j]+r[i][2]){
+   	 		h[i]= h[j] + r[i][2];
+   	 	}
+   	 }
+   }
+   int res=0;
+   for(int i=0; i<3*n; i++){
+   	  max(res,h[i]);
+   }
+   return res;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<vector<int>> box(n,vector<int>(3,0));
+	for(int i=0; i<n; i++){
+		cin>>box[i][0]>>box[i][1]>>box[i][2];
+	}
+	cout<<box_stcking(box,n);
+	return 0;
+}
+
+// Maximum value with the choice of either dividing or considering as it is
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(int n){
+	if(n<=0) return 0;
+	if(n==1||n==2|| n==3 || n==4 || n==5) return n;
+	return max(solve(n/2)+solve(n/3)+solve(n/4)+solve(n/5),n);
+}
+int main(){
+	int n;
+	cin>>n;
+	cout<<solve(n);
+	return 0;
+}
+
+// buttom up
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(int n){
+	if(n<=5) return n;
+	vector<int> dp(n+1,0);
+	for(int i=0; i<=5; i++){
+		dp[i]=i;
+	}
+
+	for(int i=6; i<=n; i++){
+		dp[i]=max(dp[i/2]+dp[i/3]+dp[i/4]+dp[i/5],n);
+	}
+ return dp[n];
+}
+int main(){
+	int n;
+	cin>>n;
+	cout<<solve(n);
+	return 0;
+}
+
+// longest zig zag subsequence
+// it is a varition of longest increasing subsequence
+//  time complexity O(N^2)
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int>&arr,int n){
+	vector<vector<int>> dp(n,vector<int>(2,0));
+	for(int i=0; i<n; i++){
+		dp[i][0]=dp[i][1]=1;
+	}
+
+	for(int i=1; i<n; i++){
+		for(int j=0; j<i; j++){
+			if(arr[j]<arr[i] && dp[i][0]<dp[j][1] + 1)
+				dp[i][0]=dp[j][1] + 1;
+			if(arr[j]>arr[i] && dp[i][1]<dp[j][0] + 1)
+				dp[i][1]=dp[j][0] + 1;
+		}
+	}
+	return max(dp[n-1][0],dp[n-1][1]);
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	cout<<solve(arr,n);
+	return 0;
+}
+
+// length of longest balanced subsequence
+#include<iostream>
+#include<string>
+using namespace std;
+int solve(string s,int i,int j){
+	if(j>=s.size()) return 0;
+	if(i>=j) return 0;
+	if(s[i]=='(' && s[j]==')') return 2 + solve(s,i+1,j-1);
+	else{
+		int current=0;
+		for(int k=i; k<j; k++){
+			current=max(current,solve(s,i,k)+solve(s,k+1,j));
+		}
+	return current;
+	}
+}
+int main(){
+	string s;
+	cin>>s;
+	cout<<solve(s,0,s.size()-1);
+	return 0;
+}
+
+// greedy algorithm for longest blanced subsequence
+// return s.size() -(n-(invalid open braces + invalid closed braces))
+#include<iostream>
+#include<string>
+using namespace std;
+int solve(string s,int n){
+	int open=0,close=0; // for invalid open braces and invalid close braces
+	for(int i=0; i<n; i++){
+        if(s[i]=='(')
+        	open++;
+        else{
+        	if(open==0){
+        		close++;
+        	}
+        	else open--;
+        }
+	}
+	return n-(open + close);
+}
+int main(){
+	string s;
+	cin>>s;
+	cout<<solve(s,s.size());
+	return 0;
+}
+
+// above greedy
+#include<iostream>
+#include<string>
+using namespace std;
+int solve(string s,int n){
+	int balanced=0;
+	int res=0;
+	for(int i=0; i<s.size(); i++){
+		if(s[i]=='(')
+			balanced++;
+		else{
+			if(balanced==0)
+				res++;
+			else balanced--;
+		}
+	}
+  return n-(balanced + res);
+}
+int main(){
+	string s;
+	cin>>s;
+	cout<<solve(s,s.size());
+	return 0;
+}
+
+
+// given a set of integers find the all possible sum that can be produce by given array subsequence
+// recursive burrete force approach time O(2^n)
+#include<iostream>
+#include<set>
+#include<vector>
+using namespace std;
+set<int> s;
+void solve(vector<int>&arr,int n,int sum){
+   if(n<0 || sum<0) return;
+   if(n==0){
+   	s.insert(sum);
+   	return;
+   }
+   solve(arr,n-1,sum+arr[n-1]);
+   solve(arr,n-1,sum);
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++){
+		cin>>arr[i];
+	}
+	solve(arr,n,0);
+	for(auto it=s.begin(); it!=s.end(); it++)
+		cout<<*it<<" ";
+	return 0;
+}
+
+// find the length of longest concutive path from given starting point
+#include<iostream>
+#include<vector>
+using namespace std;
+vector<vector<char>> dir={{1,0},{0,1},{1,-1},{-1,1},{1,1},{-1,-1},{-1,0},{0,-1}};
+bool is_valid(vector<vector<char>> &grid,int i,int j){
+	if(i>=grid.size() || i<0 || j>=grid[0].size() || j<0 ) return false;
+	else return true;
+}
+int solve(vector<vector<char>>& grid,int i,int j,char prev){
+	if(!is_valid(grid,i,j) && (grid[i][j]-prev)!=1) return 0;
+	else{
+		int current=0;
+		for(int k=0; k<8; k++){
+			int x=i+dir[k][0];
+			int y=j+dir[k][1];
+			if(is_valid(grid,x,y) && grid[i][j]-grid[x][y]==1)
+				current=max(current,1+solve(grid,x,y,grid[i][j]));
+		}
+	return current;
+	}
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<char>> grid(n,vector<char>(m));
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+			cin>>grid[i][j];
+		}
+	}
+	char s;
+	cin>>s;
+
+    int ans=0;
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+			if(grid[i][j]==s){
+				for(int k=0; k<8; k++){
+					ans=max(ans,solve(grid,i+dir[k][0],j+dir[k][1],s));
+				}
+			}
+		}
+	}
+
+	cout<<ans;
+
+	return 0;
+}
+
+// find the length of longest subsequence which is the substring of other string
+// brutte force algortithm :find the all the subsequence of first string and check for that is substring of second string and take max len time ecponantioal
+// better brute force : take each substring of second string and check is this subsequence of first string or not and take max len if it is time (n^3)
+// dynamic porgramming: time O(n^2)
+
+#include<iostream>
+#include<string>
+#include<vector>
+using namespace std;
+int solve(string s,string t,int n,int m){
+	if(n==0 || m==0) return 0;
+	if(s[n-1]==t[m-1]) return 1+solve(s,t,n-1,m-1);
+	else return solve(s,t,n,m-1);
+}
+int main(){
+	string s,t;
+	cin>>s>>t;
+	cout<<solve(s,t,s.size(),t.size());
+	return 0;
+}
+
+buttom up dp
+#include<iostream>
+#include<string>
+#include<vector>
+using namespace std;
+int main(){
+	string s,t;
+	cin>>s>>t;
+	int n=s.size(),m=t.size();
+	vector<vector<int>> dp(n+1,vector<int>(m+1,0));
+	for(int i=1; i<=n; i++){
+		for(int j=1; j<=m; j++){
+			if(s[i-1]==t[j-1]) dp[i][j]=dp[i-1][j-1]+1;
+			else dp[i][j]=dp[i][j-1];
+		}
+	}
+
+	int ans=0;
+	for(int i=0; i<=n; i++){
+		ans=max(ans,dp[i][n]);
+	}
+    cout<<ans;
+    return 0;
+}
+
+// Find longest bitonic sequence such that increasing and decreasing parts are from two different arrays
+// algorithm: find the longest increasing from the second array + longest decreasing subsequence form second array
+
+// find the longest increasing subsequence in using lcs(longest common subsequence)
+// sort the first array and find the longest common subsequence in sorted and previous unsorted array
+
+// optimal strategy for game
+// given array of coins: two players plays game find the optimal ways to win the game or not the player cna choose the
+// first or last and the winner have max collections of coins
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int> &arr,int i,int j){
+	if(i==j) return arr[i];
+	if(i+1==j) return max(arr[i],arr[i+1]);
+	else {
+		int option1=arr[i]+min(solve(arr,i+2,j),solve(arr,i+1,j-1));
+		int option2=arr[j]+min(solve(arr,i,j-1),solve(arr,i+1,j-1));
+		return max(option1,option2);
+	}
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++){
+		cin>>arr[i];
+	}
+	cout<<solve(arr,0,n-1);
+	return 0;
+}
+
+// wildcard pattern matching algorithm
+// * matches any sequence of character (includeing empty character)
+// ? matches single charcter
+
+// recursive soluction
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+int solve(string s,string t,int i,int j){
+    if(j==t.size()) return s.size()==i;
+    if(s.size()==i){
+    	for(int k=j; k<t.size(); k++){
+    		if(t[k]!='*') return false;
+    	}
+       return true;
+    }
+    if(s[i]==s[j] || t[j]=='?') return solve(s,t,i+1,j+1);
+    if(t[j]=='*') return solve(s,t,i+1,j) || solve(s,t,i,j+1);
+    else return false;
+}
+int main(){
+	string s,t;
+	cin>>s>>t;
+	cout<<solve(s,t,0,0);
+	return 0;
+}
+
+// another recursive version
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+bool solve(string s,string t,int n,int m){
+	if(m==0 && n==0) return true;
+	if(n==0){
+		for(int i=m-1; i>=0; i--){
+			if(t[i]!='*') return false;
+		}
+	return true;
+	}
+	if(s[n-1]==t[m-1] or t[m-1]=='?') return solve(s,t,n-1,m-1);
+	if(t[m-1]=='*') return solve(s,t,n-1,m) or solve(s,t,n,m-1);
+	else return false;
+}
+int main(){
+	string s,t;
+	cin>>s>>t;
+	cout<<solve(s,t,s.size(),t.size());
+	return 0;
+}
+
+
+// buttom up dp
+#include<iostream>
+#include<string>
+#include<vector>
+using namespace std;
+int solve(string s,string t,int n,int m){
+	if(n==0) return m==0;
+	vector<vector<int>> dp(n+1,vector<int>(m+1,0));
+	// * can match with empth string
+	dp[0][0]=1;
+	for(int i=0; i<=m; i++){
+		dp[0][i]=dp[0][i-1];
+	}
+
+	for(int i=1; i<=n; i++){
+		for(int j=1; j<=m; j++){
+             if(s[i-1]==t[j-1] or t[j-1]=='?')
+             	dp[i][j]=dp[i-1][j-1];
+             else if(t[j-1]=='*')
+             	dp[i][j]=dp[i-1][j] or dp[i][j-1];
+             else dp[i][j]=0;
+		}
+	}
+
+   return dp[n][m];
+}
+int main(){
+	string s,t;
+	cin>>s>>t;
+	cout<<solve(s,t,s.size(),t.size());
+	return 0;
+}
+
+// check if there is path from top left to buttom right cornor
+// -1: blockage
+// 0: there is path
+
+// dfs soluction
+#include<iostream>
+#include<vector>
+using namespace std;
+bool solve(vector<vector<int>>&grid,int i,int j){
+	if(i>=grid.size() || j>=grid[0].size() || grid[i][j]==-1) return false;
+	if(i==grid.size()-1 && j==grid[0].size()-1) return true;
+	return solve(grid,i+1,j) || solve(grid,i,j+1);
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<int>> grid(n,vector<int>(m,0));
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+			cin>>grid[i][j];
+		}
+	}
+    cout<<solve(grid,0,0);
+    return 0;
+}
+
+// bfs soluction of above probleam
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<vector<int>> &grid,int i,int j){
+	queue<pair<int,int>> q;
+	q.push({i,j});
+	while(!q.empty()){
+		int x=q.front().first;
+		int y=q.front().second;
+		q.pop();
+		if(x==grid.size()-1 && y==grid[0].size()-1) return 1;
+        if(x+1<grid.size() && x>=0 && y<grid[0].size() && y>=0 && grid[x+1][y]!=-1){
+	    	q.push({x+1,y});
+	    }
+	    else if(x<grid.size() && x>=0 && y+1<grid[0].size() && y>=0 && grid[x][y+1]!=-1)
+	    	q.push({x,y+1});
+
+	}
+	return -1;
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<int>> grid(n,vector<int>(m,0));
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++)
+			cin>>grid[i][j];
+	}
+	cout<<solve(grid,0,0);
+	return 0;
+}
+
+// longest palindromic substring recursion
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+int solve(string s,int i,int j,int len){
+  if(i==j) return len+1;
+  if(i+1==j) return s[i]==s[j]?len+2:len+1;
+  if(s[i]==s[j]){
+  	len=max(len,solve(s,i+1,j-1,len+2));
+  	return len;
+  }else{
+  	return max(solve(s,i+1,j,0),solve(s,i,j-1,0));
+  }
+}
+int main(){
+	string s;
+	cin>>s;
+	cout<<solve(s,0,s.size()-1,0);
+	return 0;
+}
+
+// longest palindromic substring  buttom up dp
+#include<iostream>
+#include<string>
+#include<vector>
+using namespace std;
+int solve(string s,int n){
+	vector<vector<int>> dp(n,vector<int>(n,0));
+	for(int i=0; i<n; i++)
+		dp[i][i]=1;
+	int max_len;
+	for(int i=1; i<=n; i++)
+		if(s[i-1]==s[i]) dp[i-1][i]=1,max_len=2;
+
+
+	for(int i=3; i<=n; i++){
+		for(int j=0; j<n-i+1; j++){
+			int k=i+j-1;
+			if(s[j]==s[k] && dp[j+1][k]==dp[j][k-1]){
+				max_len=max(max_len,i);
+			}
+		}
+	}
+	return max_len;
+}
+int main(){
+	string s;
+	cin>>s;
+	cout<<solve(s,s.size());
+	return 0;
+}
+
+// count of all palindromic substring of a string
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(string s,int i,int j){
+
+}
+int main(){
+	string s;
+	cin>>s;
+	cout<<solve(s,0,s.size()-1);
+	return 0;
+}
+
+// number of n digit stepping number
+// stepping number: if the difference between the adjecent digit is 1 like 321 is a stepping number
+// but 421 is not
+
+#include<iostream>
+#include<vector>
+using namespace std;
+long long solve(int n){
+	if(n==1) return 10;
+	vector<vector<int>> dp(n+2,vector<int>(10,0));
+
+	for(int i=0; i<=9; i++)
+		dp[1][i]=1;
+
+	for(int i=2; i<=n; i++){
+		for(int j=0; j<=9; j++){
+         if(j==0) dp[i][j]=dp[i-1][j+1];
+         if(j==9) dp[i][j]=dp[i-1][j-1];
+         else {
+            dp[i][j]=dp[i-1][j-1] + dp[i-1][j+1];
+           }
+		}
+	}
+    long long res=0;
+    for(int i=1; i<=9; i++){
+    	res+=dp[n][i];
+    }
+   return res;
+}
+int main(){
+	int n;
+	cin>>n;
+	cout<<solve(n);
+	return 0;
+}
+
+// Ways to write n as sum of two or more positive integers
+// the probleam can be solved like coin change probleam
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int>&arr,int n,int s){
+	if(s<0 || n<0) return 0;
+	if(s==0) return 1;
+	if(n>=0 && s<0) return 0;
+	return solve(arr,n,s-arr[n-1]) + solve(arr,n-1,s);
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n-1,0);
+	for(int i=0; i<n-1; i++)
+		arr[i]=i+1;
+	cout<<solve(arr,n-1,n);
+	return 0;
+}
+
+// above probleam
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(int n,int s){
+	if(s<0 || n<0) return 0;
+	if(s==0) return 1;
+	if(n>=0 && s<0) return 0;
+	return solve(n,s-n-1) + solve(n-1,s);
+}
+int main(){
+	int n;
+	cin>>n;
+	cout<<solve(n,n);
+	return 0;
+}
+
+// check if it possible to transform string1 to string2
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+int solve(string s,string t,int n,int m){
+	vector<vector<bool>> dp(n+1,vector<bool>(m+1,false));
+	dp[0][0]=true;
+	for(int i=0; i<n; i++){
+		for(int j=0; j<=m; j++){
+			if(dp[i][j]){
+				if(j<t.size() && toupper(s[i])==t[j])
+					dp[i+1][j+1]=true;
+				if(!isupper(s[i]))
+					dp[i+1][j]=true;
+			}
+		}
+	}
+	return dp[n][m];
+}
+int main(){
+	string s,t;
+	cin>>s>>t;
+	cout<<solve(s,t,s.size(),t.size());
+	return 0;
+}
+// Given a large number, check if a subsequence of digits is divisible by 8
+// brutte force approach
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+bool solve(string s,int n){
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++){
+		arr[i]=s[i]-'0';
+	}
+	// try all the combination
+	for(int i=0; i<n; i++){
+		for(int j=0; j<n; j++){
+			for(int k=0; k<n; k++){
+				if(arr[i]%8==0) return true;
+				else if((arr[i] * 10 + arr[j]) %8==0 && i!=j) return true;
+				else if((arr[i] * 100 + arr[j] *  10 + arr[k])%8==0 && i!=j && i!=k && j!=k) return true;
+			}
+		}
+	}
+	return false;
+}
+int main(){
+	string s;
+	cin>>s;
+	cout<<solve(s,s.size());
+	return 0;
+}
+
+// use dp to optimized the above probleam
+// find the string is k-palindrom or not
+// k-palondrome measn if string is palindrome by removing at most k characters
+// by analysis the probleam is to: transform the given string to it's reverse by removing at most k character
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+string reverse(string s){
+	string str=s;
+	int a=0,b=s.size()-1;
+	while(a<b){
+		swap(str[a],str[b]);
+		a++,b--;
+	}
+	return str;
+}
+int solve(string s,string t,int n,int m){
+	if(n==0) return m;
+	if(m==0) return n;
+	if(s[n-1]==t[m-1]) return solve(s,t,n-1,m-1);
+	else return min(solve(s,t,n-1,m),solve(s,t,n,m-1)) + 1;
+}
+int main(){
+	string s;
+	cin>>s;
+	string t=reverse(s);
+    int k;
+    cin>>k;
+    if(2*k>=solve(s,t,s.size(),t.size())) cout<<"yes"<<endl;
+    else cout<<"no:";
+    return 0;
+}
+
+// buttom up for above
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+string reverse(string s){
+	string str=s;
+	int a=0,b=s.size()-1;
+	while(a<b){
+		swap(str[a],str[b]);
+		a++,b--;
+	}
+	return str;
+}
+int solve(string s,string t){
+	int n=s.size(),m=t.size();
+	vector<vector<int>> dp(n+1,vector<int>(m+1,0));
+	for(int i=0; i<=m; i++) dp[0][i]=i;
+	for(int i=0; i<=n; i++) dp[i][0]=i;
+
+	for(int i=1; i<=n; i++){
+		for(int j=1; j<=m; j++){
+			if(s[i-1]==t[j-1]) dp[i][j]=dp[i-1][j-1];
+			else dp[i][j]=min(dp[i-1][j],dp[i][j-1]) + 1;
+		}
+	}
+	return dp[n][m];
+}
+int main(){
+	string s;
+	cin>>s;
+	string t=reverse(s);
+	int k;
+	cin>>k;
+	k*2>=solve(s,t)?cout<<"yes":cout<<"no";
+	return 0;
+}
+
+// another approach to solve above probleam
+// s.size()-lps(s)>k than yes else no
+#include<iostream>
+#include<string>
+using namespace std;
+int solve(string s,int i,int j){
+	if(i>j) return 0;
+	if(i==j) return 1;
+	if(i+1==j) return s[i]==s[j]?2:1;
+	if(s[i]==s[j]) return 2+solve(s,i+1,j-1);
+	else return max(solve(s,i+1,j),solve(s,i,j-1));
+}
+int main(){
+	string s;
+	cin>>s;
+	int k;
+	cin>>k;
+    s.size()-solve(s,0,s.size()-1)<=k?cout<<"yes":cout<<"no:";
+	return 0;
+}
+
+// buttom up of above probleam
+#include<iostream>
+#include<string>
+#include<vector>
+using namespace std;
+int solve(string s){
+	int n=s.size();
+	vector<vector<int>> dp(n,vector<int>(n,0));
+    for(int i=0; i<n; i++) dp[i][i]=1;
+
+    for(int i=2; i<=n; i++){
+    	for(int j=0; j<n-i+1; j++){
+    		int k=i+j-1;
+    		if(s[j]==s[k]) dp[j][k]=dp[j+1][k-1] + 2;
+    		else dp[j][k]=max(dp[j+1][k],dp[j][k-1]);
+    	}
+    }
+    return dp[0][n-1];
+}
+int main(){
+	string s;
+	cin>>s;
+	int k;
+	cin>>k;
+	s.size()-solve(s)<=k?cout<<"yes":cout<<"no";
+}
+
+// maximum sum alternating subsequence
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int> &arr,int n){
+    vector<vector<int>> dp(2,vector<int>(n,0));
+    dp[0][0]=dp[1][0]=1;
+
+    bool flag=false;
+    for(int i=1; i<n; i++){
+    	for(int j=0; j<i; j++){
+    		if(arr[j]>arr[i]){
+    			dp[0][i]=max(dp[0][i],dp[1][j] + arr[i]);
+    			flag=true;
+    		}
+    		if(arr[j]<arr[i] && flag){
+    			dp[1][i]=max(dp[1][i],dp[0][j] + arr[i]);
+    		}
+    	}
+    }
+
+    int res=0;
+    for(int i=0; i<n; i++){
+    	res=max(res,dp[0][i]);
+    	res=max(res,dp[1][i]);
+    }
+    return res;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++){
+		cin>>arr[i];
+	}
+	cout<<solve(arr,n);
+	return 0;
+}
+
+// largest alternating subsequence
+#include<iostream>
+#include<vector>
+using namespace std;
+int max_val(int a,int b,int c){
+	return max(max(a,b),c);
+}
+int solve(vector<int> &arr,int n){
+	vector<vector<int>> dp(2,vector<int>(n,0));
+	int res=0;
+	dp[0][0]=dp[1][0]=1;
+	for(int i=1; i<n; i++){
+		for(int j=0; j<i; j++){
+			if(arr[j]<arr[i] && dp[0][i]<dp[1][j] + 1)
+				dp[0][i]=dp[1][j] + 1;
+			if(arr[j]> arr[i] && dp[1][i]<dp[0][j] + 1)
+				dp[1][i]=dp[0][j] + 1;
+		}
+		res=max_val(res,dp[0][i],dp[1][i]);
+	}
+    return res;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++){
+		cin>>arr[i];
+	}
+	cout<<solve(arr,n);
+	return 0;
+}
+
+
+// check if possible to cross the given matrix with given power value k
+// given a grid we can move right,down or digonal ,the task is to reach to n-1,m-1 from 0,0 but the constraints are
+// if we rach at any cell we collect that cell value and loose power value that amount return the collected value if we can reach
+// to destination else return -1
+// soluction: find min sum path if(min_sum_path>k) return -1 else return min_sum_path
+
+// Count number of ways to partition a set into k subsets
+// if n-1 elements did already k partition then nth element can enter in any set so count =k*solve(n-1,k)
+// if n-1 previous element did k-1 partition then nth element can make his own partition so,count = solve(n-1,k-1)
+// so total count =k*f(n-1,k) + f(n-1,k-1)
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(int n,int k){
+	if(n==0 || k==0 || k>n) return 0;
+	if(n==k || k==1) return 1;
+	return k*solve(n-1,k) + solve(n-1,k-1);
+}
+int main(){
+	int n,k;
+	cin>>n>>k;
+	cout<<solve(n,k);
+	return 0;
+}
+
+// buttom up dp
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(int n,int k){
+	vector<vector<int>> dp(n+1,vector<int>(k+1,0));
+	for(int i=1; i<=n; i++){
+		for(int j=1; j<=k; j++){
+			if(i==j or j==1) dp[i][j]=1;
+			else{
+				dp[i][j]=j * dp[i-1][j] + dp[i-1][k-1];
+			}
+		}
+	}
+	return dp[n][k];
+}
+int main(){
+	int n,k;
+	cin>>n>>k;
+	cout<<solve(n,k);
+	return 0;
+}
+
+// matrix chain multiplication
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int>&arr,int i,int j){
+  if(i>=j) return 0;
+  int res=INT_MAX;
+  for(int k=i; k<j; k++){
+  	res=min(res,solve(arr,i,k) + solve(arr,k+1,j) + arr[i-1] * arr[k] *arr[j]);
+  }
+  return res;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++){
+		cin>>arr[i];
+	}
+	cout<<solve(arr,1,n-1);
+	return 0;
+}
+
+// matrix chain multiplication buttom up dp
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(vector<int> arr,int n){
+	vector<vector<int>> dp(n,vector<int>(n,0));
+	for(int i=1; i<n; i++)
+		dp[i][i]=0;
+	for(int l=2; l<n; l++){
+		for(int i=1; i<n-l+1; i++){
+			int j=l+i-1;
+			dp[i][j]=INT_MAX;
+			for(int k=i; k<j; k++){
+				dp[i][j]=min(dp[i][j],dp[i][k] + dp[k+1][j] + arr[i-1] * arr[k] * arr[j]);
+			}
+		}
+	}
+	return dp[1][n-1];
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	cout<<solve(arr,n);
+	return 0;
+}
+
+// palindrome partitioning
+// given string find the minimum number of bar/ cuts required to prtition the string such that each partition
+// becomes the palondrome
+
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+bool is_palindrome(string s,int i,int j){
+	while(i<j){
+		if(s[i]!=s[j]) return false;
+		i++,j--;
+	}
+	return true;
+}
+int solve(string s,int i,int j){
+	if(i>j) return 0;
+	if(i==j || is_palindrome(s,i,j)) return 0;
+	int res=1e9;
+	for(int k=i; k<j; k++){
+		res=min(res,solve(s,i,k) + 1 + solve(s,k+1,j));
+	}
+  return res;
+}
+int main(){
+	string s;
+	cin>>s;
+	//cout<<is_palindrome(s,2,4);
+	cout<<solve(s,0,s.size()-1);
+	return 0;
+}
+
+// buttom up of dp
+#include<iostream>
+#include<vector>
+using namespace std;
+bool is_palindrome(string s,int i,int j){
+	while(i<j){
+		if(s[i]!=s[j]) return false;
+		i++,j--;
+	}
+	return true;
+}
+int solve(string s,int n){
+	vector<vector<int>> dp(n,vector<int>(n,0));
+    for(int l=2; l<=n; l++){
+    	for(int i=0; i<n-l+1; i++){
+    		int j=l+i-1;
+    		if(i==j or is_palindrome(s,i,j))
+    			dp[i][j]=0;
+    		else{
+    			dp[i][j]=INT_MAX;
+    			for(int k=i; k<j; k++){
+    				dp[i][j]=min(dp[i][j],dp[i][k] + 1 + dp[k+1][j]);
+    			}
+    		}
+    	}
+    }
+    return dp[0][n-1];
+}
+int main(){
+	string s;
+	cin>>s;
+	cout<<solve(s,s.size());
+	return 0;
+}
+
