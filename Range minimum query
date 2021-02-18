@@ -1,0 +1,263 @@
+
+// segment tree
+// fenwic tree
+// lca binary lifting
+// fft
+// prefix array
+// sparse table
+// squreroot decomposition 
+
+// range maximum query using disjoint set union 
+#include<bits/stdc++.h>
+using namespace std;
+const int maxn = 1e5 + 17;
+int a[maxn],l[maxn],ans[maxn],par[maxn];
+vector<int> qu[maxn];
+int root(int x){
+	return par[x] == -1 ? x : par[x] = root(par[x]);
+}
+int main(){
+	int n,q,r;
+	cin>>n;
+	memset(par,-1,sizeof(par));
+	for(int i=0; i<n; i++) cin>>a[i];
+	cin>>q;
+    
+    for(int i=0; i<q; i++){
+    	cin>>l[i]>>r,r--,l[i]--;
+    	qu[r].push_back(i);
+    }
+
+    stack<int> stk;
+    for(int i=0; i<n; i++){
+    	while(stk.size() && a[stk.top()]<=a[i])
+    		par[stk.top()] = i, stk.pop();
+    	stk.push(i);
+       // printf("vicky\n");
+    	for(auto qi : qu[i]){
+    		ans[qi] = a[root(l[qi])];
+    	}
+    }
+
+    for(int i=0; i<q; i++)
+    	printf("%d\n",ans[i]);
+    
+    return 0;
+}
+
+
+// range minimum query using disjoint set union 
+// if query is given in previous
+#include<bits/stdc++.h>
+using namespace std;
+const int maxn = 1e5 + 7;
+int a[maxn],l[maxn],par[maxn];
+vector<int> qu[maxn];
+int root(int x){
+	return par[x] == -1? x : par[x] = root(par[x]);
+}
+int main(){
+    int n,q,r;
+    cin>>n;
+    memset(par,-1,sizeof(par));
+    for(int i=0; i<n; i++) cin>>a[i];
+    cin>>q;
+
+    for(int i=0; i<q; i++){
+    	cin>>l[i]>>r,r--,l[i]--;
+    	qu[r].push_back(i);
+    }
+    stack<int> stk;
+    for(int i=0; i<n; i++){
+    	while(stk.size() && a[stk.top()]>=a[i])
+    		par[stk.top()] = i,stk.pop();
+    	stk.push(i);
+
+    	for(auto qi : qu[i])
+    		ans[qi] = a[root(l[qi])];
+    }
+
+    for(int i=0; i<q; i++)
+    	cout<<ans[i]<<endl;
+    return 0;
+}
+
+
+// range minimum query using sparse table
+#include<bits/stdc++.h>
+using namespace std;
+const int maxn = 1e5 + 7;
+int a[maxn];
+vector<int> dp[20];
+void make_table(int n){
+	int p = log2(n);
+	for(int i=0; i<20; i++)
+		dp[i].assign(maxn,0);
+	for(int i=0; i<n; i++)
+		dp[0][i] = a[i];
+
+	for(int i=1; i<=p; i++){
+		for(int j=0; j+(1<<i)<=n; j++){
+           dp[i][j] = min(dp[i-1][j] ,dp[i-1][j + (1<<(i-1))]);
+		}
+	}
+}
+int query(int l,int r){
+	int p = log2(r-l + 1);
+	return min(dp[p][l] , dp[p][r - (1<<p) + 1]);
+}
+int main(){
+	int t;
+	cin>>t;
+	while(t--){
+		int n,q;
+		cin>>n;
+		for(int i=0; i<n; i++) cin>>a[i];
+		cin>>q;
+        make_table(n);
+
+	    while(q--){
+	    	int l,r;
+	    	cin>>l>>r;
+	    	cout<<query(l,r)<<endl;
+	    }
+	}
+
+	return 0;
+}
+
+// lca (with binary lifting)
+#include<bits/stdc++.h>
+#define pb(i) push_back(i)
+#define vi vector<int> 
+#define vii vector<vector<int>> 
+#define ll long long
+using namespace std;
+const int maxn = 1e5 + 7;
+vi tree[maxn];
+int dp[maxn][int(log2(maxn))+1];
+int level[maxn];
+void dfs(int v,int par = -1){
+    dp[v][0] = par;
+    for(auto u : tree[v]){
+    	if(par!=u){
+    		level[u] = level[v] + 1;
+    		dfs(u,v);
+    	}
+    }
+}
+void compute(int n){
+	int p = log2(maxn);
+	for(int i=0; i<=p; i++){
+        for(int j=0; j<=n; j++){
+        	dp[i][j] = -1;
+        }
+	}
+	level[1] = 1;
+	dfs(1,-1);
+	for(int i=1; i<=p; i++){
+        for(int j=1; j<=n; j++){
+        	if(dp[j][i-1]!=-1){
+        		dp[j][i] = dp[dp[j][i-1]][i-1];
+        	}
+        }
+	}
+}
+int query(int a,int b){
+    if(level[a]>level[b])
+    	swap(a,b);
+    int d = level[b] - level[a];
+    while(d>0){
+    	int p = log2(d);
+    	b = dp[b][p];
+    	d-=(1<<p);
+    }
+    if(a==b) return a;
+    for(int i = log2(maxn); i>=0; i--){
+    	if(dp[a][i]!=-1 && (dp[a][i]!=dp[b][i])){
+    		a = dp[a][i], b = dp[b][i];
+    	}
+    }
+
+    return dp[a][0];
+}
+int main(){
+	int t;
+	cin>>t;
+	while(t--){
+		int n,q;
+		cin>>n;
+		for(int i=0; i<n-1; i++){
+			int x,y;
+			cin>>x>>y;
+			tree[x].pb(y);
+			tree[y].pb(x);
+		}
+		compute(n);
+		cin>>q;
+		while(q--){
+			int l,r;
+			cin>>l>>r;
+			cout<<query(l,r)<<endl;
+		}
+	}
+
+	return 0;
+}
+
+
+// offline lca using dfs
+#include<bits/stdc++.h>
+#define vi vector<int> 
+#define vii vector<vector<int>> 
+using  namespace std;
+const int maxn = 1e5 + 7;
+vi  tree[maxn],qu[maxn],l[maxn];
+vector<bool> vis;
+int ans[maxn],ancestor[maxn],par[maxn];
+void union_(int u,int v){
+
+}
+void dfs(int v){
+    vis[v] = true;
+    ancestor[v] = v;
+    for(auto u : tree[v]){
+    	if(!vis[u]){
+    		dfs(u);
+    		union_(v,u);
+    		ancestor[root(v)] = v;
+    	}
+    }
+    for(auto u_node : qu[v]){
+        if(vis[u_node]){
+        	ans[l[u_node]] = ancestor[root(u_node)];
+        }
+    }
+}
+int main(){
+    int t;
+    cin>>t;
+    while(t--){
+    	int n,q;
+    	cin>>n;
+    	for(int i=0; i<n-1; i++){
+    		int x,y;
+    		cin>>x>>y;
+    		tree[x].push_back(y);
+    		tree[y].push_back(x);
+    	}
+
+        for(int i=0; i<q; i++){
+        	int x,y;
+        	cin>>x>>y;
+        	qu[x].push_back(y);
+        	qu[y].push_back(x);
+        	l[x] = i;
+        }
+        
+        for(int i=0; i<n; i++)
+        	cout<<ans[i]<<endl;
+    }
+
+    return 0;
+}
