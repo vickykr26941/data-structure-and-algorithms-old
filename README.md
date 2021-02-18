@@ -1,1 +1,2 @@
-algorithms for  CP(competitive programming)
+CP
+competitive programming 
