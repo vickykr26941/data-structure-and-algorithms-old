@@ -1,0 +1,686 @@
+//segment tree data structure
+
+
+    //range minimum quary and point update
+#include<iostream>
+#include<conio.h>
+#include<vector>
+
+using namespace std;
+const int inf=10e8;
+vector<int> segement;
+void build_segement(int *arr,int si,int ss,int se){
+	if(ss==se){
+      segement[si]=arr[ss];
+	}else{
+	   	 int k=(se+ss)/2;
+	     build_segement(arr,2*si,ss,k);
+	     build_segement(arr,2*si+1,k+1,se);
+	
+	     segement[si]=min(segement[2*si],segement[2*si+1]);		
+	}
+}
+
+int quary(int si,int ss,int se,int qs,int qe){
+   if(ss>qe || se<qs) return inf;
+   else if(qs<=ss && qe>=se) return segement[si];
+	int k=(ss+se)/2;
+	
+	return min(quary(2*si,ss,k,qs,qe),quary(2*si+1,k+1,se,qs,qe));
+}
+void point_update(int si,int ss,int se,int qi,int val){
+	if(ss==se==qi){
+		segement[si]=val;
+		return;
+	}
+	int k=(se+ss)/2;
+	if(qi<=k) point_update(2*si,ss,k,qi,val);
+	else       point_update(2*si+1,k+1,se,qi,val);
+	
+	segement[si]=min(segement[2*si],segement[2*si+1]);
+}
+int main(){
+	int n;
+	cin>>n;
+	segement.resize(4*n);
+	int  *arr=new int[n];
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	build_segement(arr,1,0,n-1);
+	int q;
+	cin>>q;
+	while(q--){
+		int a,b;
+		cin>>a>>b;
+		cout<<quary(1,1,n,a,b);	
+	}	
+	return 0;	
+}
+
+
+// lazy propogation range update and mininum quary
+
+#include<iostream>
+#include<conio.h>
+#include<vector>
+
+using namespace std;
+const int inf=10e8;
+vector<int> st,lazy; //segment and lazy
+
+void build_segment(vector<int> &arr,int si,int s,int e){
+	if(s==e){
+		st[si]=arr[s];
+	}else{
+		int k=(s+e)/2;
+    	build_segment(arr,2*si,s,k);
+		build_segment(arr,2*si+1,k+1,e);
+	
+		st[si]=st[si*2] + st[si*2+1];
+	}
+}
+int quary(int si,int s,int e,int l,int r){
+	if(lazy[si] !=0){
+		int x = lazy[si];
+		lazy[si]=0;
+		st[si] += x * (e - s + 1);
+		
+		if(s != e)
+		 lazy[si*2] += x,lazy[si*2+1] += x;
+	}
+	if(s > r || e<l) return 0;
+	if(s>=l && e<=r) return st[si];
+	
+	int k=(s+e)/ 2;
+	return quary(2*si,s,k,l,r) + quary(2*si+1,k+1,e,l,r);
+}
+void update(int si,int s,int e,int l,int r,int val){
+	if(lazy[si]!=0){
+		int x=lazy[si];
+		lazy[si]=0;
+		st[si]+=x*(e-s+1);
+	
+	    if(s!=e)
+	    lazy[si*2]+=x,lazy[si*2+1]+=x;
+	}
+	if(s>r || e<l) return;
+	if(s>=l && e<=r){
+		st[si]+=(s-e + 1)*val;
+		if(s!=e){
+		  lazy[si*2]+=val,lazy[si*2+1]+=val;
+		}
+	 return;
+	}
+ int k=(s+e)/2;
+ update(2*si,s,k,l,r,val);
+ update(2*si+1,k+1,e,l,r,val);
+ 
+ st[si]=st[2*si]+st[2*si+1];
+ 
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr;
+	for(int i=0; i<n; i++){
+		cin>>arr[i];
+	}
+
+	st.assign(4*n,0),lazy.assign(4*n,0);
+	arr.assign(n,0);
+	build_segment(arr,1,0,n-1);
+	int q;
+	cin>>q;
+	while(q--){
+		int x;
+		cin>>x;
+		if(x==0){
+		    int a,b;
+		    cin>>a>>b;
+		    cout<<quary(1,1,n,a,b);
+		}
+		else{
+			int a,b,c;       //range and value to be updated
+			cin>>a>>b>>c; 
+			update(1,1,n,a,b,c);
+		}
+	}	 
+  return 0;
+}
+
+
+
+
+
+//sum range quary and point apdate
+
+#include<iostream>
+#include<vector>
+using namespace std;
+const int inf=10e8;
+vector<int> st;
+void build_tree(vector<int> &arr,int v,int lt,int rt){
+ 	if(lt==rt){
+ 		st[v]=arr[lt];
+	  }else{
+	  	 int k=(lt+rt)/2;
+	  
+	     build_tree(arr,v*2,lt,k);
+	     build_tree(arr,v*2+1,k+1,rt);
+	  
+	     st[v]=st[v*2] + st[v*2+1];
+	  }
+}
+int quary(int v,int lt,int rt,int l,int r){
+	if(lt>r || rt <l) return 0;
+	else if(lt>=l && rt<=r) return st[v];
+	
+	int k=(lt+rt)/2;
+	return quary(v*2,lt,k,l,r) + quary(v*2+1,k+1,rt,l,r);
+}
+
+void point_update(int v,int lt,int rt,int qt,int val){
+	if(lt==rt){
+		st[v]+=val;
+		return;
+	}
+   int k=(lt+rt)/2;
+   if(qt<=k) point_update(v*2,lt,k,qt,val);
+   else    point_update(v*2 +1,k+1,rt,qt,val);
+   st[v]=st[v*2] + st[v*2+1];
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++){
+		cin>>arr[i];
+	}
+	st.assign(n*4,0);
+	build_tree(arr,1,0,n-1);
+	int q;
+	cin>>q;
+	while(q--){
+		int code;
+		cin>>code;
+		if(code==0){
+			int a,b;
+	    	cin>>a>>b;
+		    cout<<quary(1,1,n,a,b)<<endl;
+		}else{
+			int a,b;
+			cin>>a>>b;
+			point_update(1,1,n,a,b);
+		}
+	}
+	return 0;
+}
+
+
+// another way to implementation of sum range quary and point update
+// reference:cp algorithms webistes
+#include<iostream>
+#include<conio.h>
+#include<vector>
+using namespace std;
+const int inf=10e8;
+void build(vector<int>& arr,int v,int tl,int tr){
+	if(tl==tr){
+		st[v]=arr[tl];
+	}else{
+		int k = (tl + tr) / 2;
+		build(arr,2*v,tl,k);
+		build(arr,2*v+1,k+1,tr);
+		
+		st[v]=st[v*2] +st[2*v+1];
+	}
+}
+int quary(int v,int tl,int tr,int l,int r){
+   if(	
+}
+void update(int v,int tl,int tr,int pos,int val){
+	if(tl==tr) {
+		st[v]+=val;
+	}else{
+		int k=(tl+tr)/2;
+		if(pos<=k) update(2*v,tl,k,pos,val);
+		else      update(2*v+1,k+1,tr,pos,val);
+		st[v]=st[2*v]+st[2*v+1];
+   }
+}
+int mian(){
+	int n;
+	cin>>n;
+	vector<int> arr;
+	for(int i=0; i<n; i++)
+	 cin>>arr[i];
+
+	build(arr,1,0,n-1);	
+}
+
+// range sum update using lazy propogation panding updates
+#include<iostream>
+#include<conio.h>
+#include<vector>
+using namespace std;
+const int inf=10e8;
+vector<int>st,lazy;
+void build_tree(vector<int>&arr,int v,int s,int e){
+	if(s==e){
+		st[v]=arr[s];
+	}else{
+		int k=(s+e)/2;
+		build_tree(arr,v*2,s,k);
+		build_tree(arr,v*2+1,k+1,e);
+		
+		st[v]=st[v*2]+st[v*2+1];
+	}
+}
+void update_range(int v,int s,int e,int l,int r,int val){
+	if(lazy[v]!=0){
+		int x=lazy[v];
+		st[v]+=x;
+		lazy[v]=0;
+		
+		if(s!=e)
+			lazy[2*v]+=x,lazy[2*v+1]+=x;
+	}
+	if(s>r || e<l) return;
+	if(s>=l && e<=r) {
+		int x=(e - s + 1)*val;
+		st[v]+=x;
+		if(s!=e){
+			lazy[2*v]+=x,lazy[2*v+1]+=x;
+		}
+	 return ;
+	} 
+	
+	int k=(s+e)/2;
+	update_range(2*v,s,k,l,r,val);
+	update_range(2*v+1,k+1,e,l,r,val);
+	
+	st[v]=st[2*v]+st[2*v+1];
+}
+int quary(int v,int s,int e,int l,int r){
+	if(lazy[v]!=0){
+		int x= lazy[v];
+		st[v]+=x;
+		lazy[v]=0;
+		if(s!=e){
+			lazy[2*v]+=x,lazy[2*v+1]+=x;
+		}
+	}
+	if(s>r || e<l) return 0;
+	if(s>=l && e<=r) return st[v];
+	int k=(s+e)/2;
+	return quary(2*v,s,k,l,r) + quary(2*v+1,k+1,e,l,r);
+	
+}
+int main(){
+	int n;
+	cin>>n;
+	st.assign(4*n,0);
+	lazy.assign(4*n,0);
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++){
+		cin>>arr[i];
+	}
+	build_tree(arr,1,0,n-1);
+	int q;
+	cin>>q;
+	while(q--){
+		int code;
+		cin>>code;
+		if(code==0){
+			int a,b;
+			cin>>a>>b;
+			cout<<quary(1,1,n,a,b)<<endl;
+		}
+		else{
+			int a,b,val;
+			cin>>a>>b>>val;
+			update_range(1,1,n,a,b,val);
+		}
+	}
+	
+ return 0;
+}
+
+// finding the maximum and there occurences in a range l to r and update the range
+#include<iostream>
+#include<conio.h>
+#include<vector>
+using namespace std;
+const int inf=10e8;
+using pii=pair<int,int>;
+vector<pii> st;
+pii combine(pii a,pii b){
+	if(a.first>b.first) return a;
+	if(b.first> a.first) return b;
+	return {a.first,a.second+b.second};
+}
+void build_tree(vector<int> &arr,int v,int s,int e){
+	if(s==e){
+		st[v]=make_pair(arr[s],1);
+	}else{
+		int k=(s+e)/2;
+		build_tree(arr,2*v,s,k);
+		build_tree(arr,2*v+1,k+1,e);
+		
+		st[v]=combine(st[v*2],st[v*2+1]);
+	}
+}
+void update(int v,int s,int e,int q,int val){
+	if(s==e){
+		st[v]={val,1};
+	}else{
+		int k=(s+e)/2;
+		if(q<=k) update(2*v,s,k,q,val);
+		else   update(2*v+1,k+1,e,q,val);
+		
+		st[v]=combine(st[2*v],st[2*v+1]);
+	}
+} 
+pii quary(int v,int s,int e,int l,int r){
+	if(s>r || e<l) return {inf,-1};
+	if(s>=l && e<=r) return st[v];
+	int k=(s+e)/2;
+	return combine(quary(2*v,s,k,l,r),quary(2*v+1,k+1,e,l,r));
+}
+int mian(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+	 cin>>arr[i];
+	st.resize(4*n);
+	build_tree(arr,1,0,n-1);
+	int q;
+	cin>>q;
+	while(q--){
+		int code;
+		cin>>code;
+		if(code==0){
+			int a,b;
+			cin>>a>>b;
+			pii p=quary(1,1,n,a,b);
+			cout<<p.first<<" "<<p.second<<endl;
+		}
+		else{
+			int a,c;
+			cin>>a>>c;
+			update(1,1,n,a,c);
+		}
+	}
+	
+ return 0;
+}
+
+
+    // maximum gcd in range l to r using segment tree
+#include<iostream>
+#include<vector>
+using namespace std;
+const int inf=10e8;
+
+vector<int> st;
+int gcd(int a,int b){
+	if(b==0) return a;
+	return gcd(b,a%b);
+}
+void build_tree(vector<int>& arr,int v,int s,int e){
+	if(s==e){
+		st[v]=gcd(arr[s],arr[s]);
+	}else{
+		int k=(s+e)/2;
+	    build_tree(arr,2*v,s,k);
+		build_tree(arr,2*v+1,k+1,e);
+	
+		st[v]=gcd(st[2*v],st[2*v+1]);
+	}
+
+}
+int quary(int v,int s,int e,int l,int r){
+	if(s>r || e<l) return 0;
+	if(s>=l && e<=r) return st[v];
+	int k=(s+e)/2;
+	return gcd(quary(2*v,s,k,l,r),quary(2*v+1,k+1,e,l,r));
+}
+void update(int v,int s,int e,int q,int val){
+	if(s==e){
+		st[v]=val;
+	}else{
+		int k=(s+e)/2;
+		if(q<=k) update(2*v,s,k,q,val);
+		else   update(2*v+1,k+1,e,q,val);
+		
+		st[v]=gcd(st[2*v],st[2*v+1]);
+	}
+} 
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++){
+		cin>>arr[i];
+	}
+	st.assign(4*n,0);
+	build_tree(arr,1,0,n-1);
+	int q;
+	cin>>q;
+	while(q--){
+		int code;
+		cin>>code;
+		if(code==0){
+			int a,b;
+			cin>>a>>b;
+			cout<<quary(1,1,n,a,b);
+		}else{
+			int a,b;
+			cin>>a>>b;
+			update(1,1,n,a,b);
+		}
+	}
+	
+	return 0;
+}
+
+
+//counting the number of zero's in given range 
+//soluction: the problem is the extension of sum range quary it can be solved as sum quary range probleam
+
+
+
+
+//searching the k'th zeros in array /searching the kth particular number /chracter /string /pair/or any kth searching probleam can be solved 
+// by segment tree 
+// below the example to searching the k'th zeros in the array/ or finding the first segment that conctain k zero's
+//return :the index of the k'th zero 
+
+
+#include<iostream>
+#include<vector>
+using namespace std;
+vector<int> st;
+void build_tree(vector<int> &arr,int v,int s,int e){
+	if(s==e){
+		st[v]=(arr[s]==0);
+	}else{
+		int k=(s+e)/2;
+    	build_tree(arr,2*v,s,k);
+	    build_tree(arr,2*v+1,k+1,e);
+		st[v]=st[2*v]+st[2*v+1];
+	}
+	
+}
+int sum(int v,int s,int e,int l,int r){  //return the sum of range
+	if(s>r || e<l) return 0;
+	if(s>=l && e<=r) return st[v];
+	int k=(s+e)/2;
+	return sum(v*2,s,k,l,r) + sum(v*2+1,k+1,e,l,r);
+}
+int find_kth(int v,int s,int e,int k){  // query is to find the position of kth 0 in array
+	if(k>st[v]) return -1;
+	if(s==e) return s;
+	int mid=(s+e)/2;
+	if(st[2*v]>k) return find_kth(2*v,s,mid,k);
+	else        return find_kth(2*v+1,mid+1,e,k-st[v*2]);
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+	cin>>arr[i];
+	
+	st.assign(4*n,0);
+	build_tree(arr,1,0,n-1);
+	
+	 int q;
+	 cin>>q;
+	 while(q--){
+	 	int c;
+	 	cin>>c;
+	 	cout<<find_kth(1,1,n,c);   // find the position of kth zero
+	 }
+	
+	return 0;	
+}
+
+
+
+//searching for the first element // a little hard solving it latter
+
+
+// finding the subsegment with the maximal sum
+// we need to store maximum sum ,maximum prefix sum, maximum suffix sum to find the maximum subsegment
+
+#include<iostream>
+#include<vector>
+using namespace std;
+struct data{
+	int sum,pre_sum,suf_sum,ans;
+};
+
+vector<data> st;
+data combine(data l,data r){
+	data res;
+	res.sum=l.sum+r.sum;
+	res.pre_sum=max(l.pre_sum,l.sum+r.pre_sum);
+	res.suf_sum=max(r.suf_sum,r.sum+l.suf_sum);
+	res.ans=max(max(l.ans,r.ans),l.suf_sum+r.pre_sum);
+
+return res;
+}
+data make_data(int val){
+	data res;
+	res.sum=val;
+	res.pre_sum=res.suf_sum=res.ans=max(0,val);
+	return res;
+}
+void build_tree(vector<int> &arr,int v,int s,int e){
+	if(s==e){
+		st[v]=make_data(arr[s]);
+	}else{
+		int k=(s+e)/2;
+		build_tree(arr,2*v,s,k);
+		build_tree(arr,2*v+1,k+1,e);
+		
+		st[v]=combine(st[2*v],st[2*v+1]);
+	}
+}
+void update(int v,int s,int e,int q,int val){
+	if(s==e){
+		st[v]=make_data(val);
+	}else{
+		int k=(s+e)/2;
+		if(q<=k) update(2*v,s,k,q,val);
+		else   update(2*v+1,k+1,e,q,val);
+		st[v]=combine(st[2*v],st[2*v+1]);
+	}
+}
+data query(int v,int s,int e,int l,int r){
+	if(s>r || e<l) return make_data(0);
+	if(s>=l && e<=r) {
+		return st[v];
+	}
+	int k=(s+e)/2;
+	return combine(query(2*v,s,k,l,r),query(2*v+1,k+1,e,l,r));
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+	cin>>arr[i];
+	
+	st.assign(4*n,make_data(0));
+	build_tree(arr,1,0,n-1);
+	
+	int q;
+	cin>>q;
+	while(q--){
+		int code;
+		cin>>code;
+		if(code==0){
+			int a,b;
+			cin>>a>>b;
+			cout<<query(1,1,n,a,b).ans<<endl;
+		}else{
+			int a,c;
+			cin>>a>>c;
+			update(1,1,n,a,c);
+		}
+	}
+	
+	return 0;
+}
+
+
+// for three given numbers (l,r,x) we have to find the minimal number in the segment a[l…r] which is greater than or equal to x.
+
+#include<iostream>
+#include<vector>
+#define MAXN 100
+using namespace std;
+vector<int> st[MAXN];
+const int inf=10e8;
+void build_tree(vector<int>&arr,int v,int s,int e){
+	if(s==e){
+		st[v]=vector<int>(1,arr[s]);
+	}else{
+		int k=(s+e)/2;
+		build_tree(arr,2*v,s,k);
+		build_tree(arr,2*v+1,k+1,e);
+		merge(st[2*v].begin(),st[2*v].end(),st[2*v+1].begin(),st[2*v+1].end(),back_inserter(st[v]));
+	}
+}
+int query(int v,int s,int e,int l,int r,int x){
+	if(s>r || e<l) return inf;
+	if(s>=l && e<=r) {
+		int a=lower_bound(st[v].begin(),st[v].end(),x)-st[v].begin();
+		if(a!=st[v].size()) return a;
+		return inf;
+	}
+	int k=(s+e)/2;
+	return min(query(2*v,s,k,l,r),query(2*v+1,k+1,e,l,r));
+}
+int main(){
+	int n;
+	cin>>n
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++){
+		cin>>arr[i];
+	}
+   build_tree(arr,1,0,n-1);
+   
+   int q;
+   cin>>q;
+   while(q--){
+   	int a,b,c;
+   	cin>>a>>b>>c;
+   	cout<<query(a,b,c);
+	}
+	
+	return 0;
+}
