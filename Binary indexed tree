@@ -1,0 +1,413 @@
+//fenwick tree data structure
+//O(nlogn) construction of fenwick tree/bit tree
+
+
+    // one based indexing approaches
+//O(logn) quary
+#include<iostream>
+#include<conio.h>
+#include<vector>
+using namespace std;
+vector<int> bit; // array for stroring bit tree data
+void add(int idx,int val){         //point upste // use this construction as well with n updates 
+    int n=bit.size();
+	for(++idx; idx<n; idx+=idx & -idx)
+	 bit[idx]+=val;
+}
+int sum_quary(int idx){   // return sum from 0 to idx
+    int sum=0;
+   	for(++idx; idx>0; idx-=idx & -idx)
+   	sum+=bit[idx];
+   	
+   	return sum;
+}
+
+int sum_range(int l,int r){
+	return sum_quary(r)-sum_quary(l-1);
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+	cin>>arr[i];
+	
+	bit.assign(n+1,0);
+	for (int i=0; i<n; i++)
+	 add(i,arr[i]);
+	
+	int q;
+	cin>>q;
+	while(q--){
+		int code;
+		cin>>code;
+		if(code==0){
+			int a,b;
+			cin>>a>>b;
+			cout<<sum_range(a,b);
+		}else{
+			int a,b;
+			cin>>a>>b;
+			add(a,b); // update index a with value b
+		}
+	}
+	
+	return 0;
+}
+
+
+//range update and sum quary
+#include<iostream>
+#include<vector>
+using namespace std;
+vector<int> bit;
+void add(int idx,int val){
+	int n=bit.size();
+	for(++idx; idx<n; i++)
+    bit[idx]+=val;
+}
+void range_update(int l,int r,int val){
+	add(l,val);
+	add(r+1,-val);
+}
+int sum_quary(int idx){
+	int sum=0; 
+	for(++idx; idx>0; idx-=idx& -idx)
+	 sum+=bit[idx];
+	return sum;
+}
+int mian(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+	cin>>arr[i];
+	bit.assign(n+1,0);
+	int q;
+	cin>>q;
+	while(q--){
+		int code;
+		cin>>code;
+		if(code==0){
+			int a,b;
+			cin>>a>>b;
+			cout<<sum_quary(a,b);
+		}else{
+			int a,b,c; // update the range [a,b] with the value +c
+			cin>>a>>b>>c;
+			update(a,b,c);
+		}
+	}
+	
+return 0;
+}
+
+
+//min quary using bit
+//store the minimum between the binary range segment
+
+#include<iostream>
+#include<conio.h>
+#include<vector>
+using namespace std;
+const int inf=10e8;
+vector<int> bit;
+void add(int idx,int val){
+	int n=bit.size();
+	for(++idx; idx<n; idx+=idx&-idx)
+	bit[idx]=min(bit[idx],val);
+}
+int min_quary(int idx){        // minimum quary possible only  0 to r
+                             //range minimum query not possible using bit
+	int mn=inf;
+	for(++idx; idx>0;idx-=idx&-idx)
+	mn=min(mn,bit[idx]);
+
+return mn;
+}
+int main(){
+	int n; 
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+	cin>> arr[i];
+	
+	bit.assign(n+1,inf);
+	for(int i=0; i<n; i++)
+	add(i,arr[i]);
+	
+	int q;
+	cin>>q;
+	while(q--){
+		int code;
+		cin>>code;
+		if(code==0){
+			int a;
+			cin>>a;
+			cout<<min_quary(a);
+		}else{
+			int a,b;
+			cin>>a>>b;
+			add(a,b);
+		}
+	}
+	
+	
+	return 0;
+}
+
+//bit tree using 0 based indexing 
+
+
+#include<iostream>
+#include<conio.h>
+using namespace std;
+vector<int> bit;                     // binary index tree
+void add(int idx,int val){
+	for(; idx<n; idx=idx|(idx+1))
+	   bit[idx]+=val;
+}
+int sum(int idx){
+	int sum=0;
+	for(; idx>=0; idx=(idx&(idx+1))-1)
+	sum+=bit[idx];
+}
+void range_update(int l,int r,int val){
+	add(l,val);
+	add(r+1,val);
+}
+int range_sum(int l,int r){
+	return sum(r)-sum(l-1);
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+	cin>>arr[i];
+	bit.assign(n,0);
+	
+	for(int i=0; i<n; i++){
+		add(i,arr[i]);
+	}
+	
+	int q;
+	cin>>q;
+	while(q--){
+		int code;
+		cin>>code;
+		if(code==0){
+			int a,b;
+			cin>>a>>b;
+			cout<<range_sum(a,b);
+		}else{
+			int a,b;
+			cin>>a>>b;
+			add(a,b); //update point a with value b
+		}
+	}
+	return 0;
+}
+
+
+//fenwic tree/bit  on 2d array 
+//renge sum quary in 2d matrix
+#include<iostream>
+#include<vector>
+using namespace std;
+vector<vector<int>> bit;
+void add(int x,int y,int val){
+	for(int i=x; i<n; i=i|(i+1)){
+		for(int j=y; j<m; j=j|(j+1)){
+			bit[i][j]+=val;
+		}
+	}
+}
+int sum(int x,int y){  // sum from 0,0 to x,y 
+	int sum=0; 
+	for(int i=x; i>=0; i=(i&(i+1)-1)){
+		for(int j=y; j>=0; j=(j&(j+1)-1)){
+			sum+=bit[i][j];
+		}
+	}
+	return sum;
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<int>> arr(n,vector<int>(m,0));
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+			cin>>arr[i][j];
+		}
+	}
+	bit.assign(n,vector<int>(m,0));
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+			add(i,j,arr[i][j]);
+		}
+	}
+
+  int q;
+  cin>>q;
+  while(q--){
+  	int code;
+  	cin>>code;
+  	if(code==0){
+  		int a,b;
+  		cin>>a>>b;
+  		cout<<sum(a,b);
+	   }else{
+	   	int a,b,c;
+	   	add(a,b,c);  //point update
+	   }
+  }
+return 0;
+}
+
+
+//range update and point quary
+
+  a simple approach but not efficient
+#include<iostream>
+#include<vector>
+using namespace std;
+vector<int> bit;
+void add(int idx, int val) {
+	int n=bit.size();
+   for (++idx; idx < n; idx += idx & -idx)
+       bit[idx] += val;
+}
+
+void range_add(int l, int r, int val) {
+   add(l, val);
+   add(r + 1, -val);
+}
+int point_query(int idx) {
+   int ret = 0;
+   for (++idx; idx > 0; idx -= idx & -idx)
+       ret += bit[idx];
+   return ret;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int>arr(n,0);
+	for(int i=0; i<n; i++){
+		cin>>arr[i];
+	}
+	bit.assign(n+1,0);
+	for(int i=0; i<n; i++)
+	add(i,arr[i]);
+	
+	int q;
+	cin>>q;
+	while(q--){
+		int code;
+		cin>>code;
+		if(code==0){
+			int a,b;
+			cin>>a>>b;
+			cout<<point_query(a,b);
+		}else{
+			int a,b,c;
+			cin>>a>>b>>c;
+			range_add(a,b,c);
+		}
+	}
+	return 0;
+}
+
+
+
+//renge update and range quary
+//not clrerly understandble :take more resources and try to understand
+
+#include<iostream>
+#include<vector>
+using namespace std;
+vector<int> bit;
+void add(int idx,int val){
+	int n=bit.size();
+	for(++idx; idx<n; idx+=idx&-idx)
+	bit[idx]+=val;
+}
+int sum(int idx){
+	int s=0; 
+	for(++idx; idx>0; idx-=idx&-idx)
+	s+=bit[idx];
+	
+	return s;
+}
+void r
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++){
+		cin>>arr[i];
+	}
+	bit.assign(n+1,0);
+	for(int i=0; i<n; i++){
+		add(i,arr[i]);
+	}
+	
+	int q;
+	cin>>q;
+	qhile(q--){
+		int code;
+		cin>>code;
+		if(code==0){
+			int a,b;
+			cin>>a>>b;
+			
+		}
+	}
+return 0;
+}
+
+//unsual queries 
+#include<iostream>
+#include<vector>
+#include<stack>
+using namespace std;
+int __query(vector<int> arr,int x,int y){
+	stack<int> stk;
+	vector<int> res;
+
+	int ans=0;
+	for(int i=x-1; i<y; i++)
+		res.push_back(arr[i]);
+	for(int i=res.size()-1; i>=0; i--){
+		while(!stk.empty() && res[stk.top()]<=res[i]) stk.pop();
+            ans=max(ans,(int)stk.size() + 1);
+            stk.push(i);
+	}
+	return ans;
+}
+int main(){
+	int n,q,s;
+	cin>>n>>q>>s;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	int last=0;
+	while(q--){
+		if(s==0){
+			int x,y;
+			cin>>x>>y;
+			if(x>y) swap(x,y);
+			cout<<__query(arr,x,y)<<endl;
+		}
+		else{
+			int x,y;
+			cin>>x>>y;
+			x=(x+last-1)%n + 1;
+			y=(y+last-1)%n + 1;
+			if(x>y) swap(x,y);
+            last=__query(arr,x,y);
+            cout<<last<<endl;
+		}
+	}
+	return 0;
+}
