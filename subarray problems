@@ -1,0 +1,773 @@
+// number of suarray having sum less then k
+// follow up : linear time soluction 
+#include<bits/stdc++.h>
+
+using namespace std;
+void test_case(){
+     // TODO: cook your dish here 
+	int n, k; cin>>n>>k;
+
+	vector<int> a(n,0);
+	for(int i=0; i<n; i++)
+		cin>>a[i];
+    
+    int res = 0,s = 0;
+    for(int i=0,j=0; j<n; j++){
+    	s+=a[j];
+    	while(s>k){
+    		s-=a[i++];
+    	}
+    	res += (j - i + 1);
+    }
+    cout<<res<<endl;
+}
+int main(){
+
+	int t = 1;
+	cin>>t;
+	while(t--){
+		test_case();
+		cout<<"\n";
+	}
+	return 0;
+}
+
+
+// find the number of subarray having sum between the given range ( array elements are non-negative)
+#include<bits/stdc++.h>
+using namespace std;
+int find(vector<int> a,int val,int k){
+	int s = 0, res = 0 , n = a.size();
+	for(int i=0,j=0; j<n; j++){
+		s+=a[j];
+		while(s>k){
+			s-=a[i++];
+		}
+		res += (j - i + 1);
+	}
+	return res;
+}
+void test_case(){
+	int n, l, r,k;
+	cin>>n>>k;
+	vector<int> a(n,0);
+	for(int i=0; i<n; i++) cin>>a[i];
+	
+	cin>>l>>r;
+    // ans = no.of subr sum till r - no.of subr till (l-1)
+    int ans = find(a,r,k) - find(a,l-1,k);
+    cout<<ans;
+}
+int main(){
+	int t;
+	cin>>t;
+	while(t--){
+		test_case();
+		cout<<"\n";
+	}
+	return 0;
+}
+
+
+// count of smaller number after self
+#include<bits/stdc++.h>
+#define vi vector<int> 
+using namespace std;
+vi bit;
+void update(int i,int n){
+     while(i<=n){
+        bit[i]++;
+        i += i&-i;
+     }
+}
+int query(int i){
+	int s = 0;
+	while(i>0){
+		s+=bit[i];
+		i-=i&-i;
+	}
+	return s;
+}
+void test_case(){
+	int n; cin>>n;
+	vi a(n,0);
+	bit.assign(n+1,0);
+
+	unordered_map<int,int> m;
+	int maxn = 0;
+	for(int i=0; i<n; i++)
+	   cin>>a[i];
+	sort(begin(a),end(a));
+
+	for(int i=0; i<n; i++)
+		m[a[i]]++;
+	for(int i=0; i<n; i++)
+		a[i] = m[a[i]], maxn = max(maxn,a[i]);
+
+    vi res(n,0);
+    for(int i=0; i<n; i++){
+    	update(a[i],maxn);
+    	res[i] = query(a[i]-1);
+    }
+    for(int i=0; i<n; i++)
+    	cout<<res[i]<<" ";
+}
+int main(){
+	int t;
+	cin>>t;
+	while(t--){
+		test_case();
+		cout<<"\n";
+	}
+	return 0;
+}
+
+
+// inversion count of the array using merge sort algorithm 
+#include<bits/stdc++.h>
+#define vi vector<int>
+#define pb(i) push_back(i)
+using namespace std;
+int res = 0;
+void merge(vi& v,int l,int m,int r){
+	vi a,b;
+	for(int i=l; i<=m; i++)
+	 a.pb(v[i]);
+	for(int i=m+1; i<=r; i++)
+	 b.pb(v[i]);
+
+	vi c;
+	int i=0,j=0,k=0;
+	while(i<a.size() && j<b.size()){
+		if(a[i]>b[j]){
+			res += a.size() - i;
+			c.pb(b[j++]);
+		}else{
+            c.pb(a[i++]);
+		}  
+	}
+
+	while(i<a.size())
+		c.pb(a[i++]);
+	while(j<b.size())
+		c.pb(b[j++]);
+    k = 0;
+	for(int i=l; i<=r; i++)
+		v[i] = c[k++];
+    
+}
+void merge_sort(vi& v,int l,int r){
+	if(l<r){
+		int k = (l + r)/2;
+		merge_sort(v,l,k);
+		merge_sort(v,k+1,r);
+		merge(v,l,k,r);
+	}
+}
+void test_case(){
+     int n; cin>>n;
+     vi v(n,0);
+     for(int i=0; i<n; i++)
+     	cin>>v[i];
+     merge_sort(v,0,n-1);
+     cout<<res<<endl;
+}
+int main(){
+	int t;
+	cin>>t;
+	while(t--){
+		test_case();
+		cout<<"\n";
+	}
+	return 0;
+}
+
+
+// problem based on the above algorithm inversion count
+// print no.of inversions for each element
+#include<bits/stdc++.h>
+#define vi vector<int>
+#define pb(i) push_back(i)
+#define pii pair<int,int>
+#define ss second
+#define ff first
+
+using namespace std;
+void merge(vector<pii>&v,int l,int m,int r,vi &res){
+    vector<pii> a,b;
+    for(int i=l; i<=m; i++)
+    	a.pb(v[i]);
+    for(int i=m+1; i<=r; i++)
+    	b.pb(v[i]);
+
+    vector<pii> c;
+    int i=0,j=0,right_cnt = 0;
+    while(i<a.size() && j<b.size()){
+    	if(a[i].ff>b[j].ff){
+    		right_cnt++;
+    		c.pb(b[j++]);
+    	}
+    	else{
+           res[a[i].ss] +=right_cnt;
+           c.pb(a[i++]);
+    	}
+    }
+    while(i<a.size()){
+    	res[a[i].ss]+=right_cnt;
+    	c.pb(a[i++]);
+    }
+    while(j<b.size())
+    	c.pb(b[j++]);
+
+    int k = 0;
+    for(int i=l; i<=r; i++)
+    	v[i] = c[k++];
+
+  //  cout<<" debug"<<endl;
+
+}
+void merge_sort(vector<pii>&v,int l,int r,vi&res){
+	if(l<r){
+		int k = (l + r)/2;
+		merge_sort(v,l,k,res);
+		merge_sort(v,k+1,r,res);
+		merge(v,l,k,r,res);
+	}
+}
+void test_case(){
+	int n; cin>>n;
+	vector<pii> v(n,{0,0});
+	for(int i=0; i<n; i++)
+		cin>>v[i].ff,v[i].ss = i;
+
+	vi res(n,0);
+	merge_sort(v,0,n-1,res);
+
+	for(int i=0; i<n; i++)
+		cout<<res[i]<<" ";
+}
+int main(){
+	int t; cin>>t;
+	while(t--){
+		test_case();
+		cout<<"\n";
+	}
+	return 0;
+}
+
+
+// above problem solving using AVL tree
+#include<bits/stdc++.h>
+#define vi vector<int>
+#define pb(i) push_back(i)
+using namespace std;
+struct Node{
+	int val;
+	Node *left,*right;
+	int subtree_size;
+	int node_cnt;
+	Node(int val){
+        left = nullptr;
+        right = nullptr;
+        subtree_size = 0;
+        node_cnt =0;
+	}
+};
+Node *build_tree(vi&values,int l,int r){
+	if(l>r)
+		return nullptr;
+	int k = (l + r)/2;
+	Node *node = new Node(values[k]);
+	node->left = build_tree(values,l,k-1);
+	node->right = build_tree(values,k+1,r);
+	return node;
+}
+void marke_added(Node *root,int v){
+	if(root->val<v)
+       marke_added(root->left,v);
+	else if(root->val>v)
+	   marke_added(root->right,v);
+	else
+		root->node_cnt++;
+	root->subtree_size++;
+}
+void test_case(){
+	int n;
+	cin>>n;
+	vi v(n,0);
+	for(int i=0; i<n; i++)
+		cin>>v[i];
+	
+	map<int,int> m;
+	for(auto x : v)
+		m[x]++;
+	vi a;
+	for(auto x : m)
+		a.pb(x.first);
+    
+	Node *root = build_tree(a,0,a.size()-1);
+
+    vi res(n,0);
+	for(int i=n-1; i>=0; i--){
+        marke_added(root,v[i]);
+
+        Node *cur = root;
+        int cur_res = 0;
+        while(cur->val!=v[i]){
+        	if(v[i]<cur->val){
+        		cur_res += (cur->left!=nullptr)?cur->left->subtree_size:0 + cur->node_cnt;
+        		cur = cur->right;
+        	}
+        	else if(v[i]>cur->val)
+        		cur = cur->left;
+        }
+        cur_res +=(cur->left!=nullptr)?cur->left->subtree_size:0 + cur->node_cnt;
+        res[i] = cur_res;
+	}
+
+    for(int i=0; i<n; i++)
+    	cout<<res[i]<<" ";
+
+}
+int main(){
+   int t; cin>>t;
+   while(t--){
+   	test_case();
+   	cout<<"\n";
+   }
+   return 0;
+}
+
+
+
+// fint the largest rectangle in histogram 
+#include<bits/stdc++.h>
+using namespace std;
+void test_case(){
+	int n; cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	stack<int> stk;
+	arr.push_back(0);
+	stk.push(-1);
+
+    int res = 0;
+	for(int i=0; i<n; i++){
+		while(stk.size()>1 && arr[stk.top()]>arr[i]){
+			int r = i - 1;
+			int l = stk.top(); stk.pop();
+			res = max(res,arr[l]*(r - stk.top()));
+		}
+	}
+	cout<<res<<endl;
+}
+int main(){
+	int t;
+	cin>>t;
+	while(t--){
+		test_case();
+		cout<<'\n';
+	}
+	return 0;
+}
+
+// fint the smallest positive missing number in array 
+
+// joeshush problem (circul ot death)
+#include<bits/stdc++.h>
+using namespace std;
+int solve(int n,int k){
+    return n>1?(solve(n-1,k) + k)%n:0;
+}
+void test_case(){
+	int n,k; cin>>n>>k;
+	cout<<solve(n,k);
+}
+int main(){
+	int t;
+	cin>>t;
+	while(t--){
+		test_case();
+		cout<<" \n";
+	}
+	return 0;
+}
+
+
+// maximum subarray sum using divide and concor
+// time complexity : O(nlogn)
+
+#include<bits/stdc++.h>
+using namespace std;
+long long inf = 1e9 + 7;
+int max_(int a,int b,int c){
+	return max(max(a,b),c);
+}
+int cal_sum(vector<int> arr,int l,int m,int r){
+	int left = -inf,right = -inf, s = 0;
+	for(int i=l; i<=m; i++){
+         s+=arr[i];
+         if(s>left){
+         	left = s;
+         }
+	}
+	s = 0;
+	for(int i=m+1; i<=r; i++){
+		s+=arr[i];
+        if(s>right){
+        	right = s;
+        }
+	}
+	return max_(left,right,left + right);
+}
+int solve(vector<int>&arr,int l,int r){
+	if(l>r) return -inf;
+	if(l==r)
+		return arr[l];
+	int k = (l + r)/2;
+	int left = solve(arr,l,k-1);
+	int right = solve(arr,k+1,r);
+	int mid = cal_sum(arr,l,k,r);
+	return max_(left,right,mid);
+}
+void test_case(){
+	int n; cin>>n;
+	vector<int> v(n,0);
+	for(int i=0; i<n; i++)
+		cin>>v[i];
+	cout<<solve(v,0,n-1)<<endl;
+}
+int main(){
+	int t;
+	cin>>t;
+	while(t--){
+		test_case();
+	}
+	return 0;
+}
+
+// find ugly number // the ugly numbers are only those numbers whose prime factors are 2,3,5 
+// 1 is also a ugly number
+#include<bits/stdc++.h>
+using namespace std;
+void test_case(){
+	int n; cin>>n;
+	vector<int> v(n,0);
+	v[0] = 1;
+	int i2 = 0, i3 = 0, i5 = 0;
+	int a=2,b=3,c=5,ugly;
+	for(int i=1; i<n; i++){
+		ugly = min(a,min(b,c));
+		v[i] = ugly;
+		if(ugly==a){
+           i2++;
+           a = v[i2] * 2;
+		}
+		if(ugly == b){
+           i3++;
+           b = v[i3] * 3;
+		}
+		if(ugly == c){
+		   i5++;
+		   c = v[i5] * 5;
+		}
+	}
+	cout<<v[n-1];
+}
+int main(){
+	int t; cin>>t;
+	while(t--){
+		test_case();
+		cout<<"\n";
+	}
+	return 0;
+}
+
+
+// ugly number using set datastructure 
+#include<bits/stdc++.h>
+using namespace std;
+void test_case(){
+	int n; cin>>n;
+	if(n<=5 && n!=4){
+		cout<<n;
+		return ;
+	}
+	set<int> st;
+	st.insert(1);
+	n--;
+	while(n>0){
+		int x = *st.begin();
+		st.erase(begin(st));
+		cout<<x<<" ";
+		st.insert(x*2),st.insert(x*3),st.insert(x*5);
+		n--;
+	}
+	for(auto x : st)
+		cout<<x<<" ";
+	cout<<endl;
+	cout<<*st.begin();
+}
+int main(){
+	int t; cin>>t;
+	while(t--){
+		test_case();
+		cout<<"\n";
+	}
+	return 0;
+}
+
+// merge two sorted array using recursion 
+#include<bits/stdc++.h>
+using namespace std;
+const int inf = 1e9 + 7;
+vector<int> res;
+void solve(int a[],int b[],int i,int j,int n,int m,int k){
+	if(i>n or j>m) return ;
+	if(a[i]<b[j]){
+		res[k] = a[i++];
+		k++;
+        solve(a,b,i,j,n,m,k);
+	}
+	else{
+		res[k] = b[j++];
+		k++;
+		solve(a,b,i,j,n,m,k);
+	}
+}
+void test_case(){
+	int n,m; cin>>n>>m;
+	int a[n+1],b[m+1];
+	for(int i=0; i<n; i++)
+		cin>>a[i];
+	for(int j=0; j<m; j++)
+		cin>>b[j];
+    
+    a[n] = inf, b[m] = inf;
+	res.resize(n+m,0);
+	solve(a,b,0,0,n,m,0);
+
+	for(int i=0; i<n+m; i++)
+		cout<<res[i]<<" ";
+
+}
+int main(){
+	int t; cin>>t;
+	while(t--){
+		test_case();
+		cout<<"\n";
+	}
+	return 0;
+}
+
+//merge k sorted array 
+
+
+#include<bits/stdc++.h>
+using namespace std;
+vector<vector<int>> solve(vector<vector<int>> v){
+	int n = v.size();
+
+}
+void test_case(){
+	vector<vector<int>> v;
+	int n; cin>>n; // no.of list
+	for(int i=0; i<n; i++){ 
+		int m; cin>>m;    // no. of element in current list
+		vector<int> inside(m,0);
+		for(int j=0; j<m; j++){
+			cin>>inside[i];
+		}
+		v.push_back(inside);
+	}
+
+	vector<vector<int>> res = solve(v);
+	for(int i=0; i<n; i++){
+		for(int j=0; j<res[i].size(); j++)
+			cout<<res[i][j]<<" ";
+		cout<<"\n";
+	}
+}
+int main(){
+	int t; cin>>t;
+	while(t--){
+		test_case();
+		cout<<"\n";
+	}
+	return 0;
+}
+
+// given a points on xy plane find the minimum ractanle on the plane parallet to x axis and y axis
+// brute force method
+#include<bits/stdc++.h>
+using namespace std;
+const int inf = 1e9 + 7;
+void test_case(){
+	int n; cin>>n;
+	vector<vector<int>> v(n,vector<int>(2,0));
+
+	set<pair<int,int>> st;
+	for(int i=0; i<n; i++){
+		cin>>v[i][0]>>v[i][1];
+		st.insert({v[i][0],v[i][1]});
+	}
+
+
+    int result = inf;
+	for(int i=0; i<n; i++){
+		int x1 = v[i][0], y1 = v[i][1];
+		for(int j=0; j<n; j++){
+			int x2 = v[j][0], y2 = v[j][1];
+			if(x1<x2 && y1<y2){
+				if(st.find({x1,y2})!=st.end() && st.find({x2,y1})!=st.end()){
+					int current_area = abs(x1-x2) * abs(y1-y2);
+					result = min(result,current_area);
+				}
+			}
+		}
+	}
+
+	cout<<result<<endl;
+}
+int main(){
+	int t; cin>>t;
+	while(t--){
+		test_case();
+		cout<<'\n';
+	}
+	return 0;
+}
+
+// anothe way to implement the above question 
+#include<bits/stdc++.h>
+using namespace std;
+
+const long long inf = 1e9 + 7;
+void test_case(){
+	int n; cin>>n;
+	vector<vector<int>> v(n,vector<int>(2,0));
+	for(int i=0; i<n; i++){
+		cin>>v[i][0]>>v[i][1];
+	}
+
+    map<int,vector<int>> m;
+    for(int i=0; i<n; i++){
+       m[v[i][0]].push_back(v[i][1]);
+    }
+
+    int resutl = inf; 
+    map<pair<int,int>,int> seen;
+    for(auto x : m){
+    	vector<int> col = x.second;
+    	sort(begin(col),end(col));
+
+    	for(int i=0; i<col.size(); i++){
+    		for(int j=0; j<i; j++){
+    			int y1 = col[j];
+    			int y2 = col[i];
+                if(seen.count({y1,y2})){
+                    int cur_area = abs(seen[{y1,y2}] - x.first) * abs(y1 - y2);
+                    resutl = min(resutl , cur_area);
+                }
+    			seen[{y1,y2}] = x.first;
+    		}
+    	}
+    }
+
+    cout<<resutl<<endl;
+}
+int main(){
+	int t; cin>>t;
+	while(t--){
+		test_case();
+		cout<<"\n";
+	}
+
+	return 0;
+}
+
+// find the number of ways to partition a string so that each part is atmost k size
+#include<bits/stdc++.h>
+using namespace std;
+const int mod = 1e9 + 7;
+void test_case(){
+	int n,k; cin>>n>>k;
+	string s; cin>>s;
+	vector<int> dp(n+1,0);
+	dp[0] = 1;
+	int sum = 1;
+	for(int i=1; i<=k; i++){
+		dp[i] = sum;
+		sum+=dp[i];
+		sum = sum%mod;
+	}
+	// for(int i=0; i<=k; i++)
+	// 	cout<<dp[i]<<" ";
+
+	for(int i=k+1; i<=n; i++){
+		dp[i] = ((2*dp[i-1])%mod - dp[i-k]+mod)%mod;
+	}
+	cout<<dp[n];
+}
+int main(){
+	int t; cin>>t;
+	while(t--){
+		test_case();
+		cout<<"\n";
+	}
+	return 0;
+}
+
+// dynamic programming with tree
+// given a tree find the maximum sum from root to any leaf without revisiting any node
+#include<bits/stdc++.h>
+#define vi vector<int> 
+#define vii vector<vi>
+#define pb(i) push_back(i)
+using namespace std;
+vi dp;
+void dfs(vii&g,int v,int p){
+	dp[v] = v;
+	int mx = v;
+	for(auto u : g[v]){
+		if(u!=p){
+			dfs(g,u,v);
+			mx = max(mx,dp[u]);
+		}
+	}
+	dp[v]+=mx;
+}
+void test_case(){
+	int n; cin>>n;
+	vii g(n+1);
+	vi val(n+1,0);
+	for(int i=0; i<n-1; i++){
+		int x,y; cin>>x>>y;
+		g[x].pb(y);
+		g[y].pb(x);
+	}
+
+	dp.assign(n+10,0);
+	cout<<dp[1]<<endl;
+}
+int main(){
+	int t; cin>>t;
+	while(t--){
+		test_case();
+		cout<<"\n";
+	}
+	return 0;
+}
+
+// CSES problems
+
+// appartment
+// Ferris wheel
+// reading books
+// collecting number 2
+// towers
+// traffic light
+// subarray sum 2
+
+
