@@ -1,0 +1,856 @@
+ 
+// print all the combination of string of given length
+// extracting from the all the set of string
+
+#include<iostream>
+#include<string>
+using namespace std;
+void combination(string in ,string out,int k){
+	if(in.size()==0){
+		if(out.size()==k) cout<<out<<" ";
+		return;
+	}else if(out.size()==k){
+		cout<<out<<" ";
+		return; 
+	}else{
+		string op1,op2;
+		op1=op2=out;
+		op1+=in[0];
+		in.erase(begin(in));
+		combination(in,op1,k);
+		combination(in,op2,k);
+	}
+}
+int main(){
+	string s;
+	cin>>s;
+	int n;
+	cin>>n;
+	combination(s,"",n);
+	return 0;
+}
+
+
+// knight's tour probleam using backraking
+#include<iostream>
+#include<vector>
+using namespace std;
+vector<vector<int>> dir={{2,1},{1,2},{-1,2},{-2,1},{-2,-1},{-1,-2},{1,-2},{2,-1}};
+bool knight_tour(vector<vector<int>>& grid,int x,int y,int move){
+	if(move==64) return true;
+	for(int i=0; i<8; i++){
+		int a=x+dir[i][0];
+		int b=y+dir[i][1];
+		if(a<8 && a>=0 && b<8 && b>=0 && grid[a][b]==0){
+			grid[a][b]=move;
+			if(knight_tour(grid,a,b,move+1)) return true;
+			else{
+				grid[a][b]=0;  // backtrack the knight's
+			}
+		}
+	}
+ return false;
+}
+
+int main(){
+	vector<vector<int>> grid(8,vector<int>(8,0));
+	knight_tour(grid,0,0,1);
+	
+	for(int i=0;i<8; i++){
+		for(int j=0; j<8; j++){
+			cout<<grid[i][j]<<" ";
+		}
+		cout<<endl;
+	}
+	
+	return 0;
+}
+
+// rat in maze probleam using backtracking
+// simple version of rate in maze probleam
+
+#include<iostream>
+#include<vector>
+using namespace std;
+bool rat_in_maze(vector<vector<int>> &grid,int i,int j,int n,int m){
+	if(i==n-1 && j==m-1) return true;
+	if(i<n && i>=0 && j<m && j>=0 && grid[i][j]==0){
+		if(rat_in_maze(grid,i,j+1,n,m)) return true;
+		if(rat_in_maze(grid,i+1,j,n,m)) return true;
+	    grid[i][j]=0;
+	    return false;
+	}
+return false;
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<int>> grid(n,vector<int>(m,0));
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+			cin>>grid[i][j];
+		}
+	}
+	if(rat_in_maze(grid,0,0,n,m)) 
+	cout<<" the rat cna reach the destination:";
+	else cout<<" not possible:";
+	
+ return 0;
+}
+
+
+// combination of the given number of element in the array(without duplicate handling)
+#include<iostream>
+#include<vector>
+using namespace std;
+void combination(vector<int>& pre,vector<int> &arr,int s,int e,int index,int r){
+	if(index==r){
+		for(int i=0; i<pre.size(); i++)
+		cout<<pre[i]<<" ";
+	  cout<<endl;
+	  return ;
+	}else{
+		for(int i=s; i<=e && e-i+1>=r-index; i++){
+			pre[index]=arr[i];
+			combination(pre,arr,i+1,e,index+1,r);
+			
+			// duplicate handling
+			
+		}
+	}
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+	 cin>>arr[i];
+	
+	int r;
+	cin>>r;
+	vector<int> pre(r,0);
+	combination(pre,arr,0,arr.size()-1,0,r);
+	
+	return 0;
+}
+
+
+
+// dynamic programming and backtracking
+
+
+
+// ugly number dynamic programming
+// find the nth ugly number
+#include<iostream>
+#include<vector>
+using namespace std;
+int main(){
+	int n;
+	cin>>n;
+	vector<int> ugly(n,0);
+	int a,b,c;
+	a=b=c=0;
+	
+   ugly[0]=1;
+   int next_ml2=2,next_ml3=3,next_ml5=5; // next_ml=next multiple of 
+   int next_ugly=1;
+   for(int i=1; i<n; i++){
+    next_ugly=min(next_ml2,min(next_ml3,next_ml5));
+    ugly[i]=next_ugly;
+    
+    if(next_ugly==next_ml2){
+    	a++;
+    	next_ml2=ugly[a]*2;
+	   }
+	    if(next_ugly==next_ml3){
+    	b++;
+    	next_ml3=ugly[b]*3;
+	   }
+	    if(next_ugly==next_ml5){
+    	c++;
+    	next_ml5=ugly[c]*5;
+	   }
+	}
+	cout<<"all ugly number till "<<n<<endl;
+	for(int i=0; i<n; i++){
+		cout<<ugly[i]<<" ";
+	}
+	cout<<"\nthe nth ugly number is:"<<next_ugly;
+	
+	return 0;
+}
+
+
+
+// longest common substring using recursion
+#include<iostream>
+#include<string>
+using namespace std;
+int lc_substring(string x,string y,int n,int m){
+	if(n==0 || m==0) return 0;
+	if(x[n-1]==y[m-1]) return 1+lc_substring(x,y,n-1,m-1);
+	else if(x[n-1]!=y[m-1])  return 0;
+	else return max(lc_substring(x,y,n-1,m),lc_substring(x,y,n,m-1));
+}
+int main(){
+	string s,r;
+	cin>>s>>r;
+	cout<<lc_substring(s,r,s.size(),r.size());
+	return 0;
+}
+
+//longest palondromic subsequences
+#include<iostream>
+#include<string>
+
+using namespace std;
+int lcpal_subc(string str,int s,int e){
+	if(s>e || e<s) return 0;
+	if(s==e) return 1;
+	if(str[s]==str[e]){
+		return 2+lcpal_subc(str,s+1,e-1);
+	}
+	else return max(lcpal_subc(str,s+1,e),lcpal_subc(str,s,e-1));
+}
+int main(){
+	string s;
+	cin>>s;
+	cout<<lcpal_subc(s,0,s.size()-1);
+	return 0;
+}
+
+
+// longest incresing subsequence in array
+//  resursive soluction 
+#include<iostream>
+#include<vector>
+using namespace std;
+int Lis(vector<int> &arr,int a,int b,int x){
+	if(a==b) return 0;
+	if(arr[a]>=x) return max(1+Lis(arr,a+1,b,arr[a]),Lis(arr,a+1,b,x));
+	else return Lis(arr,a+1,b,x);
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++){
+	  cin>>arr[i];
+	}
+	cout<<Lis(arr,0,n,-1);
+	return 0;
+}
+
+
+// longest incresing subsequence buttom up dp
+//lis :
+#include<iostream>
+#include<vector>
+using namespace std;
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++){
+		cin>>arr[i];
+	}	
+	vector<int> dp(n,0);
+	dp[0]=1;
+	for(int i=1; i<n; i++){
+		int mx=0;
+		for(int j=0; j<i; j++){
+		   if(arr[j]<=arr[i])
+			 mx=max(mx,dp[j]);
+		}
+	  dp[i]=mx+1;
+	}
+ cout<<" lis of given array:";
+ cout<<dp[n-1];
+ 
+ return 0;
+}
+
+
+// minimum number of coin required to make the change 
+#include<iostream>
+#include<vector>
+using namespace std;
+int coin_change(vector<int>& arr,int amount,int n){
+	if(n==0 && amount>0) return INT_MAX-1;
+	if(n>0 && amount==0) return 0;
+	if(arr[n-1]<=amount) return min(1+coin_change(arr,amount-arr[n-1],n),coin_change(arr,amount,n-1));
+	else return coin_change(arr,amount,n-1);
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+	cin>>arr[i];
+	int amount;
+	cin>>amount;
+	cout<<coin_change(arr,amount,n);
+return 0;
+}
+
+
+
+// coin change probleam
+// total number of ways to make a given amount if infinite number of suppy of given coins
+
+// recursion + memoization
+#include<iostream>
+#include<conio.h>
+#include<vector>
+using namespace std;
+int coin_change(vector<int> & arr,int amount,int n){
+ if(amount==0) return 1;
+ if(amount<0) return 0;
+ if(amount>0 && n<=0) return 0;
+   // just memoized before returning
+ return coin_change(arr,amount-arr[n-1],n) + coin_change(arr,amount,n-1);
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+	cin>>arr[i];
+	
+	int amount;
+	cin>>amount;
+	cout<<coin_change(arr,amount,n);
+	return 0;
+}
+
+// rod cutting probleam using recursion as unbounded knashpase probleam
+#include<iostream>
+#include<vector>
+using namespace std;
+int rod_cutting(vector<int> &price,int length,int n){
+	if(length<=0) return 0;
+	if(n==0) return 0;
+	if(n<=length){
+		return max(price[n-1]+rod_cutting(price,length-n,n),rod_cutting(price,length,n-1));
+	}
+	 else return rod_cutting(price,length,n-1);
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> price(n,0);
+	for(int i=0; i<n; i++)
+		cin>>price[i];
+	// suppose the max length is n and price[i] is price for (i+1)th length
+	cout<<rod_cutting(price,n,n);
+return 0;
+}
+
+// another recursive varition of rod cutting probleam
+// try all possible way 
+// cut at each  ith pace and check for maximum
+// both recursive soluction have optimal substructure and overalapping  subprobleams
+// we can memoized it
+#include<iostream>
+#include<vector>
+using namespace std;
+int rod_cutting(vector<int>& price,int n){
+   if(n<=0) return 0;
+   int max_val=INT_MIN;
+   for(int i=0; i<n; i++){
+   	max_val=max(max_val,price[i]+rod_cutting(price,n-i-1));
+	}
+	cout<<max_val<<" ";
+return max_val;
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+	cin>>arr[i];
+	
+	cout<<rod_cutting(arr,n);
+	return 0;
+}
+
+// gold mine probleam
+// probleam statment: given a matrix a cell have a amount if gold if >0 the gold miner is on the firt colunm he can walk right up,right and right down 
+// find the maximum gold he can collect for the mine
+
+
+//soluction using dfs
+#include<iostream>
+#include<vector>
+using namespace std;
+int max_val(int a,int b,int c){
+	return max(max(a,b),c);
+}
+int dfs(vector<vector<int>> &grid,int i,int j){
+	if(i>=grid.size() || i<0 || j>=grid[0].size() || j<0 || grid[i][j]<=0) return 0;
+	grid[i][j]=-grid[i][j];
+	int res=max_val(dfs(grid,i,j+1),dfs(grid,i+1,j+1),dfs(grid,i-1,j+1));
+	grid[i][j]=-grid[i][j];
+	return res+grid[i][j];
+}
+int main(){
+	int n,m;
+	cin>>n>>m;
+	vector<vector<int>> grid(n,vector<int>(m,0));
+	for(int i=0; i<n; i++){
+		for(int j=0; j<m; j++){
+		   cin>>grid[i][j];
+		}
+	}
+	
+	int ans=0;
+	for(int i=0; i<n; i++){
+		ans=max(ans,dfs(grid,i,0));
+	}
+	cout<<ans;
+
+return 0;
+}
+
+
+// solving  Cryptarithmetic Puzzles 
+#include<iostream>
+#include<vector>
+#include <unordered_map>
+using namespace std;
+unordered_map<char,int> mp;
+vector<bool> used_number;
+string find_unique(string s,string t,string r){
+     for(auto c:s) mp[c]=-1;
+     for(auto c:t) mp[c]=-1;
+     for(auto c:r) mp[c]=-1;
+     string str;
+     for(auto it : mp)
+         str+=it.first;
+    return str;
+}
+int get_sum(string s){
+	int m=1,sum=0;
+	for(int i=0; i<s.size(); i++){
+		sum += m * mp[s[i]];
+		m*=10;
+	}
+	return sum;
+}
+bool solve(string uniq,string p,string q,string r,int idx){
+	if(idx>uniq.size()) return false;
+	if(idx==uniq.size()){
+		int x=get_sum(p),y=get_sum(q),z=get_sum(r);
+		if(x + y == z){
+			for(int i=0; i<26; i++){
+				char ch= i + 'a';
+				if(mp.find(ch)!=mp.end())
+					cout<<ch<<"-"<<mp[ch];
+			}
+		cout<<endl;
+		}
+	return true;
+	}
+	char chr=uniq[idx];
+	for(int i=0; i<10; i++){
+		if(used_number[i]==false){
+			used_number[i]=true;
+			mp[chr]=i;
+			if(solve(uniq,p,q,r,idx+1))
+				return true;
+			used_number[i]=false;
+			mp[chr]=-1;
+		}
+	}
+	return false;
+}
+
+int main(){
+	string s,t,r;
+	cin>>s>>t>>r;
+	string unique=find_unique(s,t,r);
+	used_number.assign(10,false);
+	solve(unique,s,t,r,0);
+	return 0;
+}
+
+// word break probleam using backtracking
+// print all the words that are present in dictionary that can be formed by spliting the given word 
+#include<iostream>
+#include<vector>
+using namespace std;
+bool find_word(string s,vector<string> & v){
+	for(int i=0; i<v.size(); i++)
+		if(v[i]==s) return true;
+	return false; 
+}
+void solve(vector<string>& v,string str,int n,string result){
+
+   for(int i=1; i<=n; i++){
+   	  string prefix=str.substr(0,i);
+   	  if(find_word(prefix,v)){
+   	  	 if(i==n){
+   	  	 	result += prefix;
+   	  	 	cout<<result<<endl;
+            return;
+   	  	 }
+   	  	solve(v,str.substr(i,n-i),n-i,result + prefix + " ");
+   	  }
+   }
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<string> v(n);
+	for(int i=0; i<n; i++)
+		cin>>v[i];
+	string s;
+	cin>>s;
+	solve(v,s,s.size(),"");
+	return 0;
+}
+
+
+//print alphanumeric abbribation
+#include<iostream>
+#include<vector>
+using namespace std;
+void solve(string str,int idx,string res,int cnt){
+   if(idx==str.size()){
+   	   if(cnt==0)
+   	   	  cout<<res<<" ";
+   	   else{
+   	   	 res+=to_string(cnt);
+   	   	 cout<<res<<" ";
+   	   }
+   	 cout<<endl;
+   	return;
+   }
+   if(cnt>0) 
+   	   solve(str,idx+1,res+ to_string(cnt)+ str[idx],0);
+   else solve(str,idx+1,res + str[idx] ,0);
+   solve(str,idx+1,res,cnt+1);
+}
+int main(){
+	string s;
+	cin>>s;
+	solve(s,0,"",0);
+	return 0;
+}
+
+// pring all the partition of a subset in to k subset 
+#include<iostream>
+#include<vector>
+using namespace std;
+void solve(vector<int> &arr,int idx,int nos,vector<vector<int>> ksubset){
+	if(idx>=arr.size()){
+          if(nos==ksubset.size()){
+               for(int i=0; i<ksubset.size(); i++){
+               	  cout<<"[";
+               	  for(int j=0; j<ksubset[i].size(); j++)
+               	  	 cout<<ksubset[i][j];
+               	  cout<<"]";
+               }
+            cout<<endl;
+          }
+     return;
+	}
+	for(int i=0; i<ksubset.size(); i++){
+		if(ksubset[i].size()>0){
+           ksubset[i].push_back(arr[idx]);
+           solve(arr,idx+1,nos,ksubset);
+           ksubset[i].pop_back();
+		}else{
+			ksubset[i].push_back(arr[idx]);
+			solve(arr,idx+1,nos+1,ksubset);
+			ksubset[i].pop_back();
+			break;
+		}
+	}
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+
+	int k;
+	cin>>k;
+	vector<vector<int>> ksubset;
+	for(int i=0; i<k; i++){
+		ksubset.push_back(vector<int>());
+	}
+    solve(arr,0,0,ksubset);
+	return 0;
+}
+
+// print k equal sum partition 
+#include<iostream>
+#include<vector>
+using namespace std;
+void solve(vector<int> &arr,int idx,int nos,vector<int>& subsetsum,vector<vector<int>> ksubset){
+	if(idx>=arr.size()){
+		if(nos==ksubset.size()){
+			int x=subsetsum[0];
+			for(int i=1; i<subsetsum.size(); i++)
+				if(subsetsum[i]!=x) return;
+			for(int i=0; i<ksubset.size(); i++){
+				cout<<"[";
+				for(int j=0; j<ksubset[i].size(); j++)
+					cout<<ksubset[i][j];
+				cout<<"]";
+			}
+		cout<<endl;
+		}
+	return ;
+	}
+
+	for(int i=0; i<ksubset.size(); i++){
+		if(ksubset[i].size()>0){
+			ksubset[i].push_back(arr[idx]);
+			subsetsum[i]+=arr[idx];
+			solve(arr,idx+1,nos,subsetsum,ksubset);
+			subsetsum[i]-=arr[idx];
+			ksubset[i].pop_back();
+		}else{
+			ksubset[i].push_back(arr[idx]);
+			subsetsum[i]+=arr[idx];
+			solve(arr,idx+1,nos+1,subsetsum,ksubset);
+			ksubset[i].pop_back();
+			subsetsum[i]-=arr[idx];
+			break;
+		}
+	}
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+
+	int k;
+	cin>>k;
+	vector<vector<int>> ksubset;
+	vector<int> subsetsum(k,0);
+	for(int i=0; i<k; i++){
+		ksubset.push_back(vector<int>());
+	}
+
+  handle all the base cases here like k==1,k>n,k==0,n==0 ,sum(arr)%k!=0
+	solve(arr,0,0,subsetsum,ksubset);
+	return 0;
+}
+
+// matching patten and string without using regular expression
+#include<iostream>
+#include<vector>
+#include<unordered_map>
+using namespace std;
+unordered_map<char,string> mp;
+void solve(string pattern,int pidx,string text){
+    if(pidx==pattern.size() && text.size()==0){
+        for(auto u : mp){
+        	cout<<u.first<<"->"<<u.second<<endl;
+        }
+       // cout<<endl;
+     return;
+    }
+
+    if(mp.find(pattern[pidx])!=mp.end()){
+    	string str=mp[pattern[pidx]];
+    	if(text.size()<str.size()) return;
+    	else{
+    		string s=text.substr(0,str.size());
+    		if(s!=str) return ;
+    		else{
+              string next_str=text.substr(str.size(),text.size());
+               solve(pattern,pidx+1,next_str);
+    		}
+    	}
+     return;
+    }
+    for(int i=0; i<text.size(); i++){
+    	char ch=pattern[pidx];
+        mp[ch]=text.substr(0,i+1);
+        string next_str=text.substr(i+1,text.size());
+        solve(pattern,pidx+1,next_str);
+        mp.erase(ch);
+    }
+   return;
+}
+int main(){
+	string pattern,text;
+	cin>>pattern>>text;
+	solve(pattern,0,text);
+	return 0;
+}
+
+//combinational sum probleam
+#include<iostream>
+#include<vector>
+using namespace std;
+void solve(vector<int> &arr,int s,int sum,vector<int> cnt){
+	if(sum<0) return;
+	if(sum==0) {
+         for(int i=0; i<cnt.size(); i++)
+         	cout<<cnt[i]<<" ";
+         cout<<endl;
+     return;
+	}
+	for(int i=s; i<arr.size(); i++){
+		if(arr[i]<=sum){
+			cnt.push_back(arr[i]);
+			solve(arr,i,sum-arr[i],cnt);
+			cnt.pop_back();
+		}
+	}
+}
+int main(){
+    int n;
+    cin>>n;
+    vector<int> arr(n,0);
+    for(int i=0; i<n; i++)
+    	cin>>arr[i];
+
+    int sum;
+    cin>>sum;
+    solve(arr,0,sum,vector<int>());
+    return 0;
+}
+
+//generate power set in lexicographical order
+// #include<iostream>
+#include<vector>
+using namespace std;
+void solve(string str,int s=-1,string cur_str=""){
+    if(s==str.size()) return;
+    cout<<cur_str<<" ";
+	for(int i=s+1; i<str.size(); i++){
+         cur_str+=str[i];
+         solve(str,i,cur_str);
+         cur_str.pop_back();
+	}
+	return;
+}
+int main(){
+	string s;
+	cin>>s;
+	string cur_str;
+	cur_str+=s[0];
+	solve(s);
+	return 0;
+}
+
+//decode string leetcode porblem 
+#include<iostream>
+#include<vector>
+using namespace std;
+string solve(string s,int& pos){
+   int num=0;
+   string word="";
+   for(;pos<s.size(); pos++){
+   	   if(s[pos]=='['){
+   	   	  string str=solve(s,++pos);
+   	   	  while(num--){
+   	   	  	word+=str;
+   	   	  }
+   	   }else if(s[pos]>='0' && s[pos]<='9'){
+   	   	  num=num*10 + s[pos]-'0';
+   	   }else if(s[pos]==']'){
+   	   	  return word;
+   	   }else{
+   	   	 word+=s[pos];
+   	   }
+   }
+   return word;
+}
+int main(){
+	string s;
+	cin>>s;
+	int pos=0;
+	cout<<solve(s,pos);
+	return 0;
+}
+
+// combinational sum 
+// given an array and a sum x print all unique subset whose sum equeal to x
+#include<iostream>
+#include<vector>
+using namespace std;
+void solve(vector<int> arr,int n,int x,vector<int> cnt,int i){
+    if(x<0) return ;
+    else if(x==0){
+    	for(auto u:cnt){
+    		cout<<u<<" ";
+    	}
+    	cout<<endl;
+    }
+    for(; i<n && x-arr[i]>=0;){
+    	cnt.push_back(arr[i]);
+    	solve(arr,n,x-arr[i],cnt,i);
+    	i++;
+    	cnt.pop_back();
+    }
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	int x;
+	cin>>x;
+    solve(arr,n,x,vector<int>(),0);
+    return 0;
+}
+
+// given an array print all the subset of the array
+#include<iostream>
+#include<vector>
+using namespace std;
+void solve(vector<int>&arr,int n,int idx,vector<int> cnt){
+	if(cnt.size()>0){
+		for(int i=0; i<cnt.size(); i++)
+			cout<<cnt[i]<<" ";
+		cout<<endl;
+	}
+	for(int i=idx; i<n; i++){
+		cnt.push_back(arr[i]);
+		solve(arr,n,i+1,cnt);
+		cnt.pop_back();
+	}
+}
+int main(){
+	int n;
+	cin>>n;
+	vector<int> arr(n,0);
+	for(int i=0; i<n; i++)
+		cin>>arr[i];
+	solve(arr,n,0,vector<int>());
+	return 0;
+}
+
+  // given a string print all the power set in lexicographically
+#include<iostream>
+#include<vector>
+using namespace std;
+int solve(string s,int idx,string str){
+   for(int i=0; i<str.size(); i++)
+   	cout<<str[i]<<" ";
+   cout<<endl;
+   for(int i=idx; i<s.size(); i++){
+   	    str+=s[i];
+        solve(s,i+1,str);
+        str.pop_back();
+   }
+}
+int main(){
+	string s;
+	cin>>s;
+	solve(s,0,"");
+	return 0;
+}
+
